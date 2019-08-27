@@ -103,13 +103,13 @@ class Console extends React.Component<{ server: string, width: 'xs'|'sm'|'md'|'l
               display: 'flex',
               flexDirection: 'column-reverse'
             }}>
-              <Typography component='div'>
+              <Typography variant='body2' component='div'>
                 {this.state.console.split('\n').map((i, index) => (
                   <div key={index}>{i}<br /></div>
                 )).slice(this.state.console.split('\n').length - 11)
                 /* Truncate to 650 lines due to performance issues afterwards. */}
               </Typography>
-              <Typography component='div'>
+              <Typography variant='body2' component='div'>
                 {this.lastEls(this.state.console.split('\n').map((i, index) => (
                   <div key={index}>{i}<br /></div>
                 )), 650)

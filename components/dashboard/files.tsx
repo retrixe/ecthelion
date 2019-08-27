@@ -5,12 +5,14 @@ import { ip } from '../../config.json'
 import fetch from 'isomorphic-unfetch'
 import { ConnectionFailure } from '../imports/connectionFailure'
 
+/*
 interface S {
   path: string,
   listening: boolean,
   serverProperties?: { code: number, content: string },
   files?: Array<{ folder: boolean, name: string, size: number, lastModified: number }>
 }
+*/
 
 const Files = (props: { server: string }) => {
   const [listening, setListening] = useState(false)

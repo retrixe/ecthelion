@@ -7,7 +7,6 @@ import Storage from '@material-ui/icons/Storage'
 import Stop from '@material-ui/icons/Stop'
 import PlayArrow from '@material-ui/icons/PlayArrow'
 import Link from 'next/link'
-import withRoot from '../components/imports/withRoot'
 
 import { ip } from '../config.json'
 import fetch from 'isomorphic-unfetch'
@@ -61,16 +60,17 @@ class Servers extends React.Component<{ width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' 
         <div style={{
           background: 'linear-gradient(to top, #fc00ff, #00dbde)', height: '100vh', width: '100vw'
         }}>
-          <div style={{ paddingTop: '5em', paddingLeft: 20, paddingRight: 20 }}>
+          <div style={{ paddingTop: '6em', paddingLeft: 20, paddingRight: 20 }}>
             {!this.state.servers || !this.state.loggedIn ? (
               <Paper style={{ padding: 10 }}>
                 <Typography>
-                  {'It doesn\'t look like you should be here.'}<Link prefetch href='/'>
-                    <Typography color='primary' component='a' onClick={() => {
-                      try { localStorage.removeItem('token') } catch (e) {}
-                    }}>Consider logging in?</Typography>
-                  </Link>
+                  {'It doesn\'t look like you should be here.'}
                 </Typography>
+                <Link href='/'>
+                  <Typography color='primary' component='a' onClick={() => {
+                    try { localStorage.removeItem('token') } catch (e) { }
+                  }}>Consider logging in?</Typography>
+                </Link>
               </Paper>
             ) : <Paper style={{ padding: 20 }}>
               <Typography gutterBottom variant='h5'>Servers</Typography>
@@ -78,7 +78,7 @@ class Servers extends React.Component<{ width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' 
               <List component='nav'>
                 {Object.keys(this.state.servers).map((server) => (
                   <div key={server}>
-                    <ListItem button onClick={() => {
+                    <ListItem dense button onClick={() => {
                       Router.push(`/dashboard?server=${server}`)
                     }}>
                       <ListItemAvatar><Avatar><Storage /></Avatar></ListItemAvatar>
@@ -119,4 +119,4 @@ class Servers extends React.Component<{ width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' 
   }
 }
 
-export default withRoot(withWidth()(Servers))
+export default withWidth()(Servers)

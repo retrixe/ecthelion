@@ -14,7 +14,6 @@ import Link from 'next/link'
 import { ip } from '../config.json'
 import fetch from 'isomorphic-unfetch'
 
-import withRoot from '../components/imports/withRoot'
 import Statistics from '../components/dashboard/statistics'
 import Console from '../components/dashboard/console'
 import Files from '../components/dashboard/files'
@@ -119,16 +118,17 @@ class Dashboard extends React.Component<{ width: 'xs'|'sm'|'md'|'lg'|'xl' }, S> 
           height: '100vh',
           width: `calc(100vw - 200px)`
         }}>
-          <div style={{ paddingTop: '5em', paddingLeft: 20, paddingRight: 20 }}>
+          <div style={{ paddingTop: '6em', paddingLeft: 20, paddingRight: 20 }}>
             {!this.state.loggedIn ? (
               <Paper style={{ padding: 10 }}>
                 <Typography>
-                  {'It doesn\'t look like you should be here.'}<Link prefetch href='/'>
-                    <Typography color='primary' component='a' onClick={() => {
-                      try { localStorage.removeItem('token') } catch (e) {}
-                    }}>Consider logging in?</Typography>
-                  </Link>
+                  {'It doesn\'t look like you should be here.'}
                 </Typography>
+                <Link href='/'>
+                  <Typography color='primary' component='a' onClick={() => {
+                    try { localStorage.removeItem('token') } catch (e) { }
+                  }}>Consider logging in?</Typography>
+                </Link>
               </Paper>
             ) : <PageToLoad server={this.state.server} />}
           </div>
@@ -138,4 +138,4 @@ class Dashboard extends React.Component<{ width: 'xs'|'sm'|'md'|'lg'|'xl' }, S> 
   }
 }
 
-export default withRoot(withWidth()(Dashboard))
+export default withWidth()(Dashboard)

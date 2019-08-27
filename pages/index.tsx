@@ -4,7 +4,6 @@ import {
 } from '@material-ui/core'
 import Link from 'next/link'
 import Router from 'next/router'
-import withRoot from '../components/imports/withRoot'
 
 import { ip } from '../config.json'
 import fetch from 'isomorphic-unfetch'
@@ -130,4 +129,4 @@ class Index extends React.Component<{ width: 'xs'|'sm'|'md'|'lg'|'xl' }, S> {
   }
 }
 
-export default withRoot(withWidth()(Index))
+export default withWidth()(Index)

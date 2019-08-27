@@ -3,7 +3,6 @@ import {
   AppBar, Toolbar, Button, Typography
 } from '@material-ui/core'
 import Link from 'next/link'
-import withRoot from '../components/imports/withRoot'
 
 const description = `ReConsole is a Minecraft server control dashboard which allows efficient and \
 easy to set up server administration.`
@@ -26,4 +25,4 @@ const Index = () => (
   </div>
 )
 
-export default withRoot(Index)
+export default Index
