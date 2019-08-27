@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "jsx": "preserve",
+    "target": "es2016",
+    "noImplicitAny": true,
+    "removeComments": false,
+    "preserveConstEnums": true,
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "outDir": "lib/",
+    "pretty": true,
+    "skipLibCheck": true,
+    "allowJs": true,
+    // Next.js starts here.
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": false,
+    "isolatedModules": true
+  },
+  "include": [
+    "pages",
+    "components",
+    "index.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
