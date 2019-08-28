@@ -104,12 +104,6 @@ class Console extends React.Component<{ server: string, width: 'xs'|'sm'|'md'|'l
               flexDirection: 'column-reverse'
             }}>
               <Typography variant='body2' style={{ lineHeight: 1.5 }} component='div'>
-                {this.state.console.split('\n').map((i, index) => (
-                  <div key={index}>{i}<br /></div>
-                )).slice(this.state.console.split('\n').length - 11)
-                /* Truncate to 650 lines due to performance issues afterwards. */}
-              </Typography>
-              <Typography variant='body2' style={{ lineHeight: 1.5 }} component='div'>
                 {this.lastEls(this.state.console.split('\n').map((i, index) => (
                   <div key={index}>{i}<br /></div>
                 )), 650)
@@ -141,8 +135,8 @@ class Console extends React.Component<{ server: string, width: 'xs'|'sm'|'md'|'l
 
   lastEls (array: Array<any>, size: number): Array<any> {
     const length = array.length
-    if (length > 650) return array.slice(length - (size - 1), length - 10)
-    else return array.slice(0, length - 10)
+    if (length > 650) return array.slice(length - (size - 1))
+    else return array
   }
 }
 
