@@ -124,7 +124,7 @@ class Console extends React.Component<{ server: string, width: 'xs'|'sm'|'md'|'l
           </Paper>
         </Paper>
         {/* Some controls. */}
-        <Paper elevation={10} style={{ marginTop: 10, padding: 10 }}>
+        <Paper elevation={10} style={{ marginTop: 10, marginBottom: 40, padding: 10 }}>
           <ResponsiveButton>Stop</ResponsiveButton>
           <div style={{ margin: 10 }} />
           <ResponsiveButton>Start</ResponsiveButton>

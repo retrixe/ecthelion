@@ -1,7 +1,7 @@
 import React from 'react'
 import {
   AppBar, Toolbar, Button, Typography, Paper, withWidth, List, ListItem, Avatar,
-  ListItemText, ListItemAvatar, Divider, ListItemSecondaryAction, IconButton
+  ListItemText, ListItemAvatar, Divider, ListItemSecondaryAction, IconButton, Tooltip
 } from '@material-ui/core'
 import Storage from '@material-ui/icons/Storage'
 import Stop from '@material-ui/icons/Stop'
@@ -58,9 +58,9 @@ class Servers extends React.Component<{ width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' 
           </Toolbar>
         </AppBar>
         <div style={{
-          background: 'linear-gradient(to top, #fc00ff, #00dbde)', height: '100vh', width: '100vw'
+          background: 'linear-gradient(to top, #fc00ff, #00dbde)', height: '100%', width: '100vw'
         }}>
-          <div style={{ paddingTop: '6em', paddingLeft: 20, paddingRight: 20 }}>
+          <div style={{ paddingTop: '6em', paddingLeft: 20, paddingRight: 20, minHeight: '100vh' }}>
             {!this.state.servers || !this.state.loggedIn ? (
               <Paper style={{ padding: 10 }}>
                 <Typography>
@@ -75,7 +75,7 @@ class Servers extends React.Component<{ width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' 
             ) : <Paper style={{ padding: 20 }}>
               <Typography gutterBottom variant='h5'>Servers</Typography>
               <Divider />
-              <List component='nav'>
+              <List>
                 {Object.keys(this.state.servers).map((server) => (
                   <div key={server}>
                     <ListItem dense button onClick={() => {
@@ -87,11 +87,13 @@ class Servers extends React.Component<{ width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' 
                         : (this.state.servers[server] === 1 ? 'Online' : 'Crashed')
                       } />
                       <ListItemSecondaryAction>
-                        <IconButton aria-label='start' onClick={() => (this.stopStartServer(
-                          this.state.servers[server] !== 1 ? 'start' : 'stop', server
-                        ))}>
-                          {this.state.servers[server] !== 1 ? <PlayArrow /> : <Stop />}
-                        </IconButton>
+                        <Tooltip title={this.state.servers[server] !== 1 ? 'Start' : 'Kill'}>
+                          <IconButton aria-label='start' onClick={() => (this.stopStartServer(
+                            this.state.servers[server] !== 1 ? 'start' : 'stop', server
+                          ))}>
+                            {this.state.servers[server] !== 1 ? <PlayArrow /> : <Stop />}
+                          </IconButton>
+                        </Tooltip>
                       </ListItemSecondaryAction>
                     </ListItem>
                     <Divider />

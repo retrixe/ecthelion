@@ -112,13 +112,13 @@ class Dashboard extends React.Component<{ width: 'xs'|'sm'|'md'|'lg'|'xl' }, S> 
         ) : ''}
         {/* Everything other than the drawer. */}
         <div style={drawerVariant === 'temporary' || !this.state.loggedIn ? {
-          background: 'linear-gradient(to top, #fc00ff, #00dbde)', height: '100vh', width: '100vw'
+          background: 'linear-gradient(to top, #fc00ff, #00dbde)', height: '100%', width: '100vw'
         } : {
           background: 'linear-gradient(to top, #fc00ff, #00dbde)',
-          height: '100vh',
+          height: '100%',
           width: `calc(100vw - 200px)`
         }}>
-          <div style={{ paddingTop: '6em', paddingLeft: 20, paddingRight: 20 }}>
+          <div style={{ paddingTop: '6em', paddingLeft: 20, paddingRight: 20, minHeight: '100vh' }}>
             {!this.state.loggedIn ? (
               <Paper style={{ padding: 10 }}>
                 <Typography>
