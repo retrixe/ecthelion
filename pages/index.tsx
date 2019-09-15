@@ -34,7 +34,6 @@ class Index extends React.Component<{ width: 'xs'|'sm'|'md'|'lg'|'xl' }, S> {
       const request = await fetch(ip + '/login', {
         headers: { Username: this.state.username, Password: this.state.password }
       })
-      const response = await request.json()
       // If request failed..
       if (!request.ok) {
         // If it was an authentication error, we handle it by setting failedAuth to true.
@@ -44,6 +43,7 @@ class Index extends React.Component<{ width: 'xs'|'sm'|'md'|'lg'|'xl' }, S> {
       }
       // Save the access token in localStorage if we are on the client.
       // We'll add sessionStorage support later for Remember Me stuff.
+      const response = await request.json()
       try {
         if (localStorage && response.token) {
           localStorage.setItem('token', response.token)
@@ -53,7 +53,7 @@ class Index extends React.Component<{ width: 'xs'|'sm'|'md'|'lg'|'xl' }, S> {
           Router.push('/servers')
         }
       } catch (e) {}
-    } catch (e) {}
+    } catch (e) { this.setState({ failedAuth: true }) }
   }
 
   componentDidMount () {

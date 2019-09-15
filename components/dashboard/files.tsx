@@ -41,6 +41,13 @@ const Files = (props: { server: string }) => {
   // Return the code.
   if (!listening || !files) return <ConnectionFailure />
   const fileSort = (a: string, b: string) => a === b ? 0 : (a > b ? 1 : -1)
+  const rtd = (num: number) => Math.round(num * 100) / 100
+  const bytesToGb = (bytes: number) => {
+    if (bytes < 1024) return bytes + ' bytes'
+    else if (bytes < (1024 * 1024)) return rtd(bytes / 1024) + ' KB'
+    else if (bytes < (1024 * 1024 * 1024)) return rtd(bytes / (1024 * 1024)) + ' MB'
+    else if (bytes < (1024 * 1024 * 1024 * 1024)) return rtd(bytes / (1024 * 1024 * 1024)) + ' GB'
+  }
   return (
     <>
       <Paper style={{ padding: 20 }}>
@@ -63,14 +70,21 @@ const Files = (props: { server: string }) => {
           {files.length ? files.sort(
             (a, b) => fileSort(a.name.toLowerCase(), b.name.toLowerCase())
           ).sort((a, b) => a.folder && b.folder ? 0 : (a.folder && !b.folder ? -1 : 1)).map(file => (
-            <ListItem key={file.name} dense button onClick={() => setPath(path + file.name + '/')}>
+            <ListItem key={file.name} dense button onClick={() => {
+              file.folder
+                ? setPath(path + file.name + '/')
+                // TODO: Authentication will break this.
+                : window.location.href = `${ip}/server/${props.server}/file?path=${path}/${file.name}`
+            }}>
               <ListItemAvatar>
                 <Avatar>{file.folder ? <Folder /> : <InsertDriveFile />}</Avatar>
               </ListItemAvatar>
               <ListItemText
                 primary={file.name}
                 secondary={
-                  'Last modified on ' + new Date(file.lastModified * 1000).toISOString()
+                  'Last modified on ' +
+                  new Date(file.lastModified * 1000).toISOString().substr(0, 19).replace('T', ' ') +
+                  ' | Size: ' + bytesToGb(file.size)
                 } />
               <ListItemSecondaryAction>
                 <IconButton onClick={e => {

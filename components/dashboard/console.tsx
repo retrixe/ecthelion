@@ -73,15 +73,15 @@ class Console extends React.Component<{ server: string, width: 'xs'|'sm'|'md'|'l
     if (!this.state.listening) return <ConnectionFailure />
     // TODO: Should be moved to Statistics, or styling should be fixed.
     const ResponsiveButton = ['xs', 'sm', 'md', 'lg', 'xl'].includes(this.props.width) ? (props: any) => (
-      <Button variant='contained' color='primary' onClick={() => this.stopStartServer(
-        props.children.toUpperCase()
+      <Button variant='contained' color='default' onClick={() => this.stopStartServer(
+        props.children === 'Start' ? 'START' : 'STOP'
       )} fullWidth>
         {props.children}
       </Button>
     ) : (props: any) => (
       <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
         <Button variant='contained' color='primary' onClick={() => this.stopStartServer(
-          props.children.toUpperCase()
+          props.children === 'Start' ? 'START' : 'STOP'
         )}>
           {props.children}
         </Button>
@@ -103,13 +103,13 @@ class Console extends React.Component<{ server: string, width: 'xs'|'sm'|'md'|'l
               display: 'flex',
               flexDirection: 'column-reverse'
             }}>
+              <div style={{ minHeight: '5px' }} />
               <Typography variant='body2' style={{ lineHeight: 1.5 }} component='div'>
                 {this.lastEls(this.state.console.split('\n').map((i, index) => (
                   <div key={index}>{i}<br /></div>
                 )), 650)
                 /* Truncate to 650 lines due to performance issues afterwards. */}
               </Typography>
-              <div />
             </div>
           </Paper>
           <Divider />
@@ -125,9 +125,20 @@ class Console extends React.Component<{ server: string, width: 'xs'|'sm'|'md'|'l
         </Paper>
         {/* Some controls. */}
         <Paper elevation={10} style={{ marginTop: 10, marginBottom: 40, padding: 10 }}>
-          <ResponsiveButton>Stop</ResponsiveButton>
+          <Button
+            variant='contained'
+            color='primary'
+            onClick={() => this.stopStartServer('START')}
+            fullWidth
+          >Start</Button>
           <div style={{ margin: 10 }} />
-          <ResponsiveButton>Start</ResponsiveButton>
+          <Button variant='contained' color='primary' onClick={() => {
+            this.state.ws.send('save-all')
+            setTimeout(() => this.state.ws.send('end'), 1000)
+            setTimeout(() => this.state.ws.send('stop'), 5000)
+          }} fullWidth>Stop</Button>
+          <div style={{ margin: 10 }} />
+          <ResponsiveButton>Kill</ResponsiveButton>
         </Paper>
       </>
     )
