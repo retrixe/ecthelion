@@ -23,7 +23,7 @@ class Console extends React.Component<{ server: string, width: 'xs'|'sm'|'md'|'l
     try {
       // Connect to console.
       document.cookie = `X-Authentication=${localStorage.getItem('token')}`
-      let ws = new WebSocket(`${ip.split('http').join('ws')}/server/${this.props.server}/console`)
+      const ws = new WebSocket(`${ip.split('http').join('ws')}/server/${this.props.server}/console`)
       // This listener needs to be loaded ASAP.
       ws.onmessage = (event) => this.setState({ console: `${this.state.console}\n${event.data}` })
       this.setState({ ws, listening: true })
@@ -59,7 +59,7 @@ class Console extends React.Component<{ server: string, width: 'xs'|'sm'|'md'|'l
     try {
       // Send the request to stop or start the server.
       const res = await fetch(ip + '/server/' + this.props.server, {
-        headers: { 'Authorization': localStorage.getItem('token') },
+        headers: { Authorization: localStorage.getItem('token') },
         method: 'POST',
         body: operation.toUpperCase()
       })

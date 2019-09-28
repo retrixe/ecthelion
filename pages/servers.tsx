@@ -14,8 +14,8 @@ import Router from 'next/router'
 
 interface S { loggedIn: boolean, servers?: { [name: string]: number } }
 
-const description = `The dashboard for Octyne.\nOctyne is a \
-dashboard which allows efficient and easy to set up server administration.`
+const description = 'The dashboard for Octyne.\nOctyne is a \
+dashboard which allows efficient and easy to set up server administration.'
 
 class Servers extends React.Component<{ width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' }, S> {
   constructor (props: { width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' }) {
@@ -26,7 +26,7 @@ class Servers extends React.Component<{ width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' 
   async componentDidMount () {
     try {
       const servers = await fetch(
-        ip + '/servers', { headers: { 'Authorization': localStorage.getItem('token') } }
+        ip + '/servers', { headers: { Authorization: localStorage.getItem('token') } }
       )
       const parsed = await servers.json()
       if (
@@ -111,7 +111,7 @@ class Servers extends React.Component<{ width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' 
     try {
       // Send the request to stop or start the server.
       const res = await fetch(ip + '/server/' + server, {
-        headers: { 'Authorization': localStorage.getItem('token') },
+        headers: { Authorization: localStorage.getItem('token') },
         method: 'POST',
         body: operation.toUpperCase()
       })

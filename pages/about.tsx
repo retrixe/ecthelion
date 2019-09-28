@@ -4,8 +4,8 @@ import {
 } from '@material-ui/core'
 import Link from 'next/link'
 
-const description = `ReConsole is a Minecraft server control dashboard which allows efficient and \
-easy to set up server administration.`
+const description = 'ReConsole is a Minecraft server control dashboard which allows efficient and \
+easy to set up server administration.'
 
 const Index = () => (
   <div style={{ marginRight: 16, marginLeft: 16 }}>

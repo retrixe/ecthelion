@@ -1,4 +1,4 @@
-# octyne
+# ecthelion
 
 A frontend for Octyne.
 

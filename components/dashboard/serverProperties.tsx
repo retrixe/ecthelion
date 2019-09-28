@@ -16,23 +16,24 @@ const ServerProperties = (props: { server: string }) => {
   const [serverProperties, setServerProperties] = useState<string>(null)
   const [origContent, setOrigContent] = useState<string>(null)
   // componentDidMount
-  const componentDidMount = async () => {
-    try {
-      // Fetch server properties.
-      const res = await fetch(ip + '/server/' + props.server + '/file?path=server.properties', {
-        headers: { 'Authorization': localStorage.getItem('accessToken') }
-      })
-      const serverProperties = await res.text()
-      if (res.status === 401) throw new Error()
-      else if (res.status === 404) setListening(true)
-      else if (res.ok) {
-        setListening(true)
-        setOrigContent(serverProperties)
-        setServerProperties(serverProperties)
-      }
-    } catch (e) {}
-  }
-  useEffect(() => { componentDidMount() }, [])
+  useEffect(() => {
+    (async () => {
+      try {
+        // Fetch server properties.
+        const res = await fetch(ip + '/server/' + props.server + '/file?path=server.properties', {
+          headers: { Authorization: localStorage.getItem('accessToken') }
+        })
+        const serverProperties = await res.text()
+        if (res.status === 401) throw new Error()
+        else if (res.status === 404) setListening(true)
+        else if (res.ok) {
+          setListening(true)
+          setOrigContent(serverProperties)
+          setServerProperties(serverProperties)
+        }
+      } catch (e) { }
+    })()
+  }, [props.server])
   // Return the code.
   if (!listening) return <ConnectionFailure />
   else if (serverProperties === null || origContent === null) {

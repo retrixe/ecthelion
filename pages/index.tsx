@@ -19,8 +19,8 @@ interface S {
 - Have a rootURL environment variable.
 */
 
-const description = `Login page for Octyne.\nOctyne is a \
-dashboard which allows efficient and easy to set up server administration.`
+const description = 'Login page for Octyne.\nOctyne is a \
+dashboard which allows efficient and easy to set up server administration.'
 
 class Index extends React.Component<{ width: 'xs'|'sm'|'md'|'lg'|'xl' }, S> {
   constructor (props: { width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' }) {

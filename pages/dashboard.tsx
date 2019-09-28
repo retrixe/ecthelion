@@ -24,8 +24,8 @@ interface S {
   loggedIn: boolean, openDrawer: boolean, currentPage: PageName, server?: string
 }
 
-const description = `The dashboard for a server running with Octyne.\nOctyne is a \
-dashboard which allows efficient and easy to set up server administration.`
+const description = 'The dashboard for a server running with Octyne.\nOctyne is a \
+dashboard which allows efficient and easy to set up server administration.'
 
 class Dashboard extends React.Component<{ width: 'xs'|'sm'|'md'|'lg'|'xl' }, S> {
   constructor (props: { width: 'xs'|'sm'|'md'|'lg'|'xl' }) {
@@ -46,7 +46,7 @@ class Dashboard extends React.Component<{ width: 'xs'|'sm'|'md'|'lg'|'xl' }, S> 
       if (
         localStorage && localStorage.getItem('token') && (await (await fetch(
           ip + '/servers',
-          { headers: { 'Authorization': localStorage.getItem('token') } }
+          { headers: { Authorization: localStorage.getItem('token') } }
         )).json()).servers
       ) this.setState({ loggedIn: true, server: this.getServer() })
     } catch (e) {}
@@ -116,7 +116,7 @@ class Dashboard extends React.Component<{ width: 'xs'|'sm'|'md'|'lg'|'xl' }, S> 
         } : {
           background: 'linear-gradient(to top, #fc00ff, #00dbde)',
           height: '100%',
-          width: `calc(100vw - 200px)`
+          width: 'calc(100vw - 200px)'
         }}>
           <div style={{ paddingTop: '6em', paddingLeft: 20, paddingRight: 20, minHeight: '100vh' }}>
             {!this.state.loggedIn ? (

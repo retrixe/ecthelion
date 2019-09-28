@@ -25,18 +25,19 @@ const Files = (props: { server: string }) => {
   const [fetching, setFetching] = useState(false)
 
   // componentDidMount
-  const componentDidMount = async () => {
-    setFetching(true) // TODO: Make it show up after 1.0 seconds.
-    const files = await (await fetch(`${ip}/server/${props.server}/files?path=${path}`, {
-      headers: { 'Authorization': localStorage.getItem('token') }
-    })).json()
-    if (files) {
-      setFiles(files.contents)
-      setListening(true)
-    }
-    setFetching(false)
-  }
-  useEffect(() => { componentDidMount() }, [path, menuOpen])
+  useEffect(() => {
+    (async () => {
+      setFetching(true) // TODO: Make it show up after 1.0 seconds.
+      const files = await (await fetch(`${ip}/server/${props.server}/files?path=${path}`, {
+        headers: { Authorization: localStorage.getItem('token') }
+      })).json()
+      if (files) {
+        setFiles(files.contents)
+        setListening(true)
+      }
+      setFetching(false)
+    })()
+  }, [path, menuOpen, props.server])
 
   // Return the code.
   if (!listening || !files) return <ConnectionFailure />
@@ -99,7 +100,7 @@ const Files = (props: { server: string }) => {
                   <MenuItem onClick={async () => {
                     setFetching(true)
                     await (await fetch(`${ip}/server/${props.server}/file?path=${path}/${file.name}`, {
-                      headers: { 'Authorization': localStorage.getItem('token') },
+                      headers: { Authorization: localStorage.getItem('token') },
                       method: 'DELETE'
                     })).json()
                     setFetching(false)

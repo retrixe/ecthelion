@@ -28,7 +28,8 @@
   "include": [
     "pages",
     "components",
-    "index.d.ts"
+    "index.d.ts",
+    "next-env.d.ts"
   ],
   "exclude": [
     "node_modules"
