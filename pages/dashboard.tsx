@@ -14,7 +14,7 @@ import Link from 'next/link'
 import { ip } from '../config.json'
 import fetch from 'isomorphic-unfetch'
 
-import Statistics from '../components/dashboard/statistics'
+// import Statistics from '../components/dashboard/statistics'
 import Console from '../components/dashboard/console'
 import Files from '../components/dashboard/files'
 import ServerProperties from '../components/dashboard/serverProperties'
@@ -54,7 +54,8 @@ class Dashboard extends React.Component<{ width: 'xs'|'sm'|'md'|'lg'|'xl' }, S> 
 
   render () {
     // Return the code.
-    let PageToLoad: any = Statistics
+    // TODO: Add Statistics later.
+    let PageToLoad: any = Console
     if (this.state.currentPage === 'Properties') PageToLoad = ServerProperties
     else if (this.state.currentPage === 'Console') PageToLoad = Console
     else if (this.state.currentPage === 'Files') PageToLoad = Files

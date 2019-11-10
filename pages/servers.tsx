@@ -1,18 +1,21 @@
 import React from 'react'
 import {
   AppBar, Toolbar, Button, Typography, Paper, withWidth, List, ListItem, Avatar,
-  ListItemText, ListItemAvatar, Divider, ListItemSecondaryAction, IconButton, Tooltip
+  ListItemText, ListItemAvatar, Divider, ListItemSecondaryAction, IconButton, Tooltip,
+  Dialog, DialogActions, DialogContent, DialogTitle, TextField
 } from '@material-ui/core'
 import Storage from '@material-ui/icons/Storage'
 import Stop from '@material-ui/icons/Stop'
+import Close from '@material-ui/icons/Close'
 import PlayArrow from '@material-ui/icons/PlayArrow'
+import Comment from '@material-ui/icons/Comment'
 import Link from 'next/link'
 
 import { ip } from '../config.json'
 import fetch from 'isomorphic-unfetch'
 import Router from 'next/router'
 
-interface S { loggedIn: boolean, servers?: { [name: string]: number } }
+interface S { loggedIn: boolean, servers?: { [name: string]: number }, command: string, server: string }
 
 const description = 'The dashboard for Octyne.\nOctyne is a \
 dashboard which allows efficient and easy to set up server administration.'
@@ -20,7 +23,7 @@ dashboard which allows efficient and easy to set up server administration.'
 class Servers extends React.Component<{ width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' }, S> {
   constructor (props: { width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' }) {
     super(props)
-    this.state = { loggedIn: false }
+    this.state = { loggedIn: false, command: '', server: '' }
   }
 
   async componentDidMount () {
@@ -38,6 +41,17 @@ class Servers extends React.Component<{ width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' 
 
   render () {
     // Return the code.
+    const handleClose = () => this.setState({ ...this.state, server: '' })
+    const openDialog = (server: string) => this.setState({ ...this.state, server })
+    const runCommand = () => {
+      document.cookie = `X-Authentication=${localStorage.getItem('token')}`
+      const ws = new WebSocket(`${ip.split('http').join('ws')}/server/${this.state.server}/console`)
+      ws.onopen = () => {
+        ws.send(this.state.command)
+        ws.close()
+        handleClose()
+      }
+    }
     return (
       <div style={{ display: 'flex' }}>
         <>
@@ -87,13 +101,27 @@ class Servers extends React.Component<{ width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' 
                         : (this.state.servers[server] === 1 ? 'Online' : 'Crashed')
                       } />
                       <ListItemSecondaryAction>
-                        <Tooltip title={this.state.servers[server] !== 1 ? 'Start' : 'Kill'}>
-                          <IconButton aria-label='start' onClick={() => (this.stopStartServer(
+                        <Tooltip title={this.state.servers[server] !== 1 ? 'Start' : 'Stop'}>
+                          <IconButton aria-label='start/stop' onClick={() => (this.stopStartServer(
                             this.state.servers[server] !== 1 ? 'start' : 'stop', server
-                          ))}>
+                          ))} color={this.state.servers[server] !== 1 ? 'primary' : 'default'}>
                             {this.state.servers[server] !== 1 ? <PlayArrow /> : <Stop />}
                           </IconButton>
                         </Tooltip>
+                        {this.state.servers[server] === 1 ? (
+                          <Tooltip title='Kill'>
+                            <IconButton aria-label='kill' onClick={() => (this.stopStartServer(
+                              'kill', server
+                            ))} color='secondary'><Close /></IconButton>
+                          </Tooltip>
+                        ) : ''}
+                        {this.state.servers[server] === 1 ? (
+                          <Tooltip title='Run Command'>
+                            <IconButton aria-label='run command' color='primary' onClick={() => openDialog(server)}>
+                              <Comment />
+                            </IconButton>
+                          </Tooltip>
+                        ) : ''}
                       </ListItemSecondaryAction>
                     </ListItem>
                     <Divider />
@@ -103,17 +131,48 @@ class Servers extends React.Component<{ width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' 
             </Paper>}
           </div>
         </div>
+        {/* Dialog */}
+        <Dialog open={!!this.state.server} onClose={handleClose}>
+          <DialogTitle>Run Command on {this.state.server}</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin='dense'
+              id='command'
+              label='Command'
+              value={this.state.command}
+              onChange={e => this.setState({ ...this.state, command: e.target.value })}
+              fullWidth
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color='default'>Cancel</Button>
+            <Button onClick={runCommand} color='primary'>Run</Button>
+          </DialogActions>
+        </Dialog>
       </div>
     )
   }
 
   async stopStartServer (operation: string, server: string) {
+    if (operation === 'stop') {
+      // Send commands.
+      document.cookie = `X-Authentication=${localStorage.getItem('token')}`
+      const ws = new WebSocket(`${ip.split('http').join('ws')}/server/${server}/console`)
+      ws.onopen = () => {
+        ws.send('save-all')
+        setTimeout(() => ws.send('end'), 1000)
+        setTimeout(() => { ws.send('stop'); ws.close() }, 5000)
+        setTimeout(() => this.componentDidMount(), 10000)
+      }
+      return
+    }
     try {
       // Send the request to stop or start the server.
       const res = await fetch(ip + '/server/' + server, {
         headers: { Authorization: localStorage.getItem('token') },
         method: 'POST',
-        body: operation.toUpperCase()
+        body: operation === 'kill' ? 'STOP' : operation.toUpperCase()
       })
       if (res.status === 400) throw new Error()
       else this.componentDidMount()

@@ -113,7 +113,7 @@ class Index extends React.Component<{ width: 'xs'|'sm'|'md'|'lg'|'xl' }, S> {
               <br /><br />
               <TextField required label='Password' fullWidth value={this.state.password}
                 onChange={e => this.setState({ password: e.target.value })} type='password'
-                onSubmit={this.login} onKeyPress={e => e.key === 'Enter' && this.login()}
+                onSubmit={this.login} onKeyDown={e => e.key === 'Enter' && this.login()}
                 error={this.state.failedAuth || this.state.invalid} />
               <br />{this.state.failedAuth ? (<><br />
                 <Typography color='error'>An unknown error occurred. Is the server online?</Typography>

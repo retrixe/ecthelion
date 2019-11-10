@@ -1,21 +1,23 @@
 import React from 'react'
 import {
-  Typography, Paper, Divider, TextField, Fab, Button, withWidth
+  Typography, Paper, Divider, TextField, Fab, Button
 } from '@material-ui/core'
 import Check from '@material-ui/icons/Check'
+import Stop from '@material-ui/icons/Stop'
+import Close from '@material-ui/icons/Close'
+import PlayArrow from '@material-ui/icons/PlayArrow'
 
 import { ip } from '../../config.json'
 import { ConnectionFailure } from '../imports/connectionFailure'
 
 interface S { // eslint-disable-next-line no-undef
-  console: string, listening: boolean, ws?: WebSocket, command: string
+  console: string, listening: boolean, ws?: WebSocket, command: string, kill: boolean, lastCmd: string
 }
 
-// TODO: Should be moved to Statistics, or styling should be fixed.
-class Console extends React.Component<{ server: string, width: 'xs'|'sm'|'md'|'lg'|'xl' }, S> {
+export default class Console extends React.Component<{ server: string }, S> {
   constructor (props: { server: string, width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' }) {
     super(props)
-    this.state = { listening: false, command: '', console: 'Loading...' }
+    this.state = { listening: false, command: '', lastCmd: '', console: 'Loading...', kill: false }
     this.executeCommand = this.executeCommand.bind(this)
   }
 
@@ -50,7 +52,7 @@ class Console extends React.Component<{ server: string, width: 'xs'|'sm'|'md'|'l
       if (!this.state.command) return
       this.setState({ console: `${this.state.console}\n>${this.state.command}` })
       this.state.ws.send(this.state.command)
-      this.setState({ command: '' })
+      this.setState({ command: '', lastCmd: this.state.command })
     } catch (e) { console.error(e) }
   }
 
@@ -71,22 +73,6 @@ class Console extends React.Component<{ server: string, width: 'xs'|'sm'|'md'|'l
   render () {
     // Return the code.
     if (!this.state.listening) return <ConnectionFailure />
-    // TODO: Should be moved to Statistics, or styling should be fixed.
-    const ResponsiveButton = ['xs', 'sm', 'md', 'lg', 'xl'].includes(this.props.width) ? (props: any) => (
-      <Button variant='contained' color='default' onClick={() => this.stopStartServer(
-        props.children === 'Start' ? 'START' : 'STOP'
-      )} fullWidth>
-        {props.children}
-      </Button>
-    ) : (props: any) => (
-      <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-        <Button variant='contained' color='primary' onClick={() => this.stopStartServer(
-          props.children === 'Start' ? 'START' : 'STOP'
-        )}>
-          {props.children}
-        </Button>
-      </div>
-    )
     return (
       <>
         {/* Information about the server. */}
@@ -118,27 +104,41 @@ class Console extends React.Component<{ server: string, width: 'xs'|'sm'|'md'|'l
               label='Input' value={this.state.command} fullWidth
               onChange={e => this.setState({ command: e.target.value })}
               onSubmit={this.executeCommand} color='secondary'
-              onKeyPress={e => e.key === 'Enter' && this.executeCommand()}
+              onKeyDown={e => (e.key === 'Enter' && this.executeCommand()) || (
+                e.key === 'ArrowUp' && this.setState({
+                  command: this.state.lastCmd, lastCmd: this.state.command
+                })
+              )}
             /><div style={{ width: 10 }} />
             <Fab color='secondary' onClick={this.executeCommand}><Check /></Fab>
           </Paper>
         </Paper>
         {/* Some controls. */}
         <Paper elevation={10} style={{ marginTop: 10, marginBottom: 40, padding: 10 }}>
+          <div style={{ display: 'flex' }}>
+            <Button
+              startIcon={<PlayArrow />}
+              variant='contained'
+              color='primary'
+              onClick={() => this.stopStartServer('START')}
+              fullWidth
+            >Start</Button>
+            <div style={{ margin: 10 }} />
+            <Button variant='contained' color='primary' fullWidth startIcon={<Stop />} onClick={() => {
+              this.state.ws.send('save-all')
+              setTimeout(() => this.state.ws.send('end'), 1000)
+              setTimeout(() => this.state.ws.send('stop'), 5000)
+            }}>Stop</Button>
+          </div>
+          <div style={{ margin: 10 }} />
           <Button
+            startIcon={<Close />}
             variant='contained'
-            color='primary'
-            onClick={() => this.stopStartServer('START')}
-            fullWidth
-          >Start</Button>
-          <div style={{ margin: 10 }} />
-          <Button variant='contained' color='primary' onClick={() => {
-            this.state.ws.send('save-all')
-            setTimeout(() => this.state.ws.send('end'), 1000)
-            setTimeout(() => this.state.ws.send('stop'), 5000)
-          }} fullWidth>Stop</Button>
-          <div style={{ margin: 10 }} />
-          <ResponsiveButton>Kill</ResponsiveButton>
+            color='default'
+            onClick={() => this.state.kill ? (this.stopStartServer('STOP') && this.setState({
+              ...this.state, kill: false
+            })) : this.setState({ ...this.state, kill: true })}
+            fullWidth>{this.state.kill ? 'Confirm Kill?' : 'Kill'}</Button>
         </Paper>
       </>
     )
@@ -150,6 +150,3 @@ class Console extends React.Component<{ server: string, width: 'xs'|'sm'|'md'|'l
     else return array
   }
 }
-
-// TODO: Should be moved to Statistics, or styling should be fixed.
-export default withWidth()(Console)
