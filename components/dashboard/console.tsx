@@ -10,9 +10,47 @@ import PlayArrow from '@material-ui/icons/PlayArrow'
 import { ip } from '../../config.json'
 import { ConnectionFailure } from '../imports/connectionFailure'
 
-interface S { // eslint-disable-next-line no-undef
+interface S {
   console: string, listening: boolean, ws?: WebSocket, command: string, kill: boolean, lastCmd: string
 }
+
+const lastEls = (array: Array<any>, size: number) => {
+  const length = array.length
+  if (length > 650) return array.slice(length - (size - 1))
+  else return array
+}
+
+const ScrolledConsole = (props: { console: string }) => {
+  const ref = React.useRef<HTMLDivElement>(null)
+  const isScrolledToBottom = ref.current !== null ? (
+    ref.current.scrollHeight - ref.current.clientHeight <= ref.current.scrollTop + 1
+  ) : false
+
+  React.useEffect(() => {
+    if (isScrolledToBottom) {
+      ref.current.scrollTop = ref.current.scrollHeight - ref.current.clientHeight
+    }
+  }, [props.console, isScrolledToBottom])
+
+  return (
+    <div style={{
+      height: '100%',
+      width: '100%',
+      overflow: 'auto',
+      display: 'flex',
+      // Firefox and EdgeHTML break this behaviour when using column-reverse.
+      flexDirection: 'column'
+    }} ref={ref}>
+      <Typography variant='body2' style={{ lineHeight: 1.5 }} component='div'>
+        {lastEls(props.console.split('\n').map((i, index) => (
+          <div key={index}>{i}<br /></div>
+        )), 650) /* Truncate to 650 lines due to performance issues afterwards. */}
+      </Typography>
+      <div style={{ minHeight: '5px' }} />
+    </div>
+  )
+}
+const PureScrolledConsole = React.memo(ScrolledConsole)
 
 export default class Console extends React.Component<{ server: string }, S> {
   constructor (props: { server: string, width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' }) {
@@ -21,7 +59,7 @@ export default class Console extends React.Component<{ server: string }, S> {
     this.executeCommand = this.executeCommand.bind(this)
   }
 
-  async componentDidMount () {
+  componentDidMount () {
     try {
       // Connect to console.
       document.cookie = `X-Authentication=${localStorage.getItem('token')}`
@@ -47,12 +85,13 @@ export default class Console extends React.Component<{ server: string }, S> {
   // Close WebSocket when done.
   componentWillUnmount () { this.state.ws && this.state.ws.close() }
 
-  async executeCommand () {
+  executeCommand () {
     try {
       if (!this.state.command) return
       this.setState({ console: `${this.state.console}\n>${this.state.command}` })
       this.state.ws.send(this.state.command)
       this.setState({ command: '', lastCmd: this.state.command })
+      return true
     } catch (e) { console.error(e) }
   }
 
@@ -70,6 +109,18 @@ export default class Console extends React.Component<{ server: string }, S> {
     } catch (e) {}
   }
 
+  isChrome () {
+    let chrome = false
+    try {
+      if (
+        Object.hasOwnProperty.call(window, 'chrome') &&
+        !navigator.userAgent.includes('Trident') &&
+        !navigator.userAgent.includes('Edge') // Chromium Edge uses Edg *sad noises*
+      ) chrome = true
+    } catch (e) {}
+    return chrome
+  }
+
   render () {
     // Return the code.
     if (!this.state.listening) return <ConnectionFailure />
@@ -82,21 +133,23 @@ export default class Console extends React.Component<{ server: string }, S> {
           <Paper style={{
             padding: 10, marginBottom: 10, backgroundColor: '#111111', height: '60vh'
           }}>
-            <div style={{
-              height: '100%',
-              width: '100%',
-              overflow: 'auto',
-              display: 'flex',
-              flexDirection: 'column-reverse'
-            }}>
-              <div style={{ minHeight: '5px' }} />
-              <Typography variant='body2' style={{ lineHeight: 1.5 }} component='div'>
-                {this.lastEls(this.state.console.split('\n').map((i, index) => (
-                  <div key={index}>{i}<br /></div>
-                )), 650)
-                /* Truncate to 650 lines due to performance issues afterwards. */}
-              </Typography>
-            </div>
+            {this.isChrome() ? ( // If it's on Chrome, use the better behaviour of course.
+              <div style={{
+                height: '100%',
+                width: '100%',
+                overflow: 'auto',
+                display: 'flex',
+                flexDirection: 'column-reverse'
+              }}>
+                <div style={{ minHeight: '5px' }} />
+                <Typography variant='body2' style={{ lineHeight: 1.5 }} component='div'>
+                  {this.lastEls(this.state.console.split('\n').map((i, index) => (
+                    <div key={index}>{i}<br /></div>
+                  )), 650)
+                  /* Truncate to 650 lines due to performance issues afterwards. */}
+                </Typography>
+              </div>
+            ) : <PureScrolledConsole console={this.state.console} />}
           </Paper>
           <Divider />
           <Paper elevation={10} style={{ padding: 10, display: 'flex' }}>
