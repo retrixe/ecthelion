@@ -1,0 +1,50 @@
+{
+  "name": "ecthelion",
+  "version": "1.0.0-alpha.0",
+  "description": "A frontend for Octyne.",
+  "main": "pages/index.tsx",
+  "repository": "https://github.com/retrixe/ecthelion.git",
+  "author": "Ibrahim Ansari <ansari.ibrahim1@gmail.com>",
+  "license": "Apache-2.0",
+  "private": true,
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint . --ext .js,.ts,.tsx --ignore-pattern *.d.ts && tsc --noEmit"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.7.1",
+    "@material-ui/icons": "^4.5.1",
+    "isomorphic-unfetch": "^3.0.0",
+    "next": "^9.1.4",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-window": "^1.8.5"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.4",
+    "@types/node": "^12.12.14",
+    "@types/react": "^16.9.14",
+    "@typescript-eslint/eslint-plugin": "^2.10.0",
+    "@typescript-eslint/parser": "^2.10.0",
+    "@zeit/next-typescript": "^1.1.1",
+    "eslint": "^6.7.2",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-config-standard-react": "^9.2.0",
+    "eslint-config-standard-with-typescript": "^11.0.1",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.17.0",
+    "eslint-plugin-react-hooks": "^2.3.0",
+    "eslint-plugin-standard": "^4.0.1",
+    "husky": "^2.4.0",
+    "typescript": "^3.7.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint"
+    }
+  }
+}
