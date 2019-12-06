@@ -14,7 +14,7 @@ const Index = (props: { width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' }) => {
 
   const router = useRouter()
 
-  // Check if already logged in when the page loads. Do this AFTER validating credentials.
+  // Check if already logged in when the page loads.
   useEffect(() => {
     // Check the access token in localStorage if we are on the client.
     // We'll add sessionStorage support later for Remember Me stuff.
@@ -134,10 +134,7 @@ const Index = (props: { width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' }) => {
                 <Typography color='error'>
                   {failedAuth
                     ? 'An unknown error occurred. Is the server online?'
-                    : 'Your username or password is incorrect.'
-                    // TODO
-                    // eslint-disable-next-line react/jsx-curly-newline
-                  }
+                    : 'Your username or password is incorrect.'}
                 </Typography>
               </>
             ) : ''}

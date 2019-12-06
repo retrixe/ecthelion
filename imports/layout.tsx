@@ -5,7 +5,7 @@ const Layout = (props: React.PropsWithChildren<{
   appBar?: React.ReactNode,
   removeToolbar?: boolean
 }>) => (
-  <div style={{ background: 'linear-gradient(to top, #fc00ff, #00dbde)', minHeight: '100vh' }}>
+  <div style={{ background: 'linear-gradient(to top, #fc00ff, #00dbde)', minHeight: '100vh', width: '100vw' }}>
     <AppBar>
       <Toolbar>
         {props.appBar}
