@@ -26,8 +26,8 @@
     "isolatedModules": true
   },
   "include": [
-    "pages",
-    "imports",
+    "pages/**/*",
+    "imports/**/*",
     "index.d.ts",
     "next-env.d.ts"
   ],

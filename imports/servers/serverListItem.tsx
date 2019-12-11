@@ -18,13 +18,13 @@ export const ServerListItem = ({ name, status, openDialog, stopStartServer }: {
   stopStartServer: (operation: string, server: string) => void
 }) => {
   const router = useRouter()
-  router.prefetch('/dashboard') // Ensure it is prefetched for fast load times.
+  router.prefetch('/dashboard/[server]/console') // Ensure it is prefetched for fast load times.
   const onClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault()
-    router.push('/dashboard')
+    router.push('/dashboard/[server]/console', `/dashboard/${name}/console`)
   }
   return (
-    <ListItem dense button component='a' href='/dashboard' onClick={onClick}>
+    <ListItem dense button component='a' href={`/dashboard/${name}/console`} onClick={onClick}>
       <ListItemAvatar><Avatar><Storage /></Avatar></ListItemAvatar>
       <ListItemText
         primary={name}
@@ -40,7 +40,7 @@ export const ServerListItem = ({ name, status, openDialog, stopStartServer }: {
             {status !== 1 ? <PlayArrow /> : <Stop />}
           </IconButton>
         </Tooltip>
-        {status === 1 ? (
+        {status === 1 && (
           <Tooltip title='Kill'>
             <IconButton
               aria-label='kill'
@@ -50,14 +50,14 @@ export const ServerListItem = ({ name, status, openDialog, stopStartServer }: {
               <Close />
             </IconButton>
           </Tooltip>
-        ) : ''}
-        {status === 1 ? (
+        )}
+        {status === 1 && (
           <Tooltip title='Run Command'>
             <IconButton aria-label='run command' color='primary' onClick={() => openDialog()}>
               <Comment />
             </IconButton>
           </Tooltip>
-        ) : ''}
+        )}
       </ListItemSecondaryAction>
     </ListItem>
   )

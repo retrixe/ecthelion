@@ -25,7 +25,7 @@ class MyDocument extends Document {
           <meta property='og:image' content={ico} /> {/* TODO: Need to check. */}
           <link
             rel='stylesheet'
-            href='https://fonts.googleapis.com/css?family=Roboto:300,400,500'
+            href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap'
           />
         </Head>
         <body>

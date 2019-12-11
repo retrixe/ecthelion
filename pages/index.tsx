@@ -128,7 +128,7 @@ const Index = (props: { width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' }) => {
               onKeyDown={e => e.key === 'Enter' && handleLogin()}
             />
             <br />
-            {(failedAuth || invalid) ? (
+            {(failedAuth || invalid) && (
               <>
                 <br />
                 <Typography color='error'>
@@ -137,7 +137,7 @@ const Index = (props: { width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' }) => {
                     : 'Your username or password is incorrect.'}
                 </Typography>
               </>
-            ) : ''}
+            )}
             <br />
             {ResponsiveButton}
           </Paper>

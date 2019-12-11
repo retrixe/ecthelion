@@ -131,9 +131,8 @@ const Servers = () => {
         </div>
       </Layout>
       {/* Dialog box to show. */}
-      {server
-        ? <CommandDialog server={server} handleClose={handleClose} runCommand={runCommand} />
-        : ''}
+      {server &&
+        <CommandDialog server={server} handleClose={handleClose} runCommand={runCommand} />}
     </React.StrictMode>
   )
 }
