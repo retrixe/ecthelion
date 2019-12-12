@@ -30,7 +30,7 @@ const Servers = () => {
           ip + '/servers', { headers: { Authorization: token } }
         )
         const parsed = await servers.json()
-        if (token && servers.ok) {
+        if (servers.ok) {
           setServers(parsed.servers)
           setLoggedIn(true)
         } else if (servers.status === 401) setLoggedIn('failed')

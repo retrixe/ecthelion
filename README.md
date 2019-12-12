@@ -9,9 +9,9 @@ Create a `config.json` in the top level of the project and then add the followin
 ```json
 {
   "ip": "<insert absolute (with http) IP to Octyne>:<port, use 42069 if unsure>",
-  "nodes": [
-    { "name": "<name of node>", "ip": "<add links like above to your other nodes>" }
-  ]
+  "nodes": {
+    "<name of node>": "<IP to node>"
+  }
 }
 ```
 
