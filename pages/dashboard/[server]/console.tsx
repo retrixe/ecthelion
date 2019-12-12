@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { ip, nodes } from '../../../config.json'
+
+import { Paper, Typography, TextField, Fab, Divider } from '@material-ui/core'
+import Check from '@material-ui/icons/Check'
+
 import Title from '../../../imports/helpers/title'
 import AuthFailure from '../../../imports/errors/authFailure'
 import ConsoleView from '../../../imports/dashboard/console/consoleView'
@@ -8,9 +12,29 @@ import DashboardLayout from '../../../imports/dashboard/dashboardLayout'
 import ConnectionFailure from '../../../imports/errors/connectionFailure'
 import authWrapperCheck from '../../../imports/dashboard/authWrapperCheck'
 
+const lastEls = (array: any[], size: number) => {
+  const length = array.length
+  if (length > 650) return array.slice(length - (size - 1))
+  else return array
+}
+
+const isChrome = () => {
+  let chrome = false
+  try {
+    if (
+      Object.hasOwnProperty.call(window, 'chrome') &&
+      !navigator.userAgent.includes('Trident') &&
+      !navigator.userAgent.includes('Edge') // Chromium Edge uses Edg *sad noises*
+    ) chrome = true
+  } catch (e) { }
+  return chrome
+}
+
 const Console = () => {
-  const [, setWs] = useState<WebSocket | null>(null)
+  const [ws, setWs] = useState<WebSocket | null>(null)
   const [consoleText, setConsole] = useState('Loading...')
+  const [command, setCommand] = useState('')
+  const [lastCmd, setLastCmd] = useState('')
   // const [confirmingKill, setConfirmingKill] = useState(false)
   const [listening, setListening] = useState(false)
   const [authenticated, setAuthenticated] = useState(false)
@@ -19,6 +43,17 @@ const Console = () => {
   const serverIp = typeof router.query.node === 'string'
     ? (nodes as { [index: string]: string })[router.query.node]
     : ip
+
+  const handleCommand = () => {
+    try {
+      if (!command || !ws) return
+      setConsole(c => `${c}\n>${command}`)
+      ws.send(command)
+      setLastCmd(command)
+      setCommand('')
+      return true
+    } catch (e) { console.error(e) }
+  }
 
   // Check if the user is authenticated.
   useEffect(() => { authWrapperCheck().then(e => setAuthenticated(e || false)) }, [])
@@ -55,7 +90,56 @@ const Console = () => {
         <div style={{ padding: 20 }}>
           {!authenticated ? <AuthFailure /> : (
             !listening ? <ConnectionFailure /> : (
-              <ConsoleView console={consoleText} />
+              <Paper style={{ padding: 20 }}>
+                {/* TODO: Need to find a good middle ground. */}
+                <Paper
+                  style={{
+                    height: '60vh',
+                    padding: 10,
+                    background: '#333',
+                    color: '#fff'
+                  }}
+                >
+                  {isChrome() ? ( // If it's on Chrome, use the better behaviour of course.
+                    <div
+                      style={{
+                        height: '100%',
+                        width: '100%',
+                        overflow: 'auto',
+                        display: 'flex',
+                        flexDirection: 'column-reverse'
+                      }}
+                    >
+                      <div style={{ minHeight: '5px' }} />
+                      <Typography variant='body2' style={{ lineHeight: 1.5 }} component='div'>
+                        {lastEls(consoleText.split('\n').map((i, index) => (
+                          <div key={index}>{i}<br /></div>
+                        )), 650) /* Truncate to 650 lines due to performance issues afterwards. */}
+                      </Typography>
+                    </div>
+                  ) : <ConsoleView console={consoleText} />}
+                </Paper>
+                <Divider style={{ marginTop: 10, marginBottom: 10 }} />
+                <Paper elevation={10} style={{ padding: 10, display: 'flex' }}>
+                  <TextField
+                    label='Input'
+                    value={command}
+                    fullWidth
+                    onChange={e => setCommand(e.target.value)}
+                    onSubmit={handleCommand}
+                    color='secondary'
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') handleCommand()
+                      else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+                        setCommand(lastCmd)
+                        setLastCmd(command)
+                      }
+                    }}
+                  />
+                  <div style={{ width: 10 }} />
+                  <Fab color='secondary' onClick={handleCommand}><Check /></Fab>
+                </Paper>
+              </Paper>
             )
           )}
         </div>
