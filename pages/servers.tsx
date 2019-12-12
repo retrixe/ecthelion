@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Typography, Paper, Divider, List } from '@material-ui/core'
+import { Button, Typography, Paper, Divider, List, Snackbar, IconButton } from '@material-ui/core'
+import Close from '@material-ui/icons/Close'
+
 import Link from 'next/link'
 import { ip } from '../config.json'
 
@@ -16,6 +18,7 @@ import ConnectionFailure from '../imports/errors/connectionFailure'
 // TODO: Un-hardcode the ip variable by importing nodes.
 
 const Servers = () => {
+  const [message, setMessage] = useState('')
   const [servers, setServers] = useState<{ [name: string]: number } | undefined>(undefined)
   const [loggedIn, setLoggedIn] = useState<boolean|'failed'>(false)
   const [server, setServer] = useState('')
@@ -48,6 +51,7 @@ const Servers = () => {
       ws.close()
       handleClose()
     }
+    ws.onerror = () => setMessage('Failed to send command!')
   }
 
   const stopStartServer = async (operation: string, server: string) => {
@@ -61,6 +65,7 @@ const Servers = () => {
         setTimeout(() => { ws.send('stop'); ws.close() }, 5000)
         setTimeout(() => setRefetch(!refetch), 10000)
       }
+      ws.onerror = () => setMessage('Failed to send commands!')
       return
     }
     try {
@@ -74,7 +79,7 @@ const Servers = () => {
       })
       if (res.status === 400) throw new Error()
       else setRefetch(!refetch)
-    } catch (e) { }
+    } catch (e) { setMessage(e) }
   }
 
   // Return final code.
@@ -133,6 +138,25 @@ const Servers = () => {
       {/* Dialog box to show. */}
       {server &&
         <CommandDialog server={server} handleClose={handleClose} runCommand={runCommand} />}
+      {/* Error message to show. */}
+      {message && (
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          open={!!message}
+          autoHideDuration={5000}
+          onClose={() => setMessage('')}
+          ContentProps={{ 'aria-describedby': 'message-id' }}
+          message={<span id='message-id'>{message}</span>}
+          action={[
+            <Button key='undo' color='secondary' size='small' onClick={() => setMessage('')}>
+              CLOSE
+            </Button>,
+            <IconButton key='close' aria-label='close' color='inherit' onClick={() => setMessage('')}>
+              <Close />
+            </IconButton>
+          ]}
+        />
+      )}
     </React.StrictMode>
   )
 }
