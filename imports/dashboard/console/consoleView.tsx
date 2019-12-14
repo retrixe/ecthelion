@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 import Typography from '@material-ui/core/Typography'
 
 const lastEls = (array: any[], size: number) => {
@@ -8,12 +8,15 @@ const lastEls = (array: any[], size: number) => {
 }
 
 const ConsoleView = (props: { console: string }) => {
-  const ref = React.useRef<HTMLDivElement>(null)
+  const ref = useRef<HTMLDivElement>(null)
   const isScrolledToBottom = ref.current !== null ? (
     ref.current.scrollHeight - ref.current.clientHeight <= ref.current.scrollTop + 1
   ) : false
 
-  React.useEffect(() => {
+  useEffect(() => {
+    if (ref.current) ref.current.scrollTop = ref.current.scrollHeight - ref.current.clientHeight
+  }, [])
+  useEffect(() => {
     if (isScrolledToBottom && ref.current) {
       ref.current.scrollTop = ref.current.scrollHeight - ref.current.clientHeight
     }
@@ -33,7 +36,7 @@ const ConsoleView = (props: { console: string }) => {
     >
       <Typography variant='body2' style={{ lineHeight: 1.5 }} component='div'>
         {lastEls(props.console.split('\n').map((i, index) => (
-          <div key={index}>{i}<br /></div>
+          <span key={index} style={{ wordWrap: 'break-word' }}>{i}<br /></span>
         )), 650) /* Truncate to 650 lines due to performance issues afterwards. */}
       </Typography>
       <div style={{ minHeight: '5px' }} />

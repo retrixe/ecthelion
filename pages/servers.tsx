@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Typography, Paper, Divider, List, Snackbar, IconButton } from '@material-ui/core'
-import Close from '@material-ui/icons/Close'
+import { Button, Typography, Paper, Divider, List } from '@material-ui/core'
 
 import Link from 'next/link'
 import { ip } from '../config.json'
 
 import Layout from '../imports/layout'
 import Title from '../imports/helpers/title'
+import Message from '../imports/helpers/message'
 import AnchorLink from '../imports/helpers/anchorLink'
 
 import CommandDialog from '../imports/servers/commandDialog'
@@ -139,24 +139,7 @@ const Servers = () => {
       {server &&
         <CommandDialog server={server} handleClose={handleClose} runCommand={runCommand} />}
       {/* Error message to show. */}
-      {message && (
-        <Snackbar
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-          open={!!message}
-          autoHideDuration={5000}
-          onClose={() => setMessage('')}
-          ContentProps={{ 'aria-describedby': 'message-id' }}
-          message={<span id='message-id'>{message}</span>}
-          action={[
-            <Button key='undo' color='secondary' size='small' onClick={() => setMessage('')}>
-              CLOSE
-            </Button>,
-            <IconButton key='close' aria-label='close' color='inherit' onClick={() => setMessage('')}>
-              <Close />
-            </IconButton>
-          ]}
-        />
-      )}
+      {message && <Message message={message} setMessage={setMessage} />}
     </React.StrictMode>
   )
 }

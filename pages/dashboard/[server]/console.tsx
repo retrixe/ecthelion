@@ -30,6 +30,7 @@ const isChrome = () => {
   return chrome
 }
 
+// TODO: To prevent lag from developing, truncate console text internally to 1000 lines.
 const Console = () => {
   const [ws, setWs] = useState<WebSocket | null>(null)
   const [consoleText, setConsole] = useState('Loading...')
@@ -113,7 +114,7 @@ const Console = () => {
                       <div style={{ minHeight: '5px' }} />
                       <Typography variant='body2' style={{ lineHeight: 1.5 }} component='div'>
                         {lastEls(consoleText.split('\n').map((i, index) => (
-                          <div key={index}>{i}<br /></div>
+                          <span key={index} style={{ wordWrap: 'break-word' }}>{i}<br /></span>
                         )), 650) /* Truncate to 650 lines due to performance issues afterwards. */}
                       </Typography>
                     </div>
@@ -121,6 +122,7 @@ const Console = () => {
                 </Paper>
                 <Divider style={{ marginTop: 10, marginBottom: 10 }} />
                 <Paper elevation={10} style={{ padding: 10, display: 'flex' }}>
+                  {/* TODO: Requires massive performance boost as separate component. */}
                   <TextField
                     label='Input'
                     value={command}
