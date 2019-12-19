@@ -2,20 +2,22 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 import { ip, nodes } from '../../../config.json'
 
-import { Paper, Typography, CircularProgress, IconButton, Divider } from '@material-ui/core'
+import { Paper, Typography, CircularProgress, IconButton, Divider, Tooltip } from '@material-ui/core'
 import ArrowBack from '@material-ui/icons/ArrowBack'
 // import Close from '@material-ui/icons/Close'
-// import Folder from '@material-ui/icons/Folder'
-// import MoreVert from '@material-ui/icons/MoreVert'
-// import InsertDriveFile from '@material-ui/icons/InsertDriveFile'
 import CreateNewFolder from '@material-ui/icons/CreateNewFolder'
 
 import Title from '../../../imports/helpers/title'
 import Message from '../../../imports/helpers/message'
+
 import AuthFailure from '../../../imports/errors/authFailure'
-import DashboardLayout from '../../../imports/dashboard/dashboardLayout'
 import ConnectionFailure from '../../../imports/errors/connectionFailure'
+
+import DashboardLayout from '../../../imports/dashboard/dashboardLayout'
 import authWrapperCheck from '../../../imports/dashboard/authWrapperCheck'
+
+// import FileList from '../../../imports/dashboard/files/fileList'
+import UploadButton from '../../../imports/dashboard/files/uploadButton'
 import FolderCreationDialog from '../../../imports/dashboard/files/folderCreationDialog'
 
 const Files = () => {
@@ -38,7 +40,7 @@ const Files = () => {
     setFetching(true) // TODO: Make it show up after 1.0 seconds.
     const token = localStorage.getItem('token')
     if (!token) return
-    const files = await (await fetch(`${ip}/server/${router.query.server}/files?path=${path}`, {
+    const files = await (await fetch(`${serverIp}/server/${router.query.server}/files?path=${path}`, {
       headers: { Authorization: token }
     })).json()
     if (files) {
@@ -50,7 +52,7 @@ const Files = () => {
   // Check if the user is authenticated.
   useEffect(() => { authWrapperCheck().then(e => setAuthenticated(e || false)) }, [])
   const onMount = useCallback(fetchFiles, [])
-  useEffect(() => { onMount() }, [onMount])
+  useEffect(() => { onMount() }, [onMount, path])
 
   return (
     <React.StrictMode>
@@ -82,15 +84,21 @@ const Files = () => {
                     <div style={{ padding: 10 }} />
                     <Typography variant='h5'>{path}</Typography>
                     <div style={{ flex: 1 }} />
-                    <IconButton onClick={() => setFolderPromptOpen(true)}>
-                      <CreateNewFolder />
-                    </IconButton>
+                    <Tooltip title='Create Folder'>
+                      <IconButton color='secondary' onClick={() => setFolderPromptOpen(true)}>
+                        <CreateNewFolder />
+                      </IconButton>
+                    </Tooltip>
+                    <div style={{ padding: 10 }} />
+                    <UploadButton setMessage={setMessage} path={path} serverIp={serverIp} />
                     {fetching && (
                       <><div style={{ padding: 10 }} /><CircularProgress color='secondary' /></>
                     )}
                   </div>
                   <Divider />
                   <div style={{ paddingBottom: 10 }} />
+                  {/* List of files and folders. */}
+                  {/* <FileList path={path} files={files} openFile={() => {}} setPath={() => {}} /> */}
                 </Paper>
                 {folderPromptOpen && (
                   <FolderCreationDialog

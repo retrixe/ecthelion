@@ -11,6 +11,7 @@ const Layout = (props: React.PropsWithChildren<{
       minHeight: '100vh',
       width: '100vw',
       minWidth: '100%'
+      // maxWidth: '100%' TODO: Required for Firefox.
     }}
   >
     <AppBar style={{ zIndex: 1000000 }}>
