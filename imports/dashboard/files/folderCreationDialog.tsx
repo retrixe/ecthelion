@@ -17,10 +17,7 @@ const FolderCreationDialog = ({ handleClose, setFetching, setMessage, ip, server
     setFetching(true)
     try {
       const token = localStorage.getItem('token')
-      if (!token) {
-        setMessage('Missing token in localStorage!')
-        return
-      }
+      if (!token) return
       const createFolder = await (await fetch(
         `${ip}/server/${server}/folder?path=/${name}`,
         { headers: { Authorization: token }, method: 'POST' }

@@ -19,10 +19,7 @@ const Editor = (props: {
     const formData = new FormData()
     formData.append('upload', new Blob([content]), 'server.properties')
     const token = localStorage.getItem('token')
-    if (!token) {
-      props.setMessage('No token in localStorage!')
-      return
-    }
+    if (!token) return
     const r = await fetch(
       `${props.ip}/server/${props.server}/file?path=/`,
       { method: 'POST', body: formData, headers: { Authorization: token } }

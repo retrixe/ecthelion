@@ -10,11 +10,11 @@ const Layout = (props: React.PropsWithChildren<{
       background: 'linear-gradient(to top, #fc00ff, #00dbde)',
       minHeight: '100vh',
       width: '100vw',
-      maxWidth: '100%'
+      minWidth: '100%'
     }}
   >
     <AppBar style={{ zIndex: 1000000 }}>
-      <Toolbar>
+      <Toolbar style={{ minWidth: '100vw' }}>
         {props.appBar}
       </Toolbar>
     </AppBar>

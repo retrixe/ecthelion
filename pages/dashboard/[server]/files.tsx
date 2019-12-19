@@ -37,10 +37,7 @@ const Files = () => {
   const fetchFiles = async () => {
     setFetching(true) // TODO: Make it show up after 1.0 seconds.
     const token = localStorage.getItem('token')
-    if (!token) {
-      setMessage('Missing token in localStorage!')
-      return
-    }
+    if (!token) return
     const files = await (await fetch(`${ip}/server/${router.query.server}/files?path=${path}`, {
       headers: { Authorization: token }
     })).json()
@@ -74,7 +71,9 @@ const Files = () => {
                     {path !== '/' && (
                       <IconButton
                         onClick={() => {
-                          if (path !== '/') setPath(path.substring(0, path.lastIndexOf('/', path.length - 2) + 1))
+                          if (path !== '/') {
+                            setPath(path.substring(0, path.lastIndexOf('/', path.length - 2) + 1))
+                          }
                         }}
                       >
                         <ArrowBack />
