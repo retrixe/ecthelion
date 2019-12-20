@@ -92,6 +92,7 @@ const Console = () => {
           {!authenticated ? <AuthFailure /> : (
             !listening ? <ConnectionFailure /> : (
               <Paper style={{ padding: 20 }}>
+                <Typography variant='h5' gutterBottom>Console - {router.query.server}</Typography>
                 {/* TODO: Need to find a good middle ground. */}
                 <Paper
                   style={{
