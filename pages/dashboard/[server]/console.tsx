@@ -38,7 +38,7 @@ const Console = () => {
   const [lastCmd, setLastCmd] = useState('')
   // const [confirmingKill, setConfirmingKill] = useState(false)
   const [listening, setListening] = useState(false)
-  const [authenticated, setAuthenticated] = useState(false)
+  const [authenticated, setAuthenticated] = useState(true)
 
   const router = useRouter()
   const serverIp = typeof router.query.node === 'string'

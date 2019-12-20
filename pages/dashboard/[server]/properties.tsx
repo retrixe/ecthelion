@@ -23,7 +23,7 @@ const ServerProperties = () => {
   const [fileContent, setFileContent] = useState('')
   const [originalFileContent, setOriginalFileContent] = useState('')
   const [listening, setListening] = useState(false)
-  const [authenticated, setAuthenticated] = useState(false)
+  const [authenticated, setAuthenticated] = useState(true)
 
   const router = useRouter()
   const serverIp = typeof router.query.node === 'string'
