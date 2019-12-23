@@ -47,7 +47,7 @@ const DashboardLayout = (props: React.PropsWithChildren<{
         {props.loggedIn && (
           <Drawer
             variant={drawerVariant}
-            style={{ flexShrink: 0, width: 200, zIndex: 10 }}
+            style={{ flexShrink: 0, width: 200 }}
             open={openDrawer}
             onClose={() => setOpenDrawer(!openDrawer)}
           >

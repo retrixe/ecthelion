@@ -1,5 +1,9 @@
 import React from 'react'
-import { AppBar, Toolbar } from '@material-ui/core'
+import { AppBar, Toolbar, createStyles, makeStyles, Theme } from '@material-ui/core'
+
+const useStyles = makeStyles(
+  (theme: Theme) => createStyles({ appBar: { zIndex: theme.zIndex.drawer + 1 } })
+)
 
 const Layout = (props: React.PropsWithChildren<{
   appBar?: React.ReactNode,
@@ -14,7 +18,7 @@ const Layout = (props: React.PropsWithChildren<{
       maxWidth: '100%'
     }}
   >
-    <AppBar style={{ zIndex: 1000000 }}>
+    <AppBar className={useStyles().appBar}>
       <Toolbar style={{ minWidth: '100vw' }}>
         {props.appBar}
       </Toolbar>
