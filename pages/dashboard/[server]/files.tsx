@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { ip, nodes } from '../../../config.json'
 
@@ -7,6 +7,7 @@ import {
   Menu, MenuItem, useMediaQuery, useTheme
 } from '@material-ui/core'
 // import Close from '@material-ui/icons/Close'
+import MoreVert from '@material-ui/icons/MoreVert'
 import ArrowBack from '@material-ui/icons/ArrowBack'
 import CreateNewFolder from '@material-ui/icons/CreateNewFolder'
 
@@ -19,9 +20,17 @@ import ConnectionFailure from '../../../imports/errors/connectionFailure'
 import DashboardLayout from '../../../imports/dashboard/dashboardLayout'
 import authWrapperCheck from '../../../imports/dashboard/authWrapperCheck'
 
-// import FileList from '../../../imports/dashboard/files/fileList'
+import Editor from '../../../imports/dashboard/files/editor'
+import FileList, { File } from '../../../imports/dashboard/files/fileList'
 import UploadButton from '../../../imports/dashboard/files/uploadButton'
 import FolderCreationDialog from '../../../imports/dashboard/files/folderCreationDialog'
+
+/*
+const joinPath = (a: string, b: string) => {
+  if (a.endsWith('/')) return a + b + '/'
+  else return a + '/' + b + '/'
+}
+*/
 
 const Files = () => {
   const router = useRouter()
@@ -30,12 +39,12 @@ const Files = () => {
   const [menuOpen, setMenuOpen] = useState('')
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const [fetching, setFetching] = useState(false)
-  const [path, setPath] = useState('/')
+  const [path, setPath] = useState(/* typeof router.query.path === 'string' ? router.query.path : */ '/')
   const [overlay, setOverlay] = useState('')
   const [message, setMessage] = useState('')
-  const [files, setFiles] = useState<Array<{
-    folder: boolean, name: string, lastModified: number, size: number
-  }> | null>(null)
+  const [filesSelected, setFilesSelected] = useState<string[]>([])
+  const [files, setFiles] = useState<File[] | null>(null)
+  const [file, setFile] = useState<{ name: string, content: string } | null>(null)
   const [folderPromptOpen, setFolderPromptOpen] = useState(false)
   const [authenticated, setAuthenticated] = useState(true)
 
@@ -59,9 +68,43 @@ const Files = () => {
 
   // Check if the user is authenticated.
   useEffect(() => { authWrapperCheck().then(e => setAuthenticated(e || false)) }, [])
-  const onMount = useCallback(fetchFiles, [])
-  useEffect(() => { onMount() }, [onMount])
+  useEffect(() => {
+    (async () => {
+      setFetching(true) // TODO: Make it show up after 1.0 seconds.
+      const token = localStorage.getItem('token')
+      if (!token) return
+      const files = await (await fetch(`${serverIp}/server/${router.query.server}/files?path=${path}`, {
+        headers: { Authorization: token }
+      })).json()
+      if (files) {
+        setFiles(files.contents)
+      }
+      setFetching(false)
+    })()
+  }, [path, router.query.server, serverIp])
 
+  const extensions = ['properties', 'json', 'yaml', 'yml', 'xml', 'js', 'log', 'sh', 'txt']
+  const openFile = async (name: string, size: number, mimeType: string) => {
+    if (
+      size < 2 * 1024 * 1024 &&
+      (extensions.includes(name.split('.').pop() || '') || mimeType.startsWith('text/'))
+    ) {
+      // Fetch the file.
+      setFetching(true)
+      const token = localStorage.getItem('token')
+      if (!token) return
+      const req = await fetch(`${serverIp}/server/${router.query.server}/file?path=${path}/${name}`, {
+        headers: { Authorization: token }, method: 'GET'
+      })
+      if (req.status !== 200) {
+        setMessage((await req.json()).error)
+        return
+      }
+      const content = await req.text()
+      setFile({ name, content })
+      setFetching(false)
+    } else window.location.href = `${serverIp}/server/${router.query.server}/file?path=${path}${name}`
+  }
   return (
     <React.StrictMode>
       {/* TODO: Require uniformity in Title descriptions. */}
@@ -74,7 +117,18 @@ const Files = () => {
         <div style={{ padding: 20 }}>
           {!authenticated ? <AuthFailure /> : (
             !files ? <ConnectionFailure /> : (
-              <>
+              file ? (
+                <Paper style={{ padding: 20 }}>
+                  <Editor
+                    {...file}
+                    handleClose={() => setFile(null)}
+                    server={`${router.query.server}`}
+                    path={path}
+                    ip={serverIp}
+                    setMessage={setMessage}
+                  />
+                </Paper>
+              ) : (
                 <Paper style={{ padding: 20 }}>
                   <Typography variant='h5' gutterBottom>Files - {router.query.server}</Typography>
                   <div style={{ display: 'flex', alignItems: 'center', padding: 5 }}>
@@ -84,12 +138,14 @@ const Files = () => {
                           if (path !== '/') {
                             const newPath = path.substring(0, path.lastIndexOf('/', path.length - 2) + 1)
                             setPath(newPath)
+                            /*
                             const asPath = router.asPath.replace('path=' + path, 'path=' + newPath)
                             router.push(
                               asPath.replace(router.query.server.toString(), '[server]'),
                               asPath,
                               { shallow: true }
                             )
+                            */
                           }
                         }}
                       >
@@ -99,6 +155,16 @@ const Files = () => {
                     <div style={{ padding: 10 }} />
                     <Typography variant='h5'>{path}</Typography>
                     <div style={{ flex: 1 }} />
+                    {filesSelected.length > 0 && (
+                      <>
+                        <Tooltip title='Mass Actions'>
+                          <IconButton>
+                            <MoreVert />
+                          </IconButton>
+                        </Tooltip>
+                        <div style={{ padding: 10 }} />
+                      </>
+                    )}
                     <Tooltip title='Create Folder'>
                       <IconButton onClick={() => setFolderPromptOpen(true)}>
                         <CreateNewFolder />
@@ -118,9 +184,22 @@ const Files = () => {
                   <Divider />
                   <div style={{ paddingBottom: 10 }} />
                   {/* List of files and folders. */}
-                  {/* <FileList path={path} files={files} openFile={() => {}} setPath={() => {}} /> */}
+                  <FileList
+                    path={path}
+                    files={files}
+                    filesSelected={filesSelected}
+                    setFilesSelected={setFilesSelected}
+                    onClick={(file) => {
+                      if (file.folder) setPath(`${path}${file.name}/`)
+                      else openFile(file.name, file.size, file.mimeType)
+                    }}
+                    openMenu={(fn, anchor) => {
+                      setMenuOpen(fn)
+                      setAnchorEl(anchor)
+                    }}
+                  />
                 </Paper>
-              </>
+              )
             )
           )}
         </div>
@@ -147,7 +226,7 @@ const Files = () => {
                 const token = localStorage.getItem('token')
                 if (!token) return
                 const a = await (await fetch(
-                  `${serverIp}/server/${router.query.server}/file?path=${path}/${menuOpen}`,
+                  `${serverIp}/server/${router.query.server}/file?path=${path}${menuOpen}`,
                   { headers: { Authorization: token }, method: 'DELETE' }
                 )).json()
                 if (a.error) setMessage(a.error)
@@ -158,6 +237,18 @@ const Files = () => {
             >
               Delete
             </MenuItem>
+            {!(() => {
+              const file = files && files.find(e => e.name === menuOpen)
+              return file && file.folder
+            })() && (
+              <MenuItem
+                onClick={() => {
+                  window.location.href = `${serverIp}/server/${router.query.server}/file?path=${path}${menuOpen}`
+                }}
+              >
+                Download
+              </MenuItem>
+            )}
           </Menu>
         )}
         {message && <Message message={message} setMessage={setMessage} />}

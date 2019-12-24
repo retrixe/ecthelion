@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { Typography, Button, TextField, LinearProgress } from '@material-ui/core'
+import { Typography, Button, TextField, LinearProgress, IconButton } from '@material-ui/core'
+import GetApp from '@material-ui/icons/GetApp'
 
 const Editor = (props: {
   name: string,
@@ -13,15 +14,15 @@ const Editor = (props: {
   const [content, setContent] = useState(props.content)
   const [saving, setSaving] = useState(false)
 
-  const saveFile = async () => { // TODO: Wait for stable endpoint on server.
+  const saveFile = async () => {
     setSaving(true)
     // Save the file.
     const formData = new FormData()
-    formData.append('upload', new Blob([content]), 'server.properties')
+    formData.append('upload', new Blob([content]), `${props.path}${props.name}`)
     const token = localStorage.getItem('token')
     if (!token) return
     const r = await fetch(
-      `${props.ip}/server/${props.server}/file?path=/`,
+      `${props.ip}/server/${props.server}/file`,
       { method: 'POST', body: formData, headers: { Authorization: token } }
     )
     if (r.status !== 200) props.setMessage((await r.json()).error)
@@ -31,7 +32,17 @@ const Editor = (props: {
 
   return (
     <>
-      <Typography variant='h5' gutterBottom>{props.name}</Typography>
+      <div style={{ display: 'flex' }}>
+        <Typography variant='h5' gutterBottom>{props.name}</Typography>
+        <div style={{ flex: 1 }} />
+        <IconButton
+          onClick={() => {
+            window.location.href = `${props.ip}/server/${props.server}/file?path=${props.path}${props.name}`
+          }}
+        >
+          <GetApp />
+        </IconButton>
+      </div>
       <div style={{ paddingBottom: 10 }} />
       <TextField
         multiline

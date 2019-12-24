@@ -51,7 +51,7 @@ const DashboardLayout = (props: React.PropsWithChildren<{
             open={openDrawer}
             onClose={() => setOpenDrawer(!openDrawer)}
           >
-            <Toolbar />
+            {drawerVariant === 'permanent' && <Toolbar />}
             <List>
               <DrawerItem name='Statistics' subUrl='' icon={<TrendingUp />} />
               <DrawerItem name='Console' subUrl='console' icon={<CallToAction />} />
