@@ -1,22 +1,25 @@
 import React, { useState } from 'react'
-import { Typography, Button, IconButton, Drawer, List, withWidth, Toolbar } from '@material-ui/core'
+import { Typography, Button, IconButton, Drawer, List, useMediaQuery, useTheme, Toolbar } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
 import TrendingUp from '@material-ui/icons/TrendingUp'
 import Settings from '@material-ui/icons/Settings'
 import CallToAction from '@material-ui/icons/CallToAction'
 import Storage from '@material-ui/icons/Storage'
 
+import { nodes, ip } from '../../config.json'
 import DrawerItem from './drawerItem'
 import Layout from '../layout'
 import AnchorLink from '../helpers/anchorLink'
+import { useRouter } from 'next/router'
 import Link from 'next/link'
 
-const DashboardLayout = (props: React.PropsWithChildren<{
-  width: 'xs' | 'sm' | 'md' | 'lg' | 'xl',
-  loggedIn: boolean
-}>) => {
+const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) => {
   const [openDrawer, setOpenDrawer] = useState(false)
-  const drawerVariant = props.width === 'xs' ? 'temporary' : 'permanent'
+  const router = useRouter()
+  const serverIp = typeof router.query.node === 'string'
+    ? (nodes as { [index: string]: string })[router.query.node]
+    : ip
+  const drawerVariant = useMediaQuery(useTheme().breakpoints.only('xs')) ? 'temporary' : 'permanent'
   return (
     <>
       <Layout
@@ -36,7 +39,18 @@ const DashboardLayout = (props: React.PropsWithChildren<{
             )}
             <Typography variant='h6' color='inherit' style={{ flex: 1 }}>Octyne</Typography>
             <Link href='/'>
-              <Button color='inherit' onClick={() => localStorage.removeItem('token')}>Logout</Button>
+              <Button
+                color='inherit'
+                onClick={() => {
+                  const token = localStorage.getItem('token')
+                  if (token) {
+                    fetch(`${serverIp}/logout`, { headers: { Authorization: token } })
+                    localStorage.removeItem('token')
+                  }
+                }}
+              >
+                Logout
+              </Button>
             </Link>
             <AnchorLink href='/servers'>
               <Button color='inherit'>Servers</Button>
@@ -68,4 +82,4 @@ const DashboardLayout = (props: React.PropsWithChildren<{
   )
 }
 
-export default withWidth()(DashboardLayout)
+export default DashboardLayout

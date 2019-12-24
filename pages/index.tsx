@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { Button, Typography, TextField, withWidth, Paper } from '@material-ui/core'
+import { Button, Typography, TextField, useTheme, useMediaQuery, Paper } from '@material-ui/core'
 import { ip } from '../config.json'
 import Layout from '../imports/layout'
 import Title from '../imports/helpers/title'
@@ -59,19 +59,15 @@ const Index = (props: { width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' }) => {
   }
 
   // Responsive styling.
-  const paperStyle = ['xs', 'sm'].includes(props.width)
-    ? { flex: 1 }
-    : { maxWidth: '33vw', width: '420px' }
+  const small = useMediaQuery(useTheme().breakpoints.down('sm'))
+  const paperStyle = small ? { flex: 1 } : { maxWidth: '33vw', width: '420px' }
   const ResponsiveButton = (
-    <div style={['xs', 'sm'].includes(props.width) ? {} : {
-      display: 'flex', justifyContent: 'flex-end', alignItems: 'center'
-    }}
-    >
+    <div style={small ? {} : { display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
       <Button
         variant='contained'
         color='secondary'
         onClick={handleLogin}
-        fullWidth={['xs', 'sm'].includes(props.width)}
+        fullWidth={small}
         disabled={!username || !password}
       >Log In
       </Button>
@@ -148,4 +144,4 @@ const Index = (props: { width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' }) => {
   )
 }
 
-export default withWidth()(Index)
+export default Index

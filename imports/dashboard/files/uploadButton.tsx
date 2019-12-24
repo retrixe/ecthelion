@@ -31,6 +31,7 @@ const UploadButton = ({ setMessage, path, serverIp, setOverlay }: {
           setOverlay('')
         }
         setMessage('Uploaded all files successfully!')
+        setFiles(null)
       })()
     }
   }, [files, router.query.server, serverIp, path, setMessage, setOverlay])

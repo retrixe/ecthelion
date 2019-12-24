@@ -20,13 +20,14 @@ export interface File {
   mimeType: string
 }
 
-const FileList = ({ files, path, onClick, openMenu, filesSelected, setFilesSelected }: {
+const FileList = ({ files, path, onClick, openMenu, filesSelected, setFilesSelected, opip }: {
   files: File[],
   path: string,
   openMenu: (fileName: string, anchorEl: HTMLButtonElement) => void,
   onClick: (name: File) => void,
   filesSelected: string[],
-  setFilesSelected: (filesSelected: string[]) => void
+  setFilesSelected: (filesSelected: string[]) => void,
+  opip: boolean
 }) => {
   const router = useRouter()
   const rtd = (num: number) => Math.round(num * 100) / 100
@@ -70,7 +71,7 @@ const FileList = ({ files, path, onClick, openMenu, filesSelected, setFilesSelec
               }
             />
             <ListItemSecondaryAction>
-              <IconButton onClick={e => openMenu(file.name, e.currentTarget)}>
+              <IconButton disabled={opip} onClick={e => openMenu(file.name, e.currentTarget)}>
                 <MoreVert />
               </IconButton>
               <Checkbox

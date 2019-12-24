@@ -7,6 +7,7 @@ import {
   Menu, MenuItem, useMediaQuery, useTheme
 } from '@material-ui/core'
 // import Close from '@material-ui/icons/Close'
+import Replay from '@material-ui/icons/Replay'
 import MoreVert from '@material-ui/icons/MoreVert'
 import ArrowBack from '@material-ui/icons/ArrowBack'
 import CreateNewFolder from '@material-ui/icons/CreateNewFolder'
@@ -21,8 +22,9 @@ import DashboardLayout from '../../../imports/dashboard/dashboardLayout'
 import authWrapperCheck from '../../../imports/dashboard/authWrapperCheck'
 
 import Editor from '../../../imports/dashboard/files/editor'
-import FileList, { File } from '../../../imports/dashboard/files/fileList'
 import UploadButton from '../../../imports/dashboard/files/uploadButton'
+import FileList, { File } from '../../../imports/dashboard/files/fileList'
+import MassActionDialog from '../../../imports/dashboard/files/massActionDialog'
 import FolderCreationDialog from '../../../imports/dashboard/files/folderCreationDialog'
 
 /*
@@ -45,8 +47,11 @@ const Files = () => {
   const [filesSelected, setFilesSelected] = useState<string[]>([])
   const [files, setFiles] = useState<File[] | null>(null)
   const [file, setFile] = useState<{ name: string, content: string } | null>(null)
+  const [massActionMenuOpen, setMassActionMenuOpen] = useState<HTMLButtonElement | null>(null)
+  const [massActionDialogOpen, setMassActionDialogOpen] = useState<'move' | 'copy' | 'delete' | false>(false)
   const [folderPromptOpen, setFolderPromptOpen] = useState(false)
   const [authenticated, setAuthenticated] = useState(true)
+  const opip = !!(fetching || overlay)
 
   const serverIp = typeof router.query.node === 'string'
     ? (nodes as { [index: string]: string })[router.query.node]
@@ -62,6 +67,7 @@ const Files = () => {
     })).json()
     if (files) {
       setFiles(files.contents)
+      setFilesSelected([])
     }
     setFetching(false)
   }
@@ -78,6 +84,7 @@ const Files = () => {
       })).json()
       if (files) {
         setFiles(files.contents)
+        setFilesSelected([])
       }
       setFetching(false)
     })()
@@ -134,6 +141,7 @@ const Files = () => {
                   <div style={{ display: 'flex', alignItems: 'center', padding: 5 }}>
                     {path !== '/' && (
                       <IconButton
+                        disabled={opip}
                         onClick={() => {
                           if (path !== '/') {
                             const newPath = path.substring(0, path.lastIndexOf('/', path.length - 2) + 1)
@@ -158,15 +166,21 @@ const Files = () => {
                     {filesSelected.length > 0 && (
                       <>
                         <Tooltip title='Mass Actions'>
-                          <IconButton>
+                          <IconButton disabled={opip} onClick={e => setMassActionMenuOpen(e.currentTarget)}>
                             <MoreVert />
                           </IconButton>
                         </Tooltip>
                         <div style={{ padding: 10 }} />
                       </>
                     )}
+                    <Tooltip title='Reload'>
+                      <IconButton disabled={opip} onClick={fetchFiles}>
+                        <Replay />
+                      </IconButton>
+                    </Tooltip>
+                    <div style={{ padding: 10 }} />
                     <Tooltip title='Create Folder'>
-                      <IconButton onClick={() => setFolderPromptOpen(true)}>
+                      <IconButton disabled={opip} onClick={() => setFolderPromptOpen(true)}>
                         <CreateNewFolder />
                       </IconButton>
                     </Tooltip>
@@ -186,6 +200,7 @@ const Files = () => {
                   {/* List of files and folders. */}
                   <FileList
                     path={path}
+                    opip={opip}
                     files={files}
                     filesSelected={filesSelected}
                     setFilesSelected={setFilesSelected}
@@ -212,6 +227,29 @@ const Files = () => {
             ip={serverIp}
             server={`${router.query.server}`}
           />
+        )}
+        {massActionDialogOpen && (
+          <MassActionDialog
+            path={path}
+            files={filesSelected}
+            setOverlay={setOverlay}
+            setMessage={setMessage}
+            operation={massActionDialogOpen}
+            handleClose={() => setMassActionDialogOpen(false)}
+            endpoint={`${serverIp}/server/${router.query.server}/file`}
+          />
+        )}
+        {massActionMenuOpen && (
+          <Menu
+            keepMounted
+            anchorEl={massActionMenuOpen}
+            onClose={() => setMassActionMenuOpen(null)}
+            open
+          >
+            <MenuItem onClick={() => setMassActionDialogOpen('move')}>Move</MenuItem>
+            <MenuItem onClick={() => setMassActionDialogOpen('copy')}>Copy</MenuItem>
+            <MenuItem onClick={() => setMassActionDialogOpen('delete')}>Delete</MenuItem>
+          </Menu>
         )}
         {menuOpen && (
           <Menu
