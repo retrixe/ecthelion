@@ -21,7 +21,7 @@ const Editor = (props: {
     formData.append('upload', new Blob([content]), props.name)
     const r = await fetch(
       `${props.ip}/server/${props.server}/file?path=${props.path}`,
-      { method: 'POST', body: formData }
+      { method: 'POST', body: formData, headers: { Authorization: localStorage.getItem('token') } }
     )
     if (r.status !== 200) props.setMessage((await r.json()).error)
     else props.setMessage('Saved successfully!')
