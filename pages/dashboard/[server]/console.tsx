@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { ip, nodes } from '../../../config.json'
 
-import { Paper, Typography, TextField, Fab, Divider } from '@material-ui/core'
+import { Paper, Typography, TextField, Fab, Button, useMediaQuery, useTheme } from '@material-ui/core'
 import Check from '@material-ui/icons/Check'
+import Stop from '@material-ui/icons/Stop'
+import Close from '@material-ui/icons/Close'
+import PlayArrow from '@material-ui/icons/PlayArrow'
 
 import Title from '../../../imports/helpers/title'
 import AuthFailure from '../../../imports/errors/authFailure'
@@ -30,21 +33,11 @@ const isChrome = () => {
   return chrome
 }
 
-// TODO: To prevent lag from developing, truncate console text internally to 1000 lines.
-const Console = () => {
-  const [ws, setWs] = useState<WebSocket | null>(null)
-  const [consoleText, setConsole] = useState('Loading...')
+const CommandTextField = ({ ws, setConsole }: {
+  ws: WebSocket | null, setConsole: React.Dispatch<React.SetStateAction<string>>
+}) => {
   const [command, setCommand] = useState('')
   const [lastCmd, setLastCmd] = useState('')
-  // const [confirmingKill, setConfirmingKill] = useState(false)
-  const [listening, setListening] = useState(false)
-  const [authenticated, setAuthenticated] = useState(true)
-
-  const router = useRouter()
-  const serverIp = typeof router.query.node === 'string'
-    ? (nodes as { [index: string]: string })[router.query.node]
-    : ip
-
   const handleCommand = () => {
     try {
       if (!command || !ws) return
@@ -55,6 +48,43 @@ const Console = () => {
       return true
     } catch (e) { console.error(e) }
   }
+  return (
+    <div style={{ display: 'flex', marginTop: 20 }}>
+      <TextField
+        label='Input'
+        value={command}
+        fullWidth
+        onChange={e => setCommand(e.target.value)}
+        onSubmit={handleCommand}
+        color='secondary'
+        variant='outlined'
+        onKeyDown={e => {
+          if (e.key === 'Enter') handleCommand()
+          else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+            setCommand(lastCmd)
+            setLastCmd(command)
+          }
+        }}
+      />
+      <div style={{ width: 10 }} />
+      <Fab color='secondary' onClick={handleCommand}><Check /></Fab>
+    </div>
+  )
+}
+
+// TODO: To prevent lag from developing, truncate console text internally to 1000 lines.
+const Console = () => {
+  const [ws, setWs] = useState<WebSocket | null>(null)
+  const [consoleText, setConsole] = useState('Loading...')
+  const [confirmingKill, setConfirmingKill] = useState(false)
+  const [listening, setListening] = useState(false)
+  const [authenticated, setAuthenticated] = useState(true)
+
+  const smallScreen = useMediaQuery(useTheme().breakpoints.only('xs'))
+  const router = useRouter()
+  const serverIp = typeof router.query.node === 'string'
+    ? (nodes as { [index: string]: string })[router.query.node]
+    : ip
 
   // Check if the user is authenticated.
   useEffect(() => { authWrapperCheck().then(e => setAuthenticated(e || false)) }, [])
@@ -79,6 +109,71 @@ const Console = () => {
     }
   }, [serverIp, router.query.server])
 
+  const stopStartServer = async (operation: string) => {
+    try {
+      const token = localStorage.getItem('token')
+      if (!token) return
+      // Send the request to stop or start the server.
+      const res = await fetch(serverIp + '/server/' + router.query.server, {
+        headers: { Authorization: token },
+        method: 'POST',
+        body: operation.toUpperCase()
+      })
+      if (res.status === 400) throw new Error(res.statusText)
+      setListening(true)
+    } catch (e) {}
+  }
+
+  const KillButton = (
+    <Button
+      startIcon={<Close />}
+      variant='contained'
+      color='default'
+      onClick={() => {
+        if (confirmingKill) {
+          setConfirmingKill(false)
+          stopStartServer('STOP')
+        } else setConfirmingKill(true)
+      }}
+      fullWidth={smallScreen}
+    >
+      {confirmingKill ? 'Confirm Kill?' : 'Kill'}
+    </Button>
+  )
+  const Buttons = (
+    <>
+      <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
+        <Button
+          startIcon={<PlayArrow />}
+          variant='contained'
+          color='primary'
+          onClick={async () => stopStartServer('START')}
+          fullWidth={smallScreen}
+        >
+          Start
+        </Button>
+        <div style={{ margin: 10 }} />
+        <Button
+          variant='contained'
+          color='primary'
+          fullWidth={smallScreen}
+          startIcon={<Stop />}
+          onClick={() => {
+            if (!ws) return
+            ws.send('save-all')
+            setTimeout(() => ws.send('end'), 1000)
+            setTimeout(() => ws.send('stop'), 5000)
+          }}
+        >
+          Stop
+        </Button>
+        {!smallScreen && <div style={{ margin: 10 }} />}
+        {!smallScreen && KillButton}
+      </div>
+      {smallScreen && <div style={{ margin: 10 }} />}
+      {smallScreen && KillButton}
+    </>
+  )
   return (
     <React.StrictMode>
       {/* TODO: Require uniformity in Title descriptions. */}
@@ -121,27 +216,26 @@ const Console = () => {
                     </div>
                   ) : <ConsoleView console={consoleText} />}
                 </Paper>
-                <Divider style={{ marginTop: 10, marginBottom: 10 }} />
-                <Paper elevation={10} style={{ padding: 10, display: 'flex' }}>
-                  {/* TODO: Requires massive performance boost as separate component. */}
-                  <TextField
-                    label='Input'
-                    value={command}
-                    fullWidth
-                    onChange={e => setCommand(e.target.value)}
-                    onSubmit={handleCommand}
-                    color='secondary'
-                    onKeyDown={e => {
-                      if (e.key === 'Enter') handleCommand()
-                      else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-                        setCommand(lastCmd)
-                        setLastCmd(command)
-                      }
+                <CommandTextField ws={ws} setConsole={setConsole} />
+                {!smallScreen && (
+                  <div
+                    style={{
+                      justifyContent: 'center',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      marginTop: 10,
+                      padding: 10,
+                      width: '100%'
                     }}
-                  />
-                  <div style={{ width: 10 }} />
-                  <Fab color='secondary' onClick={handleCommand}><Check /></Fab>
-                </Paper>
+                  >
+                    {Buttons}
+                  </div>
+                )}
+                {smallScreen && (
+                  <Paper elevation={10} style={{ marginTop: 10, padding: 10 }}>
+                    {Buttons}
+                  </Paper>
+                )}
               </Paper>
             )
           )}

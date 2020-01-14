@@ -13,7 +13,7 @@ const Index = (props: { width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' }) => {
   const [password, setPassword] = useState('')
 
   const router = useRouter()
-  router.prefetch('/servers') // Prefetch the servers page for performance.
+  try { router.prefetch('/servers') } catch {} // Prefetch the servers page for performance.
 
   // Check if already logged in when the page loads.
   useEffect(() => {

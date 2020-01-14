@@ -20,8 +20,8 @@ import authWrapperCheck from '../../../imports/dashboard/authWrapperCheck'
 const ServerProperties = () => {
   const [message, setMessage] = useState('')
   const [saving, setSaving] = useState(false)
-  const [fileContent, setFileContent] = useState('')
-  const [originalFileContent, setOriginalFileContent] = useState('')
+  const [fileContent, setFileContent] = useState<string | null>(null)
+  const [originalFileContent, setOriginalFileContent] = useState<string | null>(null)
   const [listening, setListening] = useState(false)
   const [authenticated, setAuthenticated] = useState(true)
 
@@ -57,6 +57,7 @@ const ServerProperties = () => {
 
   const saveFile = async () => { // TODO: Wait for stable endpoint on server.
     setSaving(true)
+    if (fileContent === null) return
     // Save the file.
     const formData = new FormData()
     formData.append('upload', new Blob([fileContent]), 'server.properties')
