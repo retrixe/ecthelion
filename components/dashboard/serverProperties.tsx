@@ -39,7 +39,7 @@ const ServerProperties = (props: { server: string }) => {
       try {
         // Fetch server properties.
         const res = await fetch(ip + '/server/' + props.server + '/file?path=server.properties', {
-          headers: { Authorization: localStorage.getItem('accessToken') }
+          headers: { Authorization: localStorage.getItem('token') }
         })
         const serverProperties = await res.text()
         if (res.status === 401) throw new Error()
