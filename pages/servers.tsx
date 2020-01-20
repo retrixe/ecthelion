@@ -111,7 +111,7 @@ const Servers = () => {
           </>
         }
       >
-        <div style={{ marginTop: '2em', paddingLeft: 20, paddingRight: 20 }}>
+        <div style={{ marginTop: '2em', paddingLeft: 20, paddingRight: 20, paddingBottom: 20 }}>
           {!loggedIn ? <ConnectionFailure /> : (
             loggedIn === 'failed' ? <AuthFailure /> : (servers ? (
               <Paper style={{ padding: 20 }}>

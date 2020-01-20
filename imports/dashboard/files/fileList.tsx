@@ -55,6 +55,7 @@ const FileList = ({ files, path, onClick, openMenu, filesSelected, setFilesSelec
             key={file.name}
             dense
             button
+            disabled={opip}
             onClick={() => onClick(file)}
           >
             <ListItemAvatar>
@@ -71,17 +72,20 @@ const FileList = ({ files, path, onClick, openMenu, filesSelected, setFilesSelec
               }
             />
             <ListItemSecondaryAction>
-              <IconButton disabled={opip} onClick={e => openMenu(file.name, e.currentTarget)}>
-                <MoreVert />
-              </IconButton>
-              <Checkbox
-                disableRipple
-                checked={filesSelected.includes(file.name)}
-                onClick={() => {
-                  if (!filesSelected.includes(file.name)) setFilesSelected([...filesSelected, file.name])
-                  else setFilesSelected(filesSelected.filter(e => e !== file.name))
-                }}
-              />
+              <div>
+                <IconButton disabled={opip} onClick={e => openMenu(file.name, e.currentTarget)}>
+                  <MoreVert />
+                </IconButton>
+                <Checkbox
+                  disableRipple
+                  disabled={opip}
+                  checked={filesSelected.includes(file.name)}
+                  onClick={() => {
+                    if (!filesSelected.includes(file.name)) setFilesSelected([...filesSelected, file.name])
+                    else setFilesSelected(filesSelected.filter(e => e !== file.name))
+                  }}
+                />
+              </div>
             </ListItemSecondaryAction>
           </ListItem>
         </a>

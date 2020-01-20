@@ -11,13 +11,14 @@ const Layout = (props: React.PropsWithChildren<{
 }>) => (
   <div
     style={{
-      background: 'linear-gradient(to top, #fc00ff, #00dbde)',
+      // background: 'linear-gradient(to top, #fc00ff, #00dbde)',
       minHeight: '100vh',
       width: '100vw',
-      // minWidth: '100%'
       maxWidth: '100%'
+      // minWidth: '100%'
     }}
   >
+    <style>{'body { background: linear-gradient(to top, #fc00ff, #00dbde); }'}</style>
     <AppBar className={useStyles().appBar}>
       <Toolbar style={{ minWidth: '100vw' }}>
         {props.appBar}

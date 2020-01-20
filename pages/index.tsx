@@ -11,6 +11,7 @@ const Index = (props: { width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' }) => {
   const [invalid, setInvalid] = useState(false) // Invalid credentials.
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [passRef, setPassRef] = useState<HTMLInputElement | null>(null)
 
   const router = useRouter()
   try { router.prefetch('/servers') } catch {} // Prefetch the servers page for performance.
@@ -95,7 +96,11 @@ const Index = (props: { width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' }) => {
         removeToolbar
       >
         <div style={{
-          display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh'
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          overflow: 'auto'
         }}
         >
           <Paper elevation={24} style={{ padding: 20, margin: 10, ...paperStyle }}>
@@ -110,12 +115,14 @@ const Index = (props: { width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' }) => {
               value={username}
               onChange={e => setUsername(e.target.value)}
               error={failedAuth || invalid}
+              onKeyDown={e => e.key === 'Enter' && passRef && passRef.focus()}
               autoFocus
             />
             <br /><br />
             <TextField
               required
               fullWidth
+              inputRef={ref => setPassRef(ref)}
               label='Password'
               value={password}
               onChange={e => setPassword(e.target.value)}
