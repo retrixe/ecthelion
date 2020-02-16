@@ -60,7 +60,7 @@ const Index = (props: { width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' }) => {
   }
 
   // Responsive styling.
-  const small = useMediaQuery(useTheme().breakpoints.down('sm'))
+  const small = !useMediaQuery(useTheme().breakpoints.up('md'))
   const paperStyle = small ? { flex: 1 } : { maxWidth: '33vw', width: '420px' }
   const ResponsiveButton = (
     <div style={small ? {} : { display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>

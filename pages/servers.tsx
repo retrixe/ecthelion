@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Typography, Paper, Divider, List } from '@material-ui/core'
+import { Button, Typography, Paper, Divider, List, IconButton, Tooltip } from '@material-ui/core'
+import Replay from '@material-ui/icons/Replay'
 
 import Link from 'next/link'
 import { ip } from '../config.json'
@@ -115,7 +116,17 @@ const Servers = () => {
           {!loggedIn ? <ConnectionFailure /> : (
             loggedIn === 'failed' ? <AuthFailure /> : (servers ? (
               <Paper style={{ padding: 20 }}>
-                <Typography gutterBottom variant='h5'>Servers</Typography>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <Typography gutterBottom variant='h5'>Servers</Typography>
+                  <div style={{ flex: 1 }} />
+                  <Tooltip title='Reload'>
+                    <span style={{ marginBottom: '0.35em' }}>
+                      <IconButton onClick={() => setRefetch(!refetch)}>
+                        <Replay />
+                      </IconButton>
+                    </span>
+                  </Tooltip>
+                </div>
                 <Divider />
                 <List>
                   {Object.keys(servers).map(server => (

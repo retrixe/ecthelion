@@ -17,7 +17,7 @@ import authWrapperCheck from '../../../imports/dashboard/authWrapperCheck'
 
 const lastEls = (array: any[], size: number) => {
   const length = array.length
-  if (length > 650) return array.slice(length - (size - 1))
+  if (length > size) return array.slice(length - (size - 1))
   else return array
 }
 
@@ -95,7 +95,8 @@ const Console = () => {
       document.cookie = `X-Authentication=${localStorage.getItem('token')}`
       const ws = new WebSocket(`${serverIp.split('http').join('ws')}/server/${router.query.server}/console`)
       // This listener needs to be loaded ASAP.
-      ws.onmessage = (event) => setConsole(c => c + '\n' + event.data)
+      // Limit the amount of lines in memory to prevent out of memory site crashes :v
+      ws.onmessage = (event) => setConsole(c => lastEls(c.split('\n'), 650).join('\n') + '\n' + event.data)
       setWs(ws)
       setListening(true)
       // Register listeners.

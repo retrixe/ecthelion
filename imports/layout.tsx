@@ -18,7 +18,7 @@ const Layout = (props: React.PropsWithChildren<{
       // minWidth: '100%'
     }}
   >
-    <style>{'body { background: linear-gradient(to top, #fc00ff, #00dbde); }'}</style>
+    <style jsx global>{'body { background: linear-gradient(to top, #fc00ff, #00dbde); }'}</style>
     <AppBar className={useStyles().appBar}>
       <Toolbar style={{ minWidth: '100vw' }}>
         {props.appBar}

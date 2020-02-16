@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Typography, Button, TextField, LinearProgress, IconButton } from '@material-ui/core'
+import { Typography, Button, TextField, LinearProgress, IconButton, Tooltip } from '@material-ui/core'
 import GetApp from '@material-ui/icons/GetApp'
 
 const Editor = (props: {
@@ -35,13 +35,15 @@ const Editor = (props: {
       <div style={{ display: 'flex' }}>
         <Typography variant='h5' gutterBottom>{props.name}</Typography>
         <div style={{ flex: 1 }} />
-        <IconButton
-          onClick={() => {
-            window.location.href = `${props.ip}/server/${props.server}/file?path=${props.path}${props.name}`
-          }}
-        >
-          <GetApp />
-        </IconButton>
+        <Tooltip title='Download'>
+          <IconButton
+            onClick={() => {
+              window.location.href = `${props.ip}/server/${props.server}/file?path=${props.path}${props.name}`
+            }}
+          >
+            <GetApp />
+          </IconButton>
+        </Tooltip>
       </div>
       <div style={{ paddingBottom: 10 }} />
       <TextField
