@@ -5,7 +5,7 @@ import {
 } from '@material-ui/core'
 
 const MassActionDialog = ({ operation, files, endpoint, handleClose, path, setOverlay, setMessage }: {
-  operation: 'move' | 'copy' | 'delete',
+  operation: 'move' | 'copy',
   setOverlay: (message: string) => void,
   setMessage: (message: string) => void,
   handleClose: () => void,
@@ -13,6 +13,7 @@ const MassActionDialog = ({ operation, files, endpoint, handleClose, path, setOv
   files: string[],
   path: string
 }) => {
+  // TODO: Wait for stable endpoint on server.
   const [newPath, setNewPath] = useState('')
   const handleOperation = async () => {
     for (let i = 0; i < files.length; i++) {
@@ -21,22 +22,16 @@ const MassActionDialog = ({ operation, files, endpoint, handleClose, path, setOv
       const token = localStorage.getItem('token')
       if (!token) return
       const body = operation === 'move'
-        ? `mv ${path}${file} ${newPath}/${file}`
-        : `cp ${path}${file} ${newPath}/${file}`
-      const method = operation === 'delete' ? 'DELETE' : 'PATCH'
+        ? `mv\n${path}${file}\n${newPath}/${file}`
+        : `cp\n${path}${file}\n${newPath}/${file}`
       const r = await fetch(
         `${endpoint}?path=${path}${file}`,
-        { method, body, headers: { Authorization: token } }
+        { method: 'PATCH', body, headers: { Authorization: token } }
       )
       if (r.status !== 200) setMessage(`Error ${operation}ing ${file}\n${(await r.json()).error}`)
       setOverlay('')
     }
     setMessage(operation + 'd all files successfully!')
-  }
-  if (operation === 'delete') {
-    handleOperation()
-    handleClose()
-    return (<></>)
   }
   return (
     <>

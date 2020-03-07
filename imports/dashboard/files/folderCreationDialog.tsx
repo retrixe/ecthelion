@@ -4,36 +4,11 @@ import {
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField
 } from '@material-ui/core'
 
-const FolderCreationDialog = ({ handleClose, setFetching, setMessage, ip, server, reload }: {
-  handleClose: () => void,
-  reload: () => void,
-  setFetching: (fetching: boolean) => void,
-  setMessage: (message: string) => void,
-  ip: string,
-  server: string
+const FolderCreationDialog = ({ handleCreateFolder, handleClose }: {
+  handleCreateFolder: (name: string) => any,
+  handleClose: () => void
 }) => {
   const [name, setName] = useState('')
-  const handleCreateFolder = async () => {
-    setFetching(true)
-    try {
-      const token = localStorage.getItem('token')
-      if (!token) return
-      const createFolder = await (await fetch(
-        `${ip}/server/${server}/folder?path=/${name}`,
-        { headers: { Authorization: token }, method: 'POST' }
-      )).json()
-      if (createFolder.success) {
-        reload()
-        handleClose()
-      } else {
-        setMessage(createFolder.error)
-        setFetching(false)
-      }
-    } catch (e) {
-      setMessage(e)
-      setFetching(false)
-    }
-  }
   return (
     <>
       {/* Folder creation dialog. */}
@@ -48,11 +23,12 @@ const FolderCreationDialog = ({ handleClose, setFetching, setMessage, ip, server
             label='Folder Name'
             value={name}
             onChange={e => setName(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && handleCreateFolder(name)}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color='secondary'>Cancel</Button>
-          <Button onClick={handleCreateFolder} color='primary'>
+          <Button onClick={() => handleCreateFolder(name)} color='primary'>
             Create
           </Button>
         </DialogActions>
