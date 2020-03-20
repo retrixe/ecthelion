@@ -3,10 +3,11 @@ import { useRouter } from 'next/router'
 import { ip, nodes } from '../../../config.json'
 
 import {
-  Paper, Typography, CircularProgress, IconButton, Divider, Tooltip, Menu, MenuItem,
-  useMediaQuery, useTheme
+  Paper, Typography, CircularProgress, IconButton, Divider, Tooltip, Menu, MenuItem, Slide, Snackbar,
+  Button, useMediaQuery, useTheme
 } from '@material-ui/core'
 // import Close from '@material-ui/icons/Close'
+import Add from '@material-ui/icons/Add'
 import Replay from '@material-ui/icons/Replay'
 import MoreVert from '@material-ui/icons/MoreVert'
 import ArrowBack from '@material-ui/icons/ArrowBack'
@@ -40,11 +41,11 @@ const request = async (ip: string, endpoint: string, opts?: RequestInit): Promis
   return res
 }
 
-const Files = () => {
+const Files = (props: { path: string }) => {
   const router = useRouter()
   const xs = useMediaQuery(useTheme().breakpoints.only('xs'))
 
-  const [path, setPath] = useState(/* typeof router.query.path === 'string' ? router.query.path : */ '/')
+  const [path, setPath] = useState(props.path)
 
   const [menuOpen, setMenuOpen] = useState('')
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
@@ -57,6 +58,7 @@ const Files = () => {
   const [filesSelected, setFilesSelected] = useState<string[]>([])
   const [file, setFile] = useState<{ name: string, content: string } | null>(null)
 
+  const [download, setDownload] = useState('')
   const [folderPromptOpen, setFolderPromptOpen] = useState(false)
   const [massActionMenuOpen, setMassActionMenuOpen] = useState<HTMLButtonElement | null>(null)
   const [massActionDialogOpen, setMassActionDialogOpen] = useState<'move' | 'copy' | false>(false)
@@ -101,6 +103,21 @@ const Files = () => {
     })()
   }, [path, router.query.server, serverIp])
 
+  // Update path when URL changes.
+  const updatePath = (newPath: string) => {
+    const route = {
+      pathname: '/dashboard/[server]/files',
+      query: { ...router.query, path: newPath, server: undefined }
+    }
+    const as = {
+      pathname: `/dashboard/${router.query.server}/files`,
+      query: { ...router.query, path: newPath, server: undefined }
+    }
+    delete route.query.server
+    delete as.query.server
+    router.push(route, as, { shallow: true })
+  }
+
   const extensions = ['properties', 'json', 'yaml', 'yml', 'xml', 'js', 'log', 'sh', 'txt']
   const openFile = async (name: string, size: number, mimeType: string) => {
     if (
@@ -118,7 +135,7 @@ const Files = () => {
       const content = await req.text()
       setFile({ name, content })
       setFetching(false)
-    } else window.location.href = `${serverIp}/server/${router.query.server}/file?path=${path}${name}`
+    } else setDownload(`${serverIp}/server/${router.query.server}/file?path=${path}${name}`)
   }
 
   // Multiple file logic requests.
@@ -170,10 +187,11 @@ const Files = () => {
   return (
     <>
       {!files ? <ConnectionFailure /> : (
-        file ? (
+        file !== null ? (
           <Paper style={{ padding: 20 }}>
             <Editor
               {...file}
+              siblingFiles={files.map(e => e.name)}
               handleClose={() => setFile(null)}
               server={`${router.query.server}`}
               path={path}
@@ -184,7 +202,7 @@ const Files = () => {
         ) : (
           <Paper style={{ padding: 20 }}>
             <Typography variant='h5' gutterBottom>Files - {router.query.server}</Typography>
-            <div style={{ display: 'flex', alignItems: 'center', padding: 5 }}>
+            <div style={{ display: 'flex', alignItems: 'center', padding: 5, flexWrap: 'wrap' }}>
               {path !== '/' && (
                 <IconButton
                   disabled={opip}
@@ -192,14 +210,7 @@ const Files = () => {
                     if (path !== '/') {
                       const newPath = path.substring(0, path.lastIndexOf('/', path.length - 2) + 1)
                       setPath(newPath)
-                      /*
-                      const asPath = router.asPath.replace('path=' + path, 'path=' + newPath)
-                      router.push(
-                        asPath.replace(router.query.server.toString(), '[server]'),
-                        asPath,
-                        { shallow: true }
-                      )
-                      */
+                      updatePath(newPath)
                     }
                   }}
                 >
@@ -216,7 +227,7 @@ const Files = () => {
                       <MoreVert />
                     </IconButton>
                   </Tooltip>
-                  <div style={{ padding: 10 }} />
+                  <div style={{ paddingRight: 5 }} />
                 </>
               )}
               <Tooltip title='Reload'>
@@ -226,7 +237,7 @@ const Files = () => {
                   </IconButton>
                 </span>
               </Tooltip>
-              <div style={{ padding: 10 }} />
+              <div style={{ paddingRight: 5 }} />
               <Tooltip title='Create Folder'>
                 <span>
                   <IconButton disabled={opip} onClick={() => setFolderPromptOpen(true)}>
@@ -234,13 +245,21 @@ const Files = () => {
                   </IconButton>
                 </span>
               </Tooltip>
-              <div style={{ padding: 10 }} />
+              <div style={{ paddingRight: 5 }} />
+              <Tooltip title='Create File'>
+                <span>
+                  <IconButton disabled={opip} onClick={() => setFile({ name: '', content: '' })}>
+                    <Add />
+                  </IconButton>
+                </span>
+              </Tooltip>
+              <div style={{ paddingRight: 5 }} />
               <UploadButton
                 disabled={!!overlay}
                 uploadFiles={handleFilesUpload}
               />
               {fetching && (
-                <><div style={{ padding: 10 }} /><CircularProgress color='secondary' /></>
+                <><div style={{ paddingRight: 5 }} /><CircularProgress color='secondary' /></>
               )}
             </div>
             <Divider />
@@ -253,8 +272,10 @@ const Files = () => {
               filesSelected={filesSelected}
               setFilesSelected={setFilesSelected}
               onClick={(file) => {
-                if (file.folder) setPath(`${path}${file.name}/`)
-                else openFile(file.name, file.size, file.mimeType)
+                if (file.folder) {
+                  setPath(`${path}${file.name}/`)
+                  updatePath(`${path}${file.name}/`)
+                } else openFile(file.name, file.size, file.mimeType)
               }}
               openMenu={(fn, anchor) => {
                 setMenuOpen(fn)
@@ -263,6 +284,31 @@ const Files = () => {
             />
           </Paper>
         )
+      )}
+      {download && (
+        <Snackbar
+          open
+          autoHideDuration={10000}
+          TransitionComponent={(props) => <Slide direction='up' {...props} />}
+          onClose={() => setDownload('')}
+          message={`Do you want to download '${download.split('/')[download.split('/').length - 1]}'?`}
+          action={[
+            <Button
+              key='download'
+              size='small'
+              color='secondary'
+              onClick={() => {
+                setDownload('')
+                window.location.href = download
+              }}
+            >
+              Download
+            </Button>,
+            <Button key='close' size='small' aria-label='close' color='inherit' onClick={() => setDownload('')}>
+              Close
+            </Button>
+          ]}
+        />
       )}
       {folderPromptOpen && (
         <FolderCreationDialog

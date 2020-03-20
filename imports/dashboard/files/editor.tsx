@@ -5,6 +5,7 @@ import GetApp from '@material-ui/icons/GetApp'
 const Editor = (props: {
   name: string,
   content: string,
+  siblingFiles: string[],
   handleClose: () => void,
   server: string,
   path: string,
@@ -13,12 +14,14 @@ const Editor = (props: {
 }) => {
   const [content, setContent] = useState(props.content)
   const [saving, setSaving] = useState(false)
+  const [name, setName] = useState(props.name)
+  const error = props.name === '' && props.siblingFiles.includes(name)
 
   const saveFile = async () => {
     setSaving(true)
     // Save the file.
     const formData = new FormData()
-    formData.append('upload', new Blob([content]), `${props.path}${props.name}`)
+    formData.append('upload', new Blob([content]), `${props.path}${name}`)
     const token = localStorage.getItem('token')
     if (!token) return
     const r = await fetch(
@@ -33,32 +36,47 @@ const Editor = (props: {
   return (
     <>
       <div style={{ display: 'flex' }}>
-        <Typography variant='h5' gutterBottom>{props.name}</Typography>
+        {props.name ? <Typography variant='h5' gutterBottom>{name}</Typography> : (
+          <TextField
+            size='small'
+            value={name}
+            error={error}
+            label='Filename'
+            variant='outlined'
+            onChange={e => setName(e.target.value)}
+            helperText={error
+              ? 'This file already exists! Go back and open the file directly or delete it.'
+              : undefined}
+          />
+        )}
         <div style={{ flex: 1 }} />
-        <Tooltip title='Download'>
-          <IconButton
-            onClick={() => {
-              window.location.href = `${props.ip}/server/${props.server}/file?path=${props.path}${props.name}`
-            }}
-          >
-            <GetApp />
-          </IconButton>
-        </Tooltip>
+        {props.name && (
+          <Tooltip title='Download'>
+            <IconButton
+              onClick={() => {
+                window.location.href = `${props.ip}/server/${props.server}/file?path=${props.path}${name}`
+              }}
+            >
+              <GetApp />
+            </IconButton>
+          </Tooltip>
+        )}
       </div>
       <div style={{ paddingBottom: 10 }} />
       <TextField
         multiline
         variant='outlined'
         fullWidth
-        rowsMax={20}
+        rowsMax={30}
         value={content}
+        InputProps={{ style: { fontFamily: 'monospace', fontSize: '14px' } }}
         onChange={e => setContent(e.target.value)}
       />
       <br />
       <div style={{ display: 'flex', marginTop: 10 }}>
         <Button variant='outlined' onClick={props.handleClose}>Cancel</Button>
         <div style={{ flex: 1 }} />
-        <Button variant='contained' disabled={saving} color='secondary' onClick={saveFile}>
+        <Button variant='contained' disabled={saving || error} color='secondary' onClick={saveFile}>
           Save
         </Button>
       </div>

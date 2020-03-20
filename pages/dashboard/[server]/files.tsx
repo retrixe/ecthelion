@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import { NextPage } from 'next'
 
 import Title from '../../../imports/helpers/title'
 import AuthFailure from '../../../imports/errors/authFailure'
@@ -7,7 +8,7 @@ import DashboardLayout from '../../../imports/dashboard/dashboardLayout'
 import authWrapperCheck from '../../../imports/dashboard/authWrapperCheck'
 import FileManager from '../../../imports/dashboard/files/files'
 
-const Files = () => {
+const Files: NextPage<{ path: string }> = (props: { path: string }) => {
   const router = useRouter()
   const [authenticated, setAuthenticated] = useState(true)
 
@@ -24,11 +25,14 @@ const Files = () => {
       />
       <DashboardLayout loggedIn={authenticated}>
         <div style={{ padding: 20 }}>
-          {!authenticated ? <AuthFailure /> : <FileManager />}
+          {!authenticated ? <AuthFailure /> : <FileManager path={props.path} />}
         </div>
       </DashboardLayout>
     </React.StrictMode>
   )
 }
+
+const arrToStr = (e: string | string[]) => Array.isArray(e) ? e[0] : e
+Files.getInitialProps = async (ctx) => Promise.resolve({ path: arrToStr(ctx.query.path) || '/' })
 
 export default Files
