@@ -47,7 +47,7 @@ const FileList = ({ files, path, onClick, openMenu, filesSelected, setFilesSelec
       }).map(file => (
         <a
           key={file.name}
-          href={`/dashboard/${router.query.server}/files?path=${joinPath(path, file.name)}`}
+          href={`/dashboard/${router.query.server}/files?path=${file.folder ? joinPath(path, file.name) : path}`}
           onClick={e => e.preventDefault()}
           style={{ textDecoration: 'none', color: 'inherit' }}
         >

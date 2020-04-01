@@ -33,6 +33,7 @@ const Files: NextPage<{ path: string }> = (props: { path: string }) => {
 }
 
 const arrToStr = (e: string | string[]) => Array.isArray(e) ? e[0] : e
-Files.getInitialProps = async (ctx) => Promise.resolve({ path: arrToStr(ctx.query.path) || '/' })
+const es = (str?: string) => str && (str.startsWith('/') ? '' : '/') + str + (str.endsWith('/') ? '' : '/')
+Files.getInitialProps = async (ctx) => Promise.resolve({ path: es(arrToStr(ctx.query.path)) || '/' })
 
 export default Files

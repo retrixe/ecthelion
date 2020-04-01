@@ -21,6 +21,7 @@ import Overlay from './overlay'
 import UploadButton from './uploadButton'
 import FileList, { File } from './fileList'
 import MassActionDialog from './massActionDialog'
+import ModifyFileDialog from './modifyFileDialog'
 import FolderCreationDialog from './folderCreationDialog'
 
 /*
@@ -61,6 +62,7 @@ const Files = (props: { path: string }) => {
   const [download, setDownload] = useState('')
   const [folderPromptOpen, setFolderPromptOpen] = useState(false)
   const [massActionMenuOpen, setMassActionMenuOpen] = useState<HTMLButtonElement | null>(null)
+  const [modifyFileDialogOpen, setModifyFileDialogOpen] = useState<''|'move'|'copy'|'rename'>('')
   const [massActionDialogOpen, setMassActionDialogOpen] = useState<'move' | 'copy' | false>(false)
   const opip = !!(fetching)
 
@@ -148,6 +150,31 @@ const Files = (props: { path: string }) => {
       ).then(async e => e.json())
       if (createFolder.success) fetchFiles()
       else setMessage(createFolder.error)
+      setFetching(false)
+    } catch (e) {
+      setMessage(e.message)
+      setFetching(false)
+    }
+  }
+  const handleModifyFile = async (pathToMove: string, action: 'move'|'copy'|'rename') => {
+    setModifyFileDialogOpen('')
+    setMenuOpen('')
+    setAnchorEl(null)
+    setFetching(true)
+    if (action === 'rename' && pathToMove.includes('/')) {
+      setMessage('Renamed file cannot have / in it!')
+      setFetching(false)
+      return
+    }
+    const target = action === 'rename' ? path + pathToMove : pathToMove
+    try {
+      // TODO: Wait for stable endpoint on server.
+      const editFile = await request(serverIp, `/server/${router.query.server}/file`, {
+        method: 'PATCH',
+        body: `${action === 'copy' ? 'cp' : 'mv'}\n${path}${menuOpen}\n${target}`
+      }).then(async e => e.json())
+      if (editFile.success) fetchFiles()
+      else setMessage(editFile.error)
       setFetching(false)
     } catch (e) {
       setMessage(e.message)
@@ -316,6 +343,13 @@ const Files = (props: { path: string }) => {
           handleCreateFolder={async (name: string) => handleCreateFolder(name)}
         />
       )}
+      {modifyFileDialogOpen && (
+        <ModifyFileDialog
+          handleClose={() => setModifyFileDialogOpen('')}
+          handleEdit={async (path) => handleModifyFile(path, modifyFileDialogOpen)}
+          operation={modifyFileDialogOpen}
+        />
+      )}
       {massActionDialogOpen && (
         <MassActionDialog
           path={path}
@@ -346,6 +380,9 @@ const Files = (props: { path: string }) => {
           onClose={() => setMenuOpen('')}
           open
         >
+          <MenuItem onClick={() => setModifyFileDialogOpen('rename')}>Rename</MenuItem>
+          <MenuItem onClick={() => setModifyFileDialogOpen('move')}>Move</MenuItem>
+          <MenuItem onClick={() => setModifyFileDialogOpen('copy')}>Copy</MenuItem>
           <MenuItem
             onClick={async () => {
               setMenuOpen('')

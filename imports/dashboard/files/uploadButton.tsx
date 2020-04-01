@@ -5,7 +5,6 @@ import CloudUpload from '@material-ui/icons/CloudUpload'
 const UploadButton = ({ uploadFiles, disabled }: { uploadFiles: (files: FileList) => void, disabled: boolean }) => {
   const [files, setFiles] = useState<null | FileList>(null)
   useEffect(() => {
-    // TODO: Wait for stable endpoint on server.
     if (files) {
       uploadFiles(files)
       setFiles(null)

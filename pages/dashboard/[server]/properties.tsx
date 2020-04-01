@@ -55,7 +55,7 @@ const ServerProperties = () => {
     })()
   }, [serverIp, router.query.server])
 
-  const saveFile = async () => { // TODO: Wait for stable endpoint on server.
+  const saveFile = async () => {
     setSaving(true)
     if (fileContent === null) return
     // Save the file.
@@ -104,6 +104,7 @@ const ServerProperties = () => {
                       fullWidth
                       rowsMax={20}
                       value={fileContent}
+                      InputProps={{ style: { fontFamily: 'monospace', fontSize: '14px' } }}
                       onChange={e => setFileContent(e.target.value)}
                     />
                     <br />
