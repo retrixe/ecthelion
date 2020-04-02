@@ -27,10 +27,10 @@ const ConsoleView = (props: { console: string }) => {
       style={{
         height: '100%',
         width: '100%',
-        overflow: 'auto',
-        display: 'flex',
+        overflow: 'auto'
+        // display: 'flex',
         // Firefox and EdgeHTML break this behaviour when using column-reverse.
-        flexDirection: 'column'
+        // flexDirection: 'column'
       }}
       ref={ref}
     >

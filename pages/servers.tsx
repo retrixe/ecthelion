@@ -106,7 +106,7 @@ const Servers = () => {
               </Button>
             </Link>
             <div style={{ marginRight: 5 }} />
-            <AnchorLink href='/about'>
+            <AnchorLink prefetch={false} href='/about'>
               <Button color='inherit'>About</Button>
             </AnchorLink>
           </>

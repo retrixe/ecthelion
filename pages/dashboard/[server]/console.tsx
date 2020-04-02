@@ -21,6 +21,7 @@ const lastEls = (array: any[], size: number) => {
   else return array
 }
 
+/*
 const isChrome = () => {
   let chrome = false
   try {
@@ -32,6 +33,7 @@ const isChrome = () => {
   } catch (e) { }
   return chrome
 }
+*/
 
 const CommandTextField = ({ ws, setConsole }: {
   ws: WebSocket | null, setConsole: React.Dispatch<React.SetStateAction<string>>
@@ -198,7 +200,7 @@ const Console = () => {
                     color: '#fff'
                   }}
                 >
-                  {isChrome() ? ( // If it's on Chrome, use the better behaviour of course.
+                  {/* isChrome() ? ( // If it's on Chrome, use the better behaviour of course.
                     <div
                       style={{
                         height: '100%',
@@ -212,10 +214,11 @@ const Console = () => {
                       <Typography variant='body2' style={{ lineHeight: 1.5 }} component='div'>
                         {lastEls(consoleText.split('\n').map((i, index) => (
                           <span key={index} style={{ wordWrap: 'break-word' }}>{i}<br /></span>
-                        )), 650) /* Truncate to 650 lines due to performance issues afterwards. */}
+                        )), 650) /* Truncate to 650 lines due to performance issues afterwards. *}
                       </Typography>
                     </div>
-                  ) : <ConsoleView console={consoleText} />}
+                  ) : <ConsoleView console={consoleText} /> */}
+                  <ConsoleView console={consoleText} />
                 </Paper>
                 <CommandTextField ws={ws} setConsole={setConsole} />
                 {!smallScreen && (

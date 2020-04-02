@@ -74,7 +74,7 @@ const Editor = (props: {
       />
       <br />
       <div style={{ display: 'flex', marginTop: 10 }}>
-        <Button variant='outlined' onClick={props.handleClose}>Cancel</Button>
+        <Button variant='outlined' onClick={props.handleClose}>Close</Button>
         <div style={{ flex: 1 }} />
         <Button variant='contained' disabled={saving || error} color='secondary' onClick={saveFile}>
           Save
