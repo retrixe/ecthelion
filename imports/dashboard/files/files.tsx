@@ -219,7 +219,7 @@ const Files = (props: { path: string }) => {
             <Editor
               {...file}
               siblingFiles={files.map(e => e.name)}
-              handleClose={() => setFile(null)}
+              handleClose={() => { setFile(null); fetchFiles() }}
               server={`${router.query.server}`}
               path={path}
               ip={serverIp}
@@ -345,9 +345,10 @@ const Files = (props: { path: string }) => {
       )}
       {modifyFileDialogOpen && (
         <ModifyFileDialog
+          filename={menuOpen}
+          operation={modifyFileDialogOpen}
           handleClose={() => setModifyFileDialogOpen('')}
           handleEdit={async (path) => handleModifyFile(path, modifyFileDialogOpen)}
-          operation={modifyFileDialogOpen}
         />
       )}
       {massActionDialogOpen && (

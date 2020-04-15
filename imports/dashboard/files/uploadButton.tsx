@@ -18,6 +18,7 @@ const UploadButton = ({ uploadFiles, disabled }: { uploadFiles: (files: FileList
         id='icon-button-file'
         type='file'
         onChange={e => setFiles(e.target.files)}
+        onClick={e => { (e.target as HTMLInputElement).value = '' }}
       />
       <Tooltip title='Upload Files'>
         <label htmlFor='icon-button-file'>

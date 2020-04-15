@@ -81,6 +81,7 @@ const FileList = ({ files, path, onClick, openMenu, filesSelected, setFilesSelec
                   disabled={opip}
                   checked={filesSelected.includes(file.name)}
                   onClick={() => {
+                    // TODO: Support shift+click.
                     if (!filesSelected.includes(file.name)) setFilesSelected([...filesSelected, file.name])
                     else setFilesSelected(filesSelected.filter(e => e !== file.name))
                   }}

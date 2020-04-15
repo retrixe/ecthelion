@@ -4,10 +4,13 @@ import {
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField
 } from '@material-ui/core'
 
-const ModifyFileDialog = ({ handleEdit, handleClose, operation }: {
-  handleEdit: (path: string) => any, handleClose: () => void, operation: 'move'|'copy'|'rename'
+const ModifyFileDialog = ({ handleEdit, handleClose, operation, filename }: {
+  handleEdit: (path: string) => any,
+  handleClose: () => void,
+  operation: 'move'|'copy'|'rename',
+  filename: string
 }) => {
-  const [path, setPath] = useState('')
+  const [path, setPath] = useState(operation === 'rename' ? filename : '')
   const title = operation === 'copy' ? 'Copy File/Folder' : (
     operation === 'move' ? 'Move File/Folder' : 'Rename File/Folder'
   )
