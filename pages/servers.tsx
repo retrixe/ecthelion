@@ -100,7 +100,11 @@ const Servers = () => {
               <Button
                 color='inherit'
                 onClick={() => {
-                  try { localStorage.removeItem('token') } catch (e) {}
+                  const token = localStorage.getItem('token')
+                  if (token) {
+                    fetch(`${ip}/logout`, { headers: { Authorization: token } })
+                    localStorage.removeItem('token')
+                  }
                 }}
               >Logout
               </Button>

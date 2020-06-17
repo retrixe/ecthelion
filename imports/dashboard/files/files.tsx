@@ -326,6 +326,7 @@ const Files = (props: { path: string }) => {
               color='secondary'
               onClick={() => {
                 setDownload('')
+                document.cookie = `X-Authentication=${localStorage.getItem('token')}`
                 window.location.href = download
               }}
             >
