@@ -42,6 +42,9 @@ const request = async (ip: string, endpoint: string, opts?: RequestInit): Promis
   return res
 }
 
+let euc: (uriComponent: string | number | boolean) => string
+try { euc = encodeURIComponent } catch (e) { euc = e => e.toString() }
+
 const Files = (props: { path: string }) => {
   const router = useRouter()
   const xs = useMediaQuery(useTheme().breakpoints.only('xs'))
@@ -75,7 +78,7 @@ const Files = (props: { path: string }) => {
     setFetching(true) // TODO: Make it show up after 1.0 seconds.
     let files: any
     try {
-      files = await (await request(serverIp, `/server/${router.query.server}/files?path=${path}`)).json()
+      files = await (await request(serverIp, `/server/${router.query.server}/files?path=${euc(path)}`)).json()
     } catch (e) {
       setMessage(e.message)
     }
@@ -93,7 +96,7 @@ const Files = (props: { path: string }) => {
       setFetching(true) // TODO: Make it show up after 1.0 seconds.
       let files: any
       try {
-        files = await (await request(serverIp, `/server/${router.query.server}/files?path=${path}`)).json()
+        files = await (await request(serverIp, `/server/${router.query.server}/files?path=${euc(path)}`)).json()
       } catch (e) {
         setMessage(e.message)
       }
@@ -128,7 +131,7 @@ const Files = (props: { path: string }) => {
     ) {
       // Fetch the file.
       setFetching(true)
-      const req = await request(serverIp, `/server/${router.query.server}/file?path=${path}/${name}`)
+      const req = await request(serverIp, `/server/${router.query.server}/file?path=${euc(path + name)}`)
       if (req.status !== 200) {
         setMessage((await req.json()).error)
         setFetching(false)
@@ -146,7 +149,8 @@ const Files = (props: { path: string }) => {
     setFetching(true)
     try {
       const createFolder = await request(
-        serverIp, `/server/${router.query.server}/folder?path=/${path}${name}`, { method: 'POST' }
+        serverIp, `/server/${router.query.server}/folder?path=/${euc(path + name)}`,
+        { method: 'POST' }
       ).then(async e => e.json())
       if (createFolder.success) fetchFiles()
       else setMessage(createFolder.error)
@@ -187,7 +191,9 @@ const Files = (props: { path: string }) => {
       const file = filesSelected[i]
       setOverlay('Deleting ' + file)
       // Save the file.
-      const r = await request(serverIp, `/server/${router.query.server}/file?path=${path}${file}`, { method: 'DELETE' })
+      const r = await request(
+        serverIp, `/server/${router.query.server}/file?path=${euc(path + file)}`, { method: 'DELETE' }
+      )
       if (r.status !== 200) setMessage(`Error deleting ${file}\n${(await r.json()).error}`)
       setOverlay('')
     }
@@ -201,7 +207,7 @@ const Files = (props: { path: string }) => {
       // Save the file.
       const formData = new FormData()
       formData.append('upload', file, file.name)
-      const r = await request(serverIp, `/server/${router.query.server}/file?path=${path}`, {
+      const r = await request(serverIp, `/server/${router.query.server}/file?path=${euc(path)}`, {
         method: 'POST',
         body: formData
       })
@@ -227,7 +233,17 @@ const Files = (props: { path: string }) => {
             />
           </Paper>
         ) : (
-          <Paper style={{ padding: 20 }}>
+          <Paper
+            style={{ padding: 20 }} onDragOver={e => {
+              e.stopPropagation()
+              e.preventDefault()
+              e.dataTransfer.dropEffect = 'copy'
+            }} onDrop={e => {
+              e.stopPropagation()
+              e.preventDefault()
+              handleFilesUpload(e.dataTransfer.files)
+            }}
+          >
             <Typography variant='h5' gutterBottom>Files - {router.query.server}</Typography>
             <div style={{ display: 'flex', alignItems: 'center', padding: 5, flexWrap: 'wrap' }}>
               {path !== '/' && (
@@ -391,7 +407,7 @@ const Files = (props: { path: string }) => {
               setFetching(true)
               const a = await request(
                 serverIp,
-                `/server/${router.query.server}/file?path=${path}${menuOpen}`,
+                `/server/${router.query.server}/file?path=${euc(path + menuOpen)}`,
                 { method: 'DELETE' }
               ).then(async e => e.json())
               if (a.error) setMessage(a.error)

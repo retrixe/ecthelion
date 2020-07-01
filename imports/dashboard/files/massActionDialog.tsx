@@ -30,7 +30,7 @@ const MassActionDialog = ({ operation, files, endpoint, handleClose, path, setOv
         ? `mv\n${path}${file}\n${newPath}${slash}${file}`
         : `cp\n${path}${file}\n${newPath}${slash}${file}`
       const r = await fetch( // TODO: Maybe we could parallelize the operations?
-        `${endpoint}?path=${path}${file}`,
+        `${endpoint}?path=${encodeURIComponent(path + file)}`,
         { method: 'PATCH', body, headers: { Authorization: token } }
       )
       if (r.status !== 200) setMessage(`Error ${moving} ${file}\n${(await r.json()).error}`)
