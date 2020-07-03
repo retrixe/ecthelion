@@ -31,11 +31,12 @@ export const ServerListItem = ({ name, status, openDialog, stopStartServer }: {
         secondary={status === 0 ? 'Offline' : (status === 1 ? 'Online' : 'Crashed')}
       />
       <ListItemSecondaryAction>
+        {/* Former color scheme: primary/(default, secondary, primary) */}
         <Tooltip title={status !== 1 ? 'Start' : 'Stop'}>
           <IconButton
-            aria-label='start/stop'
+            aria-label={status !== 1 ? 'start' : 'stop'}
             onClick={() => (stopStartServer(status !== 1 ? 'start' : 'stop', name))}
-            color={status !== 1 ? 'primary' : 'default'}
+            color='default'
           >
             {status !== 1 ? <PlayArrow /> : <Stop />}
           </IconButton>
@@ -45,7 +46,7 @@ export const ServerListItem = ({ name, status, openDialog, stopStartServer }: {
             <IconButton
               aria-label='kill'
               onClick={() => (stopStartServer('kill', name))}
-              color='secondary'
+              color='primary'
             >
               <Close />
             </IconButton>
@@ -53,7 +54,7 @@ export const ServerListItem = ({ name, status, openDialog, stopStartServer }: {
         )}
         {status === 1 && (
           <Tooltip title='Run Command'>
-            <IconButton aria-label='run command' color='primary' onClick={() => openDialog()}>
+            <IconButton aria-label='run command' color='secondary' onClick={() => openDialog()}>
               <Comment />
             </IconButton>
           </Tooltip>

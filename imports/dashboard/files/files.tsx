@@ -339,7 +339,7 @@ const Files = (props: { path: string }) => {
             <Button
               key='download'
               size='small'
-              color='secondary'
+              color='primary'
               onClick={() => {
                 setDownload('')
                 document.cookie = `X-Authentication=${localStorage.getItem('token')}`

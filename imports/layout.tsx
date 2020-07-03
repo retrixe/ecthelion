@@ -18,7 +18,17 @@ const Layout = (props: React.PropsWithChildren<{
       // minWidth: '100%'
     }}
   >
-    <style jsx global>{'body { background: linear-gradient(to top, #fc00ff, #00dbde); }'}</style>
+    <style jsx global>
+      {`
+      body {
+        /* background: linear-gradient(to top, #fc00ff, #00dbde); */
+        /* Ash gradient: */
+        /* background: #606c88;  /* fallback for old browsers */
+        /* background: -webkit-linear-gradient(to top, #3f4c6b, #606c88);  /* Chrome 10-25, Safari 5.1-6 */
+        /* background: linear-gradient(to top, #3f4c6b, #606c88); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+      }
+      `}
+    </style>
     <AppBar className={useStyles().appBar}>
       <Toolbar style={{ minWidth: '100vw' }}>
         {props.appBar}
