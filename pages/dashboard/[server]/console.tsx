@@ -35,15 +35,17 @@ const isChrome = () => {
 }
 */
 
+let id = 0
 const CommandTextField = ({ ws, setConsole }: {
-  ws: WebSocket | null, setConsole: React.Dispatch<React.SetStateAction<string>>
+  ws: WebSocket | null,
+  setConsole: React.Dispatch<React.SetStateAction<Array<{ id: number, text: string }>>>
 }) => {
   const [command, setCommand] = useState('')
   const [lastCmd, setLastCmd] = useState('')
   const handleCommand = () => {
     try {
       if (!command || !ws) return
-      setConsole(c => `${c}\n>${command}`)
+      setConsole(c => c.concat([{ id: ++id, text: '>' + command }]))
       ws.send(command)
       setLastCmd(command)
       setCommand('')
@@ -74,10 +76,10 @@ const CommandTextField = ({ ws, setConsole }: {
   )
 }
 
-// TODO: To prevent lag from developing, truncate console text internally to 1000 lines.
+// TODO: Batch console updates.
 const Console = () => {
   const [ws, setWs] = useState<WebSocket | null>(null)
-  const [consoleText, setConsole] = useState('Loading...')
+  const [consoleText, setConsole] = useState([{ id: id, text: 'Loading...' }])
   const [confirmingKill, setConfirmingKill] = useState(false)
   const [listening, setListening] = useState(false)
   const [authenticated, setAuthenticated] = useState(true)
@@ -99,13 +101,15 @@ const Console = () => {
       const ws = new WebSocket(`${wsIp}/server/${router.query.server}/console`)
       // This listener needs to be loaded ASAP.
       // Limit the amount of lines in memory to prevent out of memory site crashes :v
-      ws.onmessage = (event) => setConsole(c => lastEls(c.split('\n'), 650).join('\n') + '\n' + event.data)
+      ws.onmessage = (event) => setConsole(c => (
+        lastEls(c.concat(event.data.split('\n').map((line: string) => ({ id: ++id, text: line }))), 650)
+      ))
       setWs(ws)
       setListening(true)
       // Register listeners.
-      ws.onerror = () => setConsole(c => c + '\n' + 'An unknown error occurred.')
+      ws.onerror = () => setConsole(c => c.concat([{ id: ++id, text: 'An unknown error occurred.' }]))
       ws.onclose = () => { // takes argument event
-        setConsole(c => c + '\n' + 'The connection to the server was abruptly closed.')
+        setConsole(c => c.concat([{ id: ++id, text: 'The connection to the server was abruptly closed.' }]))
       }
       return () => ws.close()
     } catch (e) {
@@ -204,6 +208,8 @@ const Console = () => {
                   {/* isChrome() ? ( // If it's on Chrome, use the better behaviour of course.
                     <div
                       style={{
+                        lineHeight: 1.5,
+                        wordWrap: 'break-word',
                         height: '100%',
                         width: '100%',
                         overflow: 'auto',
@@ -212,9 +218,9 @@ const Console = () => {
                       }}
                     >
                       <div style={{ minHeight: '5px' }} />
-                      <Typography variant='body2' style={{ lineHeight: 1.5 }} component='div'>
+                      <Typography variant='body2' component='div'>
                         {lastEls(consoleText.split('\n').map((i, index) => (
-                          <span key={index} style={{ wordWrap: 'break-word' }}>{i}<br /></span>
+                          <>{i}<br /></>
                         )), 650) /* Truncate to 650 lines due to performance issues afterwards. *}
                       </Typography>
                     </div>
