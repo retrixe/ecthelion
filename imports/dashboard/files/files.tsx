@@ -49,7 +49,8 @@ const Files = (props: { path: string }) => {
   const router = useRouter()
   const xs = useMediaQuery(useTheme().breakpoints.only('xs'))
 
-  const [path, setPath] = useState(props.path)
+  const path = router.query.path?.toString() || props.path
+  // const [path, setPath] = useState(props.path)
 
   const [menuOpen, setMenuOpen] = useState('')
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
@@ -252,7 +253,7 @@ const Files = (props: { path: string }) => {
                   onClick={() => {
                     if (path !== '/') {
                       const newPath = path.substring(0, path.lastIndexOf('/', path.length - 2) + 1)
-                      setPath(newPath)
+                      // setPath(newPath)
                       updatePath(newPath)
                     }
                   }}
@@ -316,7 +317,7 @@ const Files = (props: { path: string }) => {
               setFilesSelected={setFilesSelected}
               onClick={(file) => {
                 if (file.folder) {
-                  setPath(`${path}${file.name}/`)
+                  // setPath(`${path}${file.name}/`)
                   updatePath(`${path}${file.name}/`)
                 } else openFile(file.name, file.size, file.mimeType)
               }}

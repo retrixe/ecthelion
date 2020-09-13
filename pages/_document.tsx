@@ -22,7 +22,7 @@ class MyDocument extends Document {
           <meta name='theme-color' content={theme.palette.primary.main} />
           {/* Open Graph Protocol support. */}
           <meta property='og:type' content='website' />
-          <meta property='og:image' content={ico} /> {/* TODO: Need to check. */}
+          <meta property='og:image' content={ico} />
           <link
             rel='stylesheet'
             href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap'
