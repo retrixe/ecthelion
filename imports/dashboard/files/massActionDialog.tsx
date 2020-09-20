@@ -4,7 +4,8 @@ import {
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField
 } from '@material-ui/core'
 
-const MassActionDialog = ({ operation, files, endpoint, handleClose, path, setOverlay, setMessage }: {
+const MassActionDialog = ({ operation, reload, files, endpoint, handleClose, path, setOverlay, setMessage }: {
+  reload: () => void,
   operation: 'move' | 'copy',
   setOverlay: (message: string) => void,
   setMessage: (message: string) => void,
@@ -36,6 +37,7 @@ const MassActionDialog = ({ operation, files, endpoint, handleClose, path, setOv
       if (r.status !== 200) setMessage(`Error ${moving} ${file}\n${(await r.json()).error}`)
       setOverlay('')
     }
+    reload()
     setMessage(moved + ' all files successfully!')
   }
   return (

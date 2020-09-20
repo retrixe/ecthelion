@@ -6,11 +6,12 @@ const Editor = (props: {
   name: string,
   content: string,
   siblingFiles: string[],
-  handleClose: () => void,
+  handleClose: (setContent: React.Dispatch<React.SetStateAction<string>>) => void,
   server: string,
   path: string,
   ip: string,
-  setMessage: (message: string) => void
+  setMessage: (message: string) => void,
+  closeText?: string
 }) => {
   const [content, setContent] = useState(props.content)
   const [saving, setSaving] = useState(false)
@@ -74,7 +75,9 @@ const Editor = (props: {
       />
       <br />
       <div style={{ display: 'flex', marginTop: 10 }}>
-        <Button variant='outlined' onClick={props.handleClose}>Close</Button>
+        <Button variant='outlined' onClick={() => props.handleClose(setContent)}>
+          {props.closeText || 'Close'}
+        </Button>
         <div style={{ flex: 1 }} />
         <Button variant='contained' disabled={saving || error} color='secondary' onClick={saveFile}>
           Save

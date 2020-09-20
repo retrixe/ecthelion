@@ -373,10 +373,14 @@ const Files = (props: { path: string }) => {
         <MassActionDialog
           path={path}
           files={filesSelected}
+          reload={fetchFiles}
           setOverlay={setOverlay}
           setMessage={setMessage}
           operation={massActionDialogOpen}
-          handleClose={() => setMassActionDialogOpen(false)}
+          handleClose={() => {
+            setMassActionMenuOpen(null)
+            setMassActionDialogOpen(false)
+          }}
           endpoint={`${serverIp}/server/${router.query.server}/file`}
         />
       )}

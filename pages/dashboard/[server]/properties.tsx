@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { ip, nodes } from '../../../config.json'
 
-import { Paper, Typography, TextField, LinearProgress, Button } from '@material-ui/core'
+import { Paper, Typography /* , TextField, LinearProgress, Button */ } from '@material-ui/core'
 
 import Title from '../../../imports/helpers/title'
 import Message from '../../../imports/helpers/message'
+import Editor from '../../../imports/dashboard/files/editor'
 import AuthFailure from '../../../imports/errors/authFailure'
 import DashboardLayout from '../../../imports/dashboard/dashboardLayout'
 import ConnectionFailure from '../../../imports/errors/connectionFailure'
@@ -19,7 +20,7 @@ import authWrapperCheck from '../../../imports/dashboard/authWrapperCheck'
 
 const ServerProperties = () => {
   const [message, setMessage] = useState('')
-  const [saving, setSaving] = useState(false)
+  // const [saving, setSaving] = useState(false)
   const [fileContent, setFileContent] = useState<string | null>(null)
   const [originalFileContent, setOriginalFileContent] = useState<string | null>(null)
   const [listening, setListening] = useState(false)
@@ -55,6 +56,7 @@ const ServerProperties = () => {
     })()
   }, [serverIp, router.query.server])
 
+  /*
   const saveFile = async () => {
     setSaving(true)
     if (fileContent === null) return
@@ -71,6 +73,7 @@ const ServerProperties = () => {
     else setMessage('Saved successfully!')
     setSaving(false)
   }
+  */
 
   return (
     <React.StrictMode>
@@ -95,17 +98,25 @@ const ServerProperties = () => {
                   </>
                 ) : (
                   <>
+                    <Editor
+                      name='server.properties'
+                      content={fileContent}
+                      siblingFiles={[]}
+                      handleClose={(setContent) => setContent(originalFileContent)}
+                      server={router.query.server.toString()}
+                      path='/'
+                      ip={serverIp}
+                      setMessage={setMessage}
+                      closeText='Cancel'
+                    />
                     {/* server.properties */}
+                    {/* The past:
                     <Typography variant='h5' gutterBottom>server.properties</Typography>
                     <div style={{ paddingBottom: 10 }} />
                     <TextField
-                      multiline
-                      variant='outlined'
-                      fullWidth
-                      rowsMax={20}
-                      value={fileContent}
+                      multiline variant='outlined' fullWidth rowsMax={20} value={fileContent}
                       InputProps={{ style: { fontFamily: 'monospace', fontSize: '14px' } }}
-                      onChange={e => setFileContent(e.target.value)}
+                      onChange={e => setFileContent(e.target.value)} // Compacted.
                     />
                     <br />
                     <div style={{ display: 'flex', marginTop: 10 }}>
@@ -119,6 +130,7 @@ const ServerProperties = () => {
                       <Button variant='contained' color='secondary' onClick={saveFile}>Save</Button>
                     </div>
                     {saving && (<div style={{ paddingTop: 10 }}><LinearProgress /></div>)}
+                    */}
                     {message && <Message message={message} setMessage={setMessage} />}
                   </>
                 )}
