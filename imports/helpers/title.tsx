@@ -13,4 +13,5 @@ const Title = ({ title, description, url }: {
   </Head>
 )
 
-export default Title
+const TitleMemo = React.memo(Title)
+export default TitleMemo

@@ -188,18 +188,26 @@ const Files = (props: { path: string }) => {
   }
   const handleFilesDelete = async () => {
     setMassActionMenuOpen(null)
+    let total = filesSelected.length
+    setOverlay(`Deleting ${total} out of ${filesSelected.length} files.`)
+    const ops = []
     for (let i = 0; i < filesSelected.length; i++) {
       const file = filesSelected[i]
-      setOverlay('Deleting ' + file)
+      // setOverlay('Deleting ' + file)
       // Save the file.
-      const r = await request(
+      ops.push(await request(
         serverIp, `/server/${router.query.server}/file?path=${euc(path + file)}`, { method: 'DELETE' }
-      )
-      if (r.status !== 200) setMessage(`Error deleting ${file}\n${(await r.json()).error}`)
-      setOverlay('')
+      ).then(async r => {
+        if (r.status !== 200) setMessage(`Error deleting ${file}\n${(await r.json()).error}`)
+        setOverlay(`Deleting ${--total} out of ${filesSelected.length} files.`)
+        if (localStorage.getItem('logAsyncMassActions')) console.log('Deleted ' + file)
+      }))
     }
-    setMessage('Deleted all files successfully!')
-    fetchFiles()
+    Promise.allSettled(ops).then(() => {
+      setMessage('Deleted all files successfully!')
+      setOverlay('')
+      fetchFiles()
+    })
   }
   const handleFilesUpload = async (files: FileList) => {
     for (let i = 0; i < files.length; i++) {

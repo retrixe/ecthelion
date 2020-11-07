@@ -19,26 +19,32 @@ const MassActionDialog = ({ operation, reload, files, endpoint, handleClose, pat
   const move = operation === 'move' ? 'Move' : 'Copy'
   const moved = operation === 'move' ? 'Moved' : 'Copied'
   const moving = operation === 'move' ? 'moving' : 'copying'
-  const handleOperation = async () => {
+  const handleOperation = () => {
     handleClose()
+    let left = files.length
+    setOverlay(`${moving} ${left} out of ${files.length} files.`)
+    const operations = []
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
-      setOverlay(file)
+      // setOverlay(file)
       const token = localStorage.getItem('token')
       if (!token) return
       const slash = newPath.endsWith('/') ? '' : '/'
-      const body = operation === 'move'
-        ? `mv\n${path}${file}\n${newPath}${slash}${file}`
-        : `cp\n${path}${file}\n${newPath}${slash}${file}`
-      const r = await fetch( // TODO: Maybe we could parallelize the operations?
+      const body = `${operation === 'move' ? 'mv' : 'cp'}\n${path}${file}\n${newPath}${slash}${file}`
+      operations.push(fetch(
         `${endpoint}?path=${encodeURIComponent(path + file)}`,
         { method: 'PATCH', body, headers: { Authorization: token } }
-      )
-      if (r.status !== 200) setMessage(`Error ${moving} ${file}\n${(await r.json()).error}`)
-      setOverlay('')
+      ).then(async r => {
+        if (r.status !== 200) setMessage(`Error ${moving} ${file}\n${(await r.json()).error}`)
+        setOverlay(`${moving} ${--left} out of ${files.length} files.`)
+        if (localStorage.getItem('logAsyncMassActions')) console.log(moved + ' ' + file)
+      }))
     }
-    reload()
-    setMessage(moved + ' all files successfully!')
+    Promise.allSettled(operations).then(() => {
+      reload()
+      setOverlay('')
+      setMessage(moved + ' all files successfully!')
+    })
   }
   return (
     <>
@@ -59,7 +65,7 @@ const MassActionDialog = ({ operation, reload, files, endpoint, handleClose, pat
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color='secondary'>Cancel</Button>
-          <Button onClick={handleOperation} color='primary'>Create</Button>
+          <Button onClick={handleOperation} color='primary'>{move}</Button>
         </DialogActions>
       </Dialog>
     </>

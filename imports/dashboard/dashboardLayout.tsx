@@ -82,4 +82,5 @@ const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) 
   )
 }
 
-export default DashboardLayout
+const DashboardLayoutMemo = React.memo(DashboardLayout)
+export default DashboardLayoutMemo
