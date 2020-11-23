@@ -57,7 +57,7 @@ const Files = (props: { path: string }) => {
 
   const [overlay, setOverlay] = useState('')
   const [message, setMessage] = useState('')
-  const [fetching, setFetching] = useState(false)
+  const [fetching, setFetching] = useState(true)
 
   const [files, setFiles] = useState<File[] | null>(null)
   const [filesSelected, setFilesSelected] = useState<string[]>([])
@@ -228,7 +228,7 @@ const Files = (props: { path: string }) => {
   }
   return (
     <>
-      {!files ? <ConnectionFailure /> : (
+      {!files ? <ConnectionFailure loading={fetching} /> : (
         file !== null ? (
           <Paper style={{ padding: 20 }}>
             <Editor

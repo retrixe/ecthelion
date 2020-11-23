@@ -1,5 +1,5 @@
 import React from 'react'
-import Document, { Head, Main, NextScript } from 'next/document'
+import Document, { Html, Head, Main, NextScript } from 'next/document'
 import { ServerStyleSheets } from '@material-ui/styles'
 import theme from '../imports/theme'
 
@@ -8,16 +8,10 @@ const ico = '/static/widgets.png'
 class MyDocument extends Document {
   render () {
     return (
-      <html lang='en' dir='ltr'>
+      <Html lang='en' dir='ltr'>
         <Head>
           <link rel='icon' href='/static/widgets.png' />
           <meta charSet='utf-8' />
-          {/* Use minimum-scale=1 to enable GPU rasterization */}
-          <meta
-            name='viewport'
-            content='user-scalable=0, initial-scale=1,
-            minimum-scale=1, width=device-width, height=device-height'
-          />
           {/* PWA primary color */}
           <meta name='theme-color' content={theme.palette.primary.main} />
           {/* Open Graph Protocol support. */}
@@ -32,7 +26,7 @@ class MyDocument extends Document {
           <Main />
           <NextScript />
         </body>
-      </html>
+      </Html>
     )
   }
 }

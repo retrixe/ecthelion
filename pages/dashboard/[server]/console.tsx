@@ -81,7 +81,7 @@ const Console = () => {
   const [ws, setWs] = useState<WebSocket | null>(null)
   const [consoleText, setConsole] = useState([{ id: id, text: 'Loading...' }])
   const [confirmingKill, setConfirmingKill] = useState(false)
-  const [listening, setListening] = useState(false)
+  const [listening, setListening] = useState<boolean|null>(null)
   const [authenticated, setAuthenticated] = useState(true)
 
   const smallScreen = useMediaQuery(useTheme().breakpoints.only('xs'))
@@ -113,6 +113,7 @@ const Console = () => {
       }
       return () => ws.close()
     } catch (e) {
+      setListening(false)
       console.error('Looks like an error occurred while connecting to console.\n' + e)
     }
   }, [serverIp, router.query.server])
@@ -193,7 +194,7 @@ const Console = () => {
       <DashboardLayout loggedIn={authenticated}>
         <div style={{ padding: 20 }}>
           {!authenticated ? <AuthFailure /> : (
-            !listening ? <ConnectionFailure /> : (
+            !listening ? <ConnectionFailure loading={listening === null} /> : (
               <Paper style={{ padding: 20 }}>
                 <Typography variant='h5' gutterBottom>Console - {router.query.server}</Typography>
                 {/* TODO: Need to find a good middle ground. */}

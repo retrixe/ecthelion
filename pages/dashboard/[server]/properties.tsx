@@ -23,7 +23,7 @@ const ServerProperties = () => {
   // const [saving, setSaving] = useState(false)
   const [fileContent, setFileContent] = useState<string | null>(null)
   const [originalFileContent, setOriginalFileContent] = useState<string | null>(null)
-  const [listening, setListening] = useState(false)
+  const [listening, setListening] = useState<boolean|null>(null)
   const [authenticated, setAuthenticated] = useState(true)
 
   const router = useRouter()
@@ -52,7 +52,7 @@ const ServerProperties = () => {
           setOriginalFileContent(serverProperties)
           setFileContent(serverProperties)
         }
-      } catch (e) { }
+      } catch (e) { setListening(false) }
     })()
   }, [serverIp, router.query.server])
 
@@ -86,7 +86,7 @@ const ServerProperties = () => {
       <DashboardLayout loggedIn={authenticated}>
         <div style={{ padding: 20 }}>
           {!authenticated ? <AuthFailure /> : (
-            !listening ? <ConnectionFailure /> : (
+            !listening ? <ConnectionFailure loading={listening === null} /> : (
               <Paper style={{ padding: 20 }}>
                 {originalFileContent === null || fileContent === null ? (
                   <>

@@ -21,7 +21,7 @@ import ConnectionFailure from '../imports/errors/connectionFailure'
 const Servers = () => {
   const [message, setMessage] = useState('')
   const [servers, setServers] = useState<{ [name: string]: number } | undefined>(undefined)
-  const [loggedIn, setLoggedIn] = useState<boolean|'failed'>(false)
+  const [loggedIn, setLoggedIn] = useState<boolean|null|'failed'>(null) // null - not yet fetched.
   const [server, setServer] = useState('')
   const [refetch, setRefetch] = useState(true)
 
@@ -39,7 +39,7 @@ const Servers = () => {
           setLoggedIn(true)
         } else if (servers.status === 401) setLoggedIn('failed')
         else setLoggedIn(false)
-      } catch (e) {}
+      } catch (e) { setLoggedIn(false) }
     })()
   }, [refetch])
 
@@ -117,7 +117,7 @@ const Servers = () => {
         }
       >
         <div style={{ marginTop: '2em', paddingLeft: 20, paddingRight: 20, paddingBottom: 20 }}>
-          {!loggedIn ? <ConnectionFailure /> : (
+          {!loggedIn ? <ConnectionFailure loading={loggedIn === null} /> : (
             loggedIn === 'failed' ? <AuthFailure /> : (servers ? (
               <Paper style={{ padding: 20 }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -146,7 +146,7 @@ const Servers = () => {
                   ))}
                 </List>
               </Paper>
-            ) : <ConnectionFailure />)
+            ) : <ConnectionFailure loading={false} />)
           )}
         </div>
       </Layout>

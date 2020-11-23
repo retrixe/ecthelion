@@ -44,7 +44,7 @@ interface ServerStatus {
 
 const Statistics = () => {
   const [message, setMessage] = useState('')
-  const [listening, setListening] = useState(false)
+  const [listening, setListening] = useState<boolean|null>(null)
   const [statistics, setStatistics] = useState<ServerStatus | null>(null)
   const [authenticated, setAuthenticated] = useState(true)
 
@@ -72,7 +72,7 @@ const Statistics = () => {
           setListening(true)
           setStatistics(await res.json())
         }
-      } catch (e) {}
+      } catch (e) { setListening(false) }
     }, 1000)
     return () => clearInterval(interval)
   }, [serverIp, router.query.server])
@@ -88,7 +88,7 @@ const Statistics = () => {
       <DashboardLayout loggedIn={authenticated}>
         <div style={{ padding: 20 }}>
           {!authenticated ? <AuthFailure /> : (
-            (!listening || !statistics) ? <ConnectionFailure /> : (
+            (!listening || !statistics) ? <ConnectionFailure loading={listening === null} /> : (
               <Paper style={{ padding: 20 }}>
                 <Typography variant='h4' gutterBottom>Process Statistics</Typography>
                 <Divider />
