@@ -348,10 +348,14 @@ const Files = (props: { path: string }) => {
               key='download'
               size='small'
               color='primary'
-              onClick={() => {
+              onClick={async () => {
                 setDownload('')
-                document.cookie = `X-Authentication=${localStorage.getItem('token')}`
-                window.location.href = download
+                // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
+                const ticket = await fetch(serverIp + '/ott', {
+                  headers: { authorization: localStorage.getItem('token') || '' }
+                })
+                const ott = encodeURIComponent((await ticket.json()).ticket)
+                window.location.href = download.replace('?path', `?ticket=${ott}&path`)
               }}
             >
               Download
@@ -435,9 +439,13 @@ const Files = (props: { path: string }) => {
             return file && file.folder
           })() && (
             <MenuItem
-              onClick={() => {
+              onClick={async () => {
                 setMenuOpen('')
-                window.location.href = `${serverIp}/server/${router.query.server}/file?path=${path}${menuOpen}`
+                const ticket = await fetch(serverIp + '/ott', {
+                  headers: { authorization: localStorage.getItem('token') || '' }
+                })
+                const ott = encodeURIComponent((await ticket.json()).ticket)
+                window.location.href = `${serverIp}/server/${router.query.server}/file?ticket=${ott}&path=${path}${menuOpen}`
               }}
             >
               Download

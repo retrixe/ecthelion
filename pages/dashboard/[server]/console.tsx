@@ -79,10 +79,10 @@ const CommandTextField = ({ ws, setConsole }: {
 // TODO: Batch console updates.
 const Console = () => {
   const [ws, setWs] = useState<WebSocket | null>(null)
-  const [consoleText, setConsole] = useState([{ id: id, text: 'Loading...' }])
-  const [confirmingKill, setConfirmingKill] = useState(false)
   const [listening, setListening] = useState<boolean|null>(null)
+  const [consoleText, setConsole] = useState([{ id: id, text: 'Loading...' }])
   const [authenticated, setAuthenticated] = useState(true)
+  const [confirmingKill, setConfirmingKill] = useState(false)
 
   const smallScreen = useMediaQuery(useTheme().breakpoints.only('xs'))
   const router = useRouter()
@@ -94,27 +94,36 @@ const Console = () => {
   useEffect(() => { authWrapperCheck().then(e => setAuthenticated(e || false)) }, [])
   useEffect(() => {
     if (!router.query.server) return
-    try {
-      // Connect to console.
-      document.cookie = `X-Authentication=${localStorage.getItem('token')}`
-      const wsIp = serverIp.replace('http', 'ws').replace('https', 'wss')
-      const ws = new WebSocket(`${wsIp}/server/${router.query.server}/console`)
-      // This listener needs to be loaded ASAP.
-      // Limit the amount of lines in memory to prevent out of memory site crashes :v
-      ws.onmessage = (event) => setConsole(c => (
-        lastEls(c.concat(event.data.split('\n').map((line: string) => ({ id: ++id, text: line }))), 650)
-      ))
-      setWs(ws)
-      setListening(true)
-      // Register listeners.
-      ws.onerror = () => setConsole(c => c.concat([{ id: ++id, text: 'An unknown error occurred.' }]))
-      ws.onclose = () => { // takes argument event
-        setConsole(c => c.concat([{ id: ++id, text: 'The connection to the server was abruptly closed.' }]))
+    let ws: WebSocket
+    (async () => {
+      try {
+        // Connect to console.
+        // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
+        const ticket = await fetch(serverIp + '/ott', {
+          headers: { authorization: localStorage.getItem('token') || '' }
+        })
+        const ott = encodeURIComponent((await ticket.json()).ticket)
+        const wsIp = serverIp.replace('http', 'ws').replace('https', 'wss')
+        ws = new WebSocket(`${wsIp}/server/${router.query.server}/console?ticket=${ott}`)
+        // This listener needs to be loaded ASAP.
+        // Limit the amount of lines in memory to prevent out of memory site crashes :v
+        ws.onmessage = (event) => setConsole(c => (
+          lastEls(c.concat(event.data.split('\n').map((line: string) => ({ id: ++id, text: line }))), 650)
+        ))
+        setWs(ws)
+        setListening(true)
+        // Register listeners.
+        ws.onerror = () => setConsole(c => c.concat([{ id: ++id, text: 'An unknown error occurred.' }]))
+        ws.onclose = () => { // takes argument event
+          setConsole(c => c.concat([{ id: ++id, text: 'The connection to the server was abruptly closed.' }]))
+        }
+      } catch (e) {
+        setListening(false)
+        console.error('Looks like an error occurred while connecting to console.\n' + e)
       }
-      return () => ws.close()
-    } catch (e) {
-      setListening(false)
-      console.error('Looks like an error occurred while connecting to console.\n' + e)
+    })()
+    return () => {
+      if (ws) ws.close()
     }
   }, [serverIp, router.query.server])
 

@@ -55,8 +55,12 @@ const Editor = (props: {
         {props.name && (
           <Tooltip title='Download'>
             <IconButton
-              onClick={() => {
-                window.location.href = `${props.ip}/server/${props.server}/file?path=${props.path}${name}`
+              onClick={async () => {
+                const ticket = await fetch(props.ip + '/ott', {
+                  headers: { authorization: localStorage.getItem('token') || '' }
+                })
+                const ott = encodeURIComponent((await ticket.json()).ticket)
+                window.location.href = `${props.ip}/server/${props.server}/file?path=${props.path}${name}&ticket=${ott}`
               }}
             >
               <GetApp />

@@ -44,9 +44,13 @@ const Servers = () => {
   }, [refetch])
 
   const handleClose = () => setServer('')
-  const runCommand = (command: string) => {
-    document.cookie = `X-Authentication=${localStorage.getItem('token')}`
-    const ws = new WebSocket(`${ip.split('http').join('ws')}/server/${server}/console`)
+  const runCommand = async (command: string) => {
+    const ticket = await fetch(ip + '/ott', {
+      headers: { authorization: localStorage.getItem('token') || '' }
+    })
+    const ott = encodeURIComponent((await ticket.json()).ticket)
+    // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
+    const ws = new WebSocket(`${ip.split('http').join('ws')}/server/${server}/console?ticket=${ott}`)
     ws.onopen = () => {
       ws.send(command)
       ws.close()
@@ -58,8 +62,12 @@ const Servers = () => {
   const stopStartServer = async (operation: string, server: string) => {
     if (operation === 'stop') {
       // Send commands.
-      document.cookie = `X-Authentication=${localStorage.getItem('token')}`
-      const ws = new WebSocket(`${ip.split('http').join('ws')}/server/${server}/console`)
+      const ticket = await fetch(ip + '/ott', {
+        headers: { authorization: localStorage.getItem('token') || '' }
+      })
+      const ott = encodeURIComponent((await ticket.json()).ticket)
+      // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
+      const ws = new WebSocket(`${ip.split('http').join('ws')}/server/${server}/console?ticket=${ott}`)
       ws.onopen = () => {
         ws.send('save-all')
         setTimeout(() => ws.send('end'), 1000)
