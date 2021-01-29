@@ -32,7 +32,6 @@ const About = () => {
   // Return final code.
   return (
     <React.StrictMode>
-      {/* TODO: Require uniformity in Title descriptions. */}
       <Title
         title='About - Ecthelion'
         description='About this running instance of Ecthelion.'

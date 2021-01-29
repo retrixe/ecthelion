@@ -14,7 +14,6 @@ const MassActionDialog = ({ operation, reload, files, endpoint, handleClose, pat
   files: string[],
   path: string
 }) => {
-  // TODO: Wait for stable endpoint on server.
   const [newPath, setNewPath] = useState('')
   const move = operation === 'move' ? 'Move' : 'Copy'
   const moved = operation === 'move' ? 'Moved' : 'Copied'

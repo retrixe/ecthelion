@@ -173,7 +173,6 @@ const Files = (props: { path: string }) => {
     }
     const target = action === 'rename' ? path + pathToMove : pathToMove
     try {
-      // TODO: Wait for stable endpoint on server.
       const editFile = await request(serverIp, `/server/${router.query.server}/file`, {
         method: 'PATCH',
         body: `${action === 'copy' ? 'cp' : 'mv'}\n${path}${menuOpen}\n${target}`

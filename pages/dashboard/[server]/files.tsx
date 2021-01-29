@@ -15,11 +15,11 @@ const Files: NextPage<{ path: string }> = (props: { path: string }) => {
   // Check if the user is authenticated.
   useEffect(() => { authWrapperCheck().then(e => setAuthenticated(e || false)) }, [])
 
+  const title = router.query.server ? ' - ' + router.query.server : ''
   return (
     <React.StrictMode>
-      {/* TODO: Require uniformity in Title descriptions. */}
       <Title
-        title='Files - Ecthelion'
+        title={`Files${title} - Ecthelion`}
         description='The files of a process running on Octyne.'
         url={`/dashboard/${router.query.server}/files`}
       />

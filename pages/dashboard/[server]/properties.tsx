@@ -12,12 +12,6 @@ import DashboardLayout from '../../../imports/dashboard/dashboardLayout'
 import ConnectionFailure from '../../../imports/errors/connectionFailure'
 import authWrapperCheck from '../../../imports/dashboard/authWrapperCheck'
 
-/*
-  TODO:
-  Move the editor out and add a button to refresh contents from the server
-  as this shares a lot in common with files tab.
-*/
-
 const ServerProperties = () => {
   const [message, setMessage] = useState('')
   // const [saving, setSaving] = useState(false)
@@ -75,11 +69,11 @@ const ServerProperties = () => {
   }
   */
 
+  const title = router.query.server ? ' - ' + router.query.server : ''
   return (
     <React.StrictMode>
-      {/* TODO: Require uniformity in Title descriptions. */}
       <Title
-        title='server.properties - Ecthelion'
+        title={`server.properties${title} - Ecthelion`}
         description='The server.properties of a Minecraft server running on Octyne.'
         url={`/dashboard/${router.query.server}/properties`}
       />

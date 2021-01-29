@@ -183,11 +183,11 @@ const Console = () => {
       {smallScreen && KillButton}
     </>
   )
+  const title = router.query.server ? ' - ' + router.query.server : ''
   return (
     <React.StrictMode>
-      {/* TODO: Require uniformity in Title descriptions. */}
       <Title
-        title='Console - Ecthelion'
+        title={`Console${title} - Ecthelion`}
         description='The output terminal console of a process running on Octyne.'
         url={`/dashboard/${router.query.server}/console`}
       />
@@ -197,7 +197,7 @@ const Console = () => {
             !listening ? <ConnectionFailure loading={listening === null} /> : (
               <Paper style={{ padding: 20 }}>
                 <Typography variant='h5' gutterBottom>Console - {router.query.server}</Typography>
-                {/* TODO: Need to find a good middle ground. */}
+                {/* TODO: Benchmark flexbox on Chrome. */}
                 <Paper
                   style={{
                     height: '60vh',

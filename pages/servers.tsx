@@ -86,7 +86,6 @@ const Servers = () => {
   // Return final code.
   return (
     <React.StrictMode>
-      {/* TODO: Require uniformity in Title descriptions. */}
       <Title
         title='Servers - Ecthelion'
         description='The list of servers on Octyne.'

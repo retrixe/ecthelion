@@ -78,7 +78,6 @@ const Index = (props: { width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' }) => {
   // Return final code.
   return (
     <React.StrictMode>
-      {/* TODO: Require uniformity in Title descriptions. */}
       <Title
         title='Login - Ecthelion'
         description='The login page for Ecthelion, an Octyne frontend.'

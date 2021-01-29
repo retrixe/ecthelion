@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Typography, Button, TextField, LinearProgress, IconButton, Tooltip } from '@material-ui/core'
 import GetApp from '@material-ui/icons/GetApp'
 
+// TODO: Refresh button.
 const Editor = (props: {
   name: string,
   content: string,

@@ -77,11 +77,11 @@ const Statistics = () => {
     return () => clearInterval(interval)
   }, [serverIp, router.query.server])
 
+  const title = router.query.server ? ' - ' + router.query.server : ''
   return (
     <React.StrictMode>
-      {/* TODO: Require uniformity in Title descriptions. */}
       <Title
-        title='Statistics - Ecthelion'
+        title={`Statistics${title} - Ecthelion`}
         description='The statistics of a process running on Octyne.'
         url={`/dashboard/${router.query.server}`}
       />
