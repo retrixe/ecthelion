@@ -3,14 +3,14 @@ import Document, { Html, Head, Main, NextScript } from 'next/document'
 import { ServerStyleSheets } from '@material-ui/styles'
 import theme from '../imports/theme'
 
-const ico = '/static/widgets.png'
+const ico = '/favicon.png'
 
 class MyDocument extends Document {
   render () {
     return (
       <Html lang='en' dir='ltr'>
         <Head>
-          <link rel='icon' href='/static/widgets.png' />
+          <link rel='icon' href={ico} />
           <meta charSet='utf-8' />
           {/* PWA primary color */}
           <meta name='theme-color' content={theme.palette.primary.main} />
