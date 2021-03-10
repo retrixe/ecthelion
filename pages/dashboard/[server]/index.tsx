@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { ip, nodes } from '../../../config.json'
 
-import { Paper, Typography, Divider } from '@material-ui/core'
+import { Paper, Typography, Divider, LinearProgress } from '@material-ui/core'
 
 import Title from '../../../imports/helpers/title'
 import Message from '../../../imports/helpers/message'
@@ -102,12 +102,13 @@ const Statistics = () => {
                 <Typography variant='subtitle1' gutterBottom>
                   {statistics && statistics.uptime ? parseDuration(statistics.uptime) : 'N/A'}
                 </Typography>
-                {/*
                 <Divider />
                 <div style={{ paddingBottom: 10 }} />
                 <Typography variant='h6'>CPU Usage</Typography>
-                <Typography gutterBottom>{statistics.cpuUsage}%</Typography>
-                <LinearProgress variant='determinate' value={statistics.cpuUsage} />
+                <Typography gutterBottom>{Math.ceil(statistics.cpuUsage)}%</Typography>
+                <LinearProgress
+                  variant='determinate' color='secondary' value={Math.ceil(statistics.cpuUsage)}
+                />
                 <br />
                 <Typography variant='h6'>RAM Usage</Typography>
                 <Typography gutterBottom>
@@ -119,7 +120,6 @@ const Statistics = () => {
                     statistics.memoryUsage * 100 / statistics.totalMemory
                   }
                 />
-                */}
                 {message && <Message message={message} setMessage={setMessage} />}
               </Paper>
             )
