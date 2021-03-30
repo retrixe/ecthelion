@@ -67,7 +67,7 @@ const Files = (props: { path: string }) => {
   const [folderPromptOpen, setFolderPromptOpen] = useState(false)
   const [massActionMenuOpen, setMassActionMenuOpen] = useState<HTMLButtonElement | null>(null)
   const [modifyFileDialogOpen, setModifyFileDialogOpen] = useState<''|'move'|'copy'|'rename'>('')
-  const [massActionDialogOpen, setMassActionDialogOpen] = useState<'move' | 'copy' | false>(false)
+  const [massActionDialogOpen, setMassActionDialogOpen] = useState<'move' | 'copy' | 'compress' | false>(false)
   const opip = !!(fetching)
 
   const serverIp = typeof router.query.node === 'string'
@@ -392,7 +392,9 @@ const Files = (props: { path: string }) => {
             setMassActionMenuOpen(null)
             setMassActionDialogOpen(false)
           }}
-          endpoint={`${serverIp}/server/${router.query.server}/file`}
+          endpoint={`${serverIp}/server/${router.query.server}/${
+            massActionDialogOpen === 'compress' ? 'compress' : 'file'
+          }`}
         />
       )}
       {massActionMenuOpen && (
@@ -405,6 +407,7 @@ const Files = (props: { path: string }) => {
           <MenuItem onClick={() => setMassActionDialogOpen('move')}>Move</MenuItem>
           <MenuItem onClick={() => setMassActionDialogOpen('copy')}>Copy</MenuItem>
           <MenuItem onClick={async () => handleFilesDelete()}>Delete</MenuItem>
+          <MenuItem onClick={() => setMassActionDialogOpen('compress')}>Compress</MenuItem>
         </Menu>
       )}
       {menuOpen && (
@@ -449,6 +452,28 @@ const Files = (props: { path: string }) => {
               }}
             >
               Download
+            </MenuItem>
+          )}
+          {(() => {
+            const file = files && files.find(e => e.name === menuOpen)
+            return file && !file.folder && file.name.endsWith('.zip')
+          })() && (
+            <MenuItem
+              onClick={async () => {
+                setMenuOpen('')
+                setFetching(true)
+                const a = await request(
+                  serverIp,
+                  `/server/${router.query.server}/decompress?path=${euc(path + menuOpen)}`,
+                  { method: 'POST' }
+                ).then(async e => e.json())
+                if (a.error) setMessage(a.error)
+                setFetching(false)
+                setMenuOpen('')
+                fetchFiles()
+              }}
+            >
+                Decompress
             </MenuItem>
           )}
         </Menu>
