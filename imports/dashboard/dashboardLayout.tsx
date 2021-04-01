@@ -6,58 +6,50 @@ import Settings from '@material-ui/icons/Settings'
 import CallToAction from '@material-ui/icons/CallToAction'
 import Storage from '@material-ui/icons/Storage'
 
-import { nodes, ip } from '../../config.json'
-import DrawerItem from './drawerItem'
-import Layout from '../layout'
-import AnchorLink from '../helpers/anchorLink'
-import { useRouter } from 'next/router'
 import Link from 'next/link'
+import Layout from '../layout'
+import DrawerItem from './drawerItem'
+import useOctyneData from './useOctyneData'
+import AnchorLink from '../helpers/anchorLink'
 
 const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) => {
+  const { ip } = useOctyneData()
   const [openDrawer, setOpenDrawer] = useState(false)
-  const router = useRouter()
-  const serverIp = typeof router.query.node === 'string'
-    ? (nodes as { [index: string]: string })[router.query.node]
-    : ip
   const drawerVariant = useMediaQuery(useTheme().breakpoints.only('xs')) ? 'temporary' : 'permanent'
+  const onLogout = () => {
+    const token = localStorage.getItem('token')
+    if (token) {
+      fetch(`${ip}/logout`, { headers: { Authorization: token } })
+      localStorage.removeItem('token')
+    }
+  }
+
+  const appBarContent = (
+    <>
+      {(props.loggedIn && drawerVariant === 'temporary') && (
+        <>
+          <IconButton
+            color='inherit'
+            aria-label='Open drawer'
+            onClick={() => setOpenDrawer(!openDrawer)}
+          >
+            <MenuIcon />
+          </IconButton>
+          <div style={{ marginRight: 10 }} />
+        </>
+      )}
+      <Typography variant='h6' color='inherit' style={{ flex: 1 }}>Octyne</Typography>
+      <Link href='/'>
+        <Button color='inherit' onClick={onLogout}>Logout</Button>
+      </Link>
+      <AnchorLink href='/servers'>
+        <Button color='inherit'>Servers</Button>
+      </AnchorLink>
+    </>
+  )
   return (
     <>
-      <Layout
-        appBar={
-          <>
-            {(props.loggedIn && drawerVariant === 'temporary') && (
-              <>
-                <IconButton
-                  color='inherit'
-                  aria-label='Open drawer'
-                  onClick={() => setOpenDrawer(!openDrawer)}
-                >
-                  <MenuIcon />
-                </IconButton>
-                <div style={{ marginRight: 10 }} />
-              </>
-            )}
-            <Typography variant='h6' color='inherit' style={{ flex: 1 }}>Octyne</Typography>
-            <Link href='/'>
-              <Button
-                color='inherit'
-                onClick={() => {
-                  const token = localStorage.getItem('token')
-                  if (token) {
-                    fetch(`${serverIp}/logout`, { headers: { Authorization: token } })
-                    localStorage.removeItem('token')
-                  }
-                }}
-              >
-                Logout
-              </Button>
-            </Link>
-            <AnchorLink href='/servers'>
-              <Button color='inherit'>Servers</Button>
-            </AnchorLink>
-          </>
-        }
-      >
+      <Layout appBar={appBarContent}>
         {props.loggedIn && (
           <Drawer
             variant={drawerVariant}
