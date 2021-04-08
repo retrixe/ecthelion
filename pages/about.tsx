@@ -4,8 +4,9 @@ import { Button, Typography, Paper, Divider } from '@material-ui/core'
 import Layout from '../imports/layout'
 import Title from '../imports/helpers/title'
 import AnchorLink from '../imports/helpers/anchorLink'
+import packageJson from '../package.json'
 
-import { version } from '../package.json'
+const { version } = packageJson
 
 const About = () => {
   const [loggedIn, setLoggedIn] = useState(true)

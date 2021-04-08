@@ -29,13 +29,12 @@ const ServerProperties = () => {
       try {
         // Fetch server properties.
         const authorization = localStorage.getItem('token')
-        if (!authorization) return
+        if (!authorization) return setAuthenticated(false)
         const res = await fetch(
           `${ip}/server/${server}/file?path=server.properties`, { headers: { authorization } }
         )
         const serverProperties = await res.text()
         if (res.status === 401) setAuthenticated(false)
-        // TODO: Parse this intelligently for serverExists.
         else if (res.status === 404) {
           try {
             const json = JSON.parse(serverProperties)

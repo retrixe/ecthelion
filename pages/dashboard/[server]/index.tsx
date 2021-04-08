@@ -92,7 +92,7 @@ const Statistics = () => {
       try {
         // Fetch server stats.
         const authorization = localStorage.getItem('token')
-        if (!authorization) return
+        if (!authorization) return setAuthenticated(false)
         const res = await fetch(`${ip}/server/${server}`, { headers: { authorization } })
         if (res.ok) {
           setListening(true)

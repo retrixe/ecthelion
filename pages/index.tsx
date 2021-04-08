@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { Button, Typography, TextField, useTheme, useMediaQuery, Paper } from '@material-ui/core'
-import { ip } from '../config.json'
+import config from '../config.json'
 import Layout from '../imports/layout'
 import Title from '../imports/helpers/title'
 import AnchorLink from '../imports/helpers/anchorLink'
@@ -30,7 +30,7 @@ const Index = (props: { width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' }) => {
 
   const handleLogin = async () => {
     try {
-      const request = await fetch(ip + '/login', {
+      const request = await fetch(config.ip + '/login', {
         headers: { Username: username, Password: password }
       })
       // If request failed..

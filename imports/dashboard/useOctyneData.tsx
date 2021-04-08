@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { ip as mainIp, nodes } from '../../config.json'
+import config from '../../config.json'
 
-const nodeIps = nodes as { [index: string]: string }
+const nodeIps = config.nodes as { [index: string]: string }
 
 export const useOctyneAuth = () => {
   const octyneData = useOctyneData()
@@ -34,7 +34,7 @@ const useOctyneData = () => {
   const router = useRouter()
   const server = router.query.server && router.query.server.toString()
   const node = router.query.node && router.query.node.toString()
-  const ip = node ? nodeIps[node] : mainIp
+  const ip = node ? nodeIps[node] : config.ip
   const nodeExists = !node || !!(server && node && nodeIps[node])
 
   return { server, node, ip, nodeExists }

@@ -3,7 +3,7 @@ import { Button, Typography, Paper, Divider, List, IconButton, Tooltip } from '@
 import Replay from '@material-ui/icons/Replay'
 
 import Link from 'next/link'
-import { ip } from '../config.json'
+import config from '../config.json'
 
 import Layout from '../imports/layout'
 import Title from '../imports/helpers/title'
@@ -15,9 +15,9 @@ import ServerListItem from '../imports/servers/serverListItem'
 
 import AuthFailure from '../imports/errors/authFailure'
 import ConnectionFailure from '../imports/errors/connectionFailure'
+const { ip } = config
 
 // TODO: Un-hardcode the ip variable by importing nodes.
-
 const Servers = () => {
   const [message, setMessage] = useState('')
   const [servers, setServers] = useState<{ [name: string]: number } | undefined>(undefined)

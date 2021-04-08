@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { ip, nodes } from '../../../config.json'
+import config from '../../../config.json'
 
 import {
   Paper, Typography, CircularProgress, IconButton, Divider, Tooltip, Menu, MenuItem, Slide, Snackbar,
@@ -71,8 +71,8 @@ const Files = (props: { path: string }) => {
   const opip = !!(fetching)
 
   const serverIp = typeof router.query.node === 'string'
-    ? (nodes as { [index: string]: string })[router.query.node]
-    : ip
+    ? (config.nodes as { [index: string]: string })[router.query.node]
+    : config.ip
 
   // Used to fetch files.
   const fetchFiles = async () => {
