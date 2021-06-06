@@ -1,39 +1,21 @@
 import React, { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
-import { ip, nodes } from '../../../config.json'
-
-import { Paper, Typography, TextField, Fab, Button, useMediaQuery, useTheme } from '@material-ui/core'
+import { Paper, Typography, TextField, Fab } from '@material-ui/core'
 import Check from '@material-ui/icons/Check'
-import Stop from '@material-ui/icons/Stop'
-import Close from '@material-ui/icons/Close'
-import PlayArrow from '@material-ui/icons/PlayArrow'
 
 import Title from '../../../imports/helpers/title'
 import AuthFailure from '../../../imports/errors/authFailure'
-import ConsoleView from '../../../imports/dashboard/console/consoleView'
+import NotExistsError from '../../../imports/errors/notExistsError'
+import useOctyneData from '../../../imports/dashboard/useOctyneData'
 import DashboardLayout from '../../../imports/dashboard/dashboardLayout'
+import ConsoleView from '../../../imports/dashboard/console/consoleView'
+import ConsoleButtons from '../../../imports/dashboard/console/consoleButtons'
 import ConnectionFailure from '../../../imports/errors/connectionFailure'
-import authWrapperCheck from '../../../imports/dashboard/authWrapperCheck'
 
 const lastEls = (array: any[], size: number) => {
   const length = array.length
   if (length > size) return array.slice(length - (size - 1))
   else return array
 }
-
-/*
-const isChrome = () => {
-  let chrome = false
-  try {
-    if (
-      Object.hasOwnProperty.call(window, 'chrome') &&
-      !navigator.userAgent.includes('Trident') &&
-      !navigator.userAgent.includes('Edge') // Chromium Edge uses Edg *sad noises*
-    ) chrome = true
-  } catch (e) { }
-  return chrome
-}
-*/
 
 let id = 0
 const CommandTextField = ({ ws, setConsole }: {
@@ -78,40 +60,39 @@ const CommandTextField = ({ ws, setConsole }: {
 
 // TODO: Batch console updates.
 const Console = () => {
+  const { ip, server, nodeExists } = useOctyneData()
+
   const [ws, setWs] = useState<WebSocket | null>(null)
   const [listening, setListening] = useState<boolean|null>(null)
   const [consoleText, setConsole] = useState([{ id: id, text: 'Loading...' }])
+  const [serverExists] = useState(true) // TODO: setServerExists
   const [authenticated, setAuthenticated] = useState(true)
-  const [confirmingKill, setConfirmingKill] = useState(false)
-
-  const smallScreen = useMediaQuery(useTheme().breakpoints.only('xs'))
-  const router = useRouter()
-  const serverIp = typeof router.query.node === 'string'
-    ? (nodes as { [index: string]: string })[router.query.node]
-    : ip
 
   // Check if the user is authenticated.
-  useEffect(() => { authWrapperCheck().then(e => setAuthenticated(e || false)) }, [])
   useEffect(() => {
-    if (!router.query.server) return
+    if (!server || !nodeExists) return
     let ws: WebSocket
     (async () => {
       try {
         // Connect to console.
         // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
-        const ticket = await fetch(serverIp + '/ott', {
+        const ticket = await fetch(ip + '/ott', {
           headers: { authorization: localStorage.getItem('token') || '' }
         })
+        setListening(true)
+        if (ticket.status === 401) {
+          setAuthenticated(false)
+          return
+        }
         const ott = encodeURIComponent((await ticket.json()).ticket)
-        const wsIp = serverIp.replace('http', 'ws').replace('https', 'wss')
-        ws = new WebSocket(`${wsIp}/server/${router.query.server}/console?ticket=${ott}`)
+        const wsIp = ip.replace('http', 'ws').replace('https', 'wss')
+        ws = new WebSocket(`${wsIp}/server/${server}/console?ticket=${ott}`)
         // This listener needs to be loaded ASAP.
         // Limit the amount of lines in memory to prevent out of memory site crashes :v
         ws.onmessage = (event) => setConsole(c => (
           lastEls(c.concat(event.data.split('\n').map((line: string) => ({ id: ++id, text: line }))), 650)
         ))
         setWs(ws)
-        setListening(true)
         // Register listeners.
         ws.onerror = () => setConsole(c => c.concat([{ id: ++id, text: 'An unknown error occurred.' }]))
         ws.onclose = () => { // takes argument event
@@ -125,14 +106,14 @@ const Console = () => {
     return () => {
       if (ws) ws.close()
     }
-  }, [serverIp, router.query.server])
+  }, [ip, nodeExists, server])
 
-  const stopStartServer = async (operation: string) => {
+  const stopStartServer = async (operation: 'START' | 'STOP') => {
     try {
       const token = localStorage.getItem('token')
       if (!token) return
       // Send the request to stop or start the server.
-      const res = await fetch(serverIp + '/server/' + router.query.server, {
+      const res = await fetch(ip + '/server/' + server, {
         headers: { Authorization: token },
         method: 'POST',
         body: operation.toUpperCase()
@@ -142,124 +123,28 @@ const Console = () => {
     } catch (e) {}
   }
 
-  const KillButton = (
-    <Button
-      startIcon={<Close />}
-      variant='contained'
-      color='default'
-      onClick={() => {
-        if (confirmingKill) {
-          setConfirmingKill(false)
-          stopStartServer('STOP')
-        } else setConfirmingKill(true)
-      }}
-      fullWidth={smallScreen}
-    >
-      {confirmingKill ? 'Confirm Kill?' : 'Kill'}
-    </Button>
-  )
-  const Buttons = (
-    <>
-      <div style={{ display: 'flex', width: '100%', justifyContent: 'center' }}>
-        <Button
-          startIcon={<PlayArrow />}
-          variant='contained'
-          color='primary'
-          onClick={async () => stopStartServer('START')}
-          fullWidth={smallScreen}
-        >
-          Start
-        </Button>
-        <div style={{ margin: 10 }} />
-        <Button
-          variant='contained'
-          color='primary'
-          fullWidth={smallScreen}
-          startIcon={<Stop />}
-          onClick={() => {
-            if (!ws) return
-            ws.send('save-all')
-            setTimeout(() => ws.send('end'), 1000)
-            setTimeout(() => ws.send('stop'), 5000)
-          }}
-        >
-          Stop
-        </Button>
-        {!smallScreen && <div style={{ margin: 10 }} />}
-        {!smallScreen && KillButton}
-      </div>
-      {smallScreen && <div style={{ margin: 10 }} />}
-      {smallScreen && KillButton}
-    </>
-  )
-  const title = router.query.server ? ' - ' + router.query.server : ''
   return (
     <React.StrictMode>
       <Title
-        title={`Console${title} - Ecthelion`}
+        title={`Console${server ? ' - ' + server : ''} - Ecthelion`}
         description='The output terminal console of a process running on Octyne.'
-        url={`/dashboard/${router.query.server}/console`}
+        url={`/dashboard/${server}/console`}
       />
       <DashboardLayout loggedIn={authenticated}>
         <div style={{ padding: 20 }}>
-          {!authenticated ? <AuthFailure /> : (
-            !listening ? <ConnectionFailure loading={listening === null} /> : (
-              <Paper style={{ padding: 20 }}>
-                <Typography variant='h5' gutterBottom>Console - {router.query.server}</Typography>
-                {/* TODO: Benchmark flexbox on Chrome. */}
-                <Paper
-                  style={{
-                    height: '60vh',
-                    padding: 10,
-                    background: '#333',
-                    color: '#fff'
-                  }}
-                >
-                  {/* isChrome() ? ( // If it's on Chrome, use the better behaviour of course.
-                    <div
-                      style={{
-                        lineHeight: 1.5,
-                        wordWrap: 'break-word',
-                        height: '100%',
-                        width: '100%',
-                        overflow: 'auto',
-                        display: 'flex',
-                        flexDirection: 'column-reverse'
-                      }}
-                    >
-                      <div style={{ minHeight: '5px' }} />
-                      <Typography variant='body2' component='div'>
-                        {lastEls(consoleText.split('\n').map((i, index) => (
-                          <>{i}<br /></>
-                        )), 650) /* Truncate to 650 lines due to performance issues afterwards. *}
-                      </Typography>
-                    </div>
-                  ) : <ConsoleView console={consoleText} /> */}
-                  <ConsoleView console={consoleText} />
-                </Paper>
-                <CommandTextField ws={ws} setConsole={setConsole} />
-                {!smallScreen && (
-                  <div
-                    style={{
-                      justifyContent: 'center',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      marginTop: 10,
-                      padding: 10,
-                      width: '100%'
-                    }}
-                  >
-                    {Buttons}
-                  </div>
-                )}
-                {smallScreen && (
-                  <Paper elevation={10} style={{ marginTop: 10, padding: 10 }}>
-                    {Buttons}
+          {!nodeExists || !serverExists ? <NotExistsError node={!nodeExists} />
+            : !authenticated ? <AuthFailure /> : (
+              !listening ? <ConnectionFailure loading={listening === null} /> : (
+                <Paper style={{ padding: 20 }}>
+                  <Typography variant='h5' gutterBottom>Console - {server}</Typography>
+                  <Paper style={{ height: '60vh', padding: 10, background: '#333', color: '#fff' }}>
+                    <ConsoleView console={consoleText} />
                   </Paper>
-                )}
-              </Paper>
-            )
-          )}
+                  <CommandTextField ws={ws} setConsole={setConsole} />
+                  <ConsoleButtons ws={ws} stopStartServer={stopStartServer} />
+                </Paper>
+              )
+            )}
         </div>
       </DashboardLayout>
     </React.StrictMode>

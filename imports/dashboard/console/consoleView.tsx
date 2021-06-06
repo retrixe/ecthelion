@@ -1,6 +1,36 @@
 import React, { useRef, useLayoutEffect } from 'react'
 import Typography from '@material-ui/core/Typography'
 
+let chrome = false
+try {
+  if (
+    Object.hasOwnProperty.call(window, 'chrome') &&
+    !navigator.userAgent.includes('Trident') &&
+    !navigator.userAgent.includes('Edge') // Chromium Edge uses Edg *sad noises*
+  ) chrome = true
+} catch (e) {}
+
+const ChromeConsoleView = (props: { console: Array<{ id: number, text: string }> }) => {
+  return (
+    <div
+      style={{
+        height: '100%',
+        width: '100%',
+        overflow: 'auto',
+        display: 'flex',
+        flexDirection: 'column-reverse'
+      }}
+    >
+      <div style={{ minHeight: '5px' }} />
+      <Typography variant='body2' style={{ lineHeight: 1.5, wordWrap: 'break-word' }} component='div'>
+        {props.console.map((i) => (
+          <span key={i.id}>{i.text}<br /></span>
+        )) /* Truncate to 650 lines due to performance issues afterwards. */}
+      </Typography>
+    </div>
+  )
+}
+
 const ConsoleView = (props: { console: Array<{ id: number, text: string }> }) => {
   const ref = useRef<HTMLDivElement>(null)
   const isScrolledToBottom = ref.current !== null ? (
@@ -17,17 +47,7 @@ const ConsoleView = (props: { console: Array<{ id: number, text: string }> }) =>
   }, [props.console, isScrolledToBottom])
 
   return (
-    <div
-      style={{
-        height: '100%',
-        width: '100%',
-        overflow: 'auto'
-        // display: 'flex',
-        // Firefox and EdgeHTML break this behaviour when using column-reverse.
-        // flexDirection: 'column'
-      }}
-      ref={ref}
-    >
+    <div style={{ height: '100%', width: '100%', overflow: 'auto' }} ref={ref}>
       <Typography variant='body2' style={{ lineHeight: 1.5, wordWrap: 'break-word' }} component='div'>
         {props.console.map((i) => (
           <span key={i.id}>{i.text}<br /></span>
@@ -38,5 +58,6 @@ const ConsoleView = (props: { console: Array<{ id: number, text: string }> }) =>
   )
 }
 
-const PureConsoleView = React.memo(ConsoleView)
+// Firefox and EdgeHTML break column-reverse behaviour.
+const PureConsoleView = React.memo(chrome ? ChromeConsoleView : ConsoleView)
 export default PureConsoleView
