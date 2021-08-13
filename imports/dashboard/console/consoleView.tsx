@@ -33,9 +33,9 @@ const ChromeConsoleView = (props: { console: Array<{ id: number, text: string }>
 
 const ConsoleView = (props: { console: Array<{ id: number, text: string }> }) => {
   const ref = useRef<HTMLDivElement>(null)
-  const isScrolledToBottom = ref.current !== null ? (
-    ref.current.scrollHeight - ref.current.clientHeight <= ref.current.scrollTop + 1
-  ) : false
+  const isScrolledToBottom = ref.current !== null
+    ? ref.current.scrollHeight - ref.current.clientHeight <= ref.current.scrollTop + 1
+    : false
 
   useLayoutEffect(() => {
     if (ref.current) ref.current.scrollTop = ref.current.scrollHeight - ref.current.clientHeight

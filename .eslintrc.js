@@ -4,12 +4,13 @@ module.exports = {
     node: true,
     browser: true
   },
-  extends: ['plugin:react/recommended', 'standard-with-typescript', 'standard-react'],
+  extends: ['plugin:react/recommended', 'standard-with-typescript', 'standard-react', 'standard-jsx'],
   plugins: ['react', 'react-hooks', '@typescript-eslint'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: './tsconfig.json'
   },
+  ignorePatterns: ['.eslintrc.js'],
   rules: {
     // React Hooks rules.
     'react-hooks/rules-of-hooks': 'error',
@@ -24,6 +25,7 @@ module.exports = {
     '@typescript-eslint/restrict-template-expressions': 'off',
     '@typescript-eslint/prefer-optional-chain': 'off',
     '@typescript-eslint/prefer-nullish-coalescing': 'off',
+    'multiline-ternary': 'off', // Temporary.
     // Allow no-multi-str.
     'no-multi-str': 'off'
   }

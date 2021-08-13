@@ -34,7 +34,7 @@ const ConsoleButtons = ({ stopStartServer, ws }: {
           startIcon={<PlayArrow />}
           variant='contained'
           color='primary'
-          onClick={async () => stopStartServer('START')}
+          onClick={async () => await stopStartServer('START')}
           fullWidth={smallScreen}
         >
           Start
@@ -62,24 +62,26 @@ const ConsoleButtons = ({ stopStartServer, ws }: {
     </>
   )
 
-  return smallScreen ? (
-    <Paper elevation={10} style={{ marginTop: 10, padding: 10 }}>
-      {Buttons}
-    </Paper>
-  ) : (
-    <div
-      style={{
-        justifyContent: 'center',
-        display: 'flex',
-        flexDirection: 'column',
-        marginTop: 10,
-        padding: 10,
-        width: '100%'
-      }}
-    >
-      {Buttons}
-    </div>
-  )
+  return smallScreen
+    ? (
+      <Paper elevation={10} style={{ marginTop: 10, padding: 10 }}>
+        {Buttons}
+      </Paper>
+      )
+    : (
+      <div
+        style={{
+          justifyContent: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          marginTop: 10,
+          padding: 10,
+          width: '100%'
+        }}
+      >
+        {Buttons}
+      </div>
+      )
 }
 
 export default ConsoleButtons

@@ -11,9 +11,9 @@ const ModifyFileDialog = ({ handleEdit, handleClose, operation, filename }: {
   filename: string
 }) => {
   const [path, setPath] = useState(operation === 'rename' ? filename : '')
-  const title = operation === 'copy' ? 'Copy File/Folder' : (
-    operation === 'move' ? 'Move File/Folder' : 'Rename File/Folder'
-  )
+  const title = operation === 'copy'
+    ? 'Copy File/Folder'
+    : operation === 'move' ? 'Move File/Folder' : 'Rename File/Folder'
   const pathOrName = operation === 'rename' ? 'name' : 'path'
   return (
     <>

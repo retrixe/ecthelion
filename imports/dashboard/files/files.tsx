@@ -152,7 +152,7 @@ const Files = (props: { path: string }) => {
       const createFolder = await request(
         serverIp, `/server/${router.query.server}/folder?path=/${euc(path + name)}`,
         { method: 'POST' }
-      ).then(async e => e.json())
+      ).then(async e => await e.json())
       if (createFolder.success) fetchFiles()
       else setMessage(createFolder.error)
       setFetching(false)
@@ -176,7 +176,7 @@ const Files = (props: { path: string }) => {
       const editFile = await request(serverIp, `/server/${router.query.server}/file`, {
         method: 'PATCH',
         body: `${action === 'copy' ? 'cp' : 'mv'}\n${path}${menuOpen}\n${target}`
-      }).then(async e => e.json())
+      }).then(async e => await e.json())
       if (editFile.success) fetchFiles()
       else setMessage(editFile.error)
       setFetching(false)
@@ -369,7 +369,7 @@ const Files = (props: { path: string }) => {
       {folderPromptOpen && (
         <FolderCreationDialog
           handleClose={() => setFolderPromptOpen(false)}
-          handleCreateFolder={async (name: string) => handleCreateFolder(name)}
+          handleCreateFolder={async (name: string) => await handleCreateFolder(name)}
         />
       )}
       {modifyFileDialogOpen && (
@@ -377,7 +377,7 @@ const Files = (props: { path: string }) => {
           filename={menuOpen}
           operation={modifyFileDialogOpen}
           handleClose={() => setModifyFileDialogOpen('')}
-          handleEdit={async (path) => handleModifyFile(path, modifyFileDialogOpen)}
+          handleEdit={async (path) => await handleModifyFile(path, modifyFileDialogOpen)}
         />
       )}
       {massActionDialogOpen && (
@@ -406,7 +406,7 @@ const Files = (props: { path: string }) => {
         >
           <MenuItem onClick={() => setMassActionDialogOpen('move')}>Move</MenuItem>
           <MenuItem onClick={() => setMassActionDialogOpen('copy')}>Copy</MenuItem>
-          <MenuItem onClick={async () => handleFilesDelete()}>Delete</MenuItem>
+          <MenuItem onClick={async () => await handleFilesDelete()}>Delete</MenuItem>
           <MenuItem onClick={() => setMassActionDialogOpen('compress')}>Compress</MenuItem>
         </Menu>
       )}
@@ -428,7 +428,7 @@ const Files = (props: { path: string }) => {
                 serverIp,
                 `/server/${router.query.server}/file?path=${euc(path + menuOpen)}`,
                 { method: 'DELETE' }
-              ).then(async e => e.json())
+              ).then(async e => await e.json())
               if (a.error) setMessage(a.error)
               setFetching(false)
               setMenuOpen('')
@@ -466,14 +466,14 @@ const Files = (props: { path: string }) => {
                   serverIp,
                   `/server/${router.query.server}/decompress?path=${euc(path + menuOpen)}`,
                   { method: 'POST' }
-                ).then(async e => e.json())
+                ).then(async e => await e.json())
                 if (a.error) setMessage(a.error)
                 setFetching(false)
                 setMenuOpen('')
                 fetchFiles()
               }}
             >
-                Decompress
+              Decompress
             </MenuItem>
           )}
         </Menu>

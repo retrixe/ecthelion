@@ -56,10 +56,11 @@ const FileList = ({ files, path, onClick, openMenu, filesSelected, setFilesSelec
             dense
             button
             disabled={opip}
-            onClick={(e) => e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey ? (
-              setFilesSelected(!filesSelected.includes(file.name)
-                ? [...filesSelected, file.name] : filesSelected.filter(e => e !== file.name))
-            ) : onClick(file)}
+            onClick={(e) => e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey
+              ? setFilesSelected(!filesSelected.includes(file.name)
+                ? [...filesSelected, file.name]
+                : filesSelected.filter(e => e !== file.name))
+              : onClick(file)}
           >
             <ListItemAvatar>
               <Avatar>

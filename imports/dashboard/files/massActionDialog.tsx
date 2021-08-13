@@ -65,7 +65,8 @@ const MassActionDialog = ({
     })
   }
   const prompt = operation === 'compress'
-    ? 'Enter path to ZIP file to create:' : `Enter path of folder to ${operation} to:`
+    ? 'Enter path to ZIP file to create:'
+    : `Enter path of folder to ${operation} to:`
   return (
     <>
       {/* Folder creation dialog. */}

@@ -47,7 +47,8 @@ const StatisticsDisplay = ({ statistics }: { statistics: ServerStatus }) => (
     <div style={{ paddingBottom: 10 }} />
     <Typography variant='h6'>Status</Typography>
     <Typography variant='subtitle1' gutterBottom>
-      {statistics && statistics.status === 0 ? 'Offline'
+      {statistics && statistics.status === 0
+        ? 'Offline'
         : (statistics && statistics.status === 1 ? 'Online' : 'Crashed')}
     </Typography>
     <Typography variant='h6'>Uptime</Typography>

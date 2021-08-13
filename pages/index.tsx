@@ -6,7 +6,7 @@ import Layout from '../imports/layout'
 import Title from '../imports/helpers/title'
 import AnchorLink from '../imports/helpers/anchorLink'
 
-const Index = (props: { width: 'xs' | 'sm' | 'md' | 'lg' | 'xl' }) => {
+const Index = () => {
   const [failedAuth, setFailedAuth] = useState(false) // Unable to authorize with the server.
   const [invalid, setInvalid] = useState(false) // Invalid credentials.
   const [username, setUsername] = useState('')
