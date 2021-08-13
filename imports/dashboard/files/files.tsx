@@ -1,35 +1,29 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
-import config from '../../../config.json'
 
 import {
   Paper, Typography, CircularProgress, IconButton, Divider, Tooltip, Menu, MenuItem, Slide, Snackbar,
   Button, useMediaQuery, useTheme
 } from '@material-ui/core'
-// import Close from '@material-ui/icons/Close'
 import Add from '@material-ui/icons/Add'
 import Replay from '@material-ui/icons/Replay'
+// import Close from '@material-ui/icons/Close'
 import MoreVert from '@material-ui/icons/MoreVert'
 import ArrowBack from '@material-ui/icons/ArrowBack'
 import CreateNewFolder from '@material-ui/icons/CreateNewFolder'
 
 import Message from '../../helpers/message'
 import ConnectionFailure from '../../errors/connectionFailure'
+import useOctyneData from '../../../imports/dashboard/useOctyneData'
 
 import Editor from './editor'
 import Overlay from './overlay'
+import { joinPath, parentPath } from './fileUtils'
 import UploadButton from './uploadButton'
 import FileList, { File } from './fileList'
 import MassActionDialog from './massActionDialog'
 import ModifyFileDialog from './modifyFileDialog'
 import FolderCreationDialog from './folderCreationDialog'
-
-/*
-const joinPath = (a: string, b: string) => {
-  if (a.endsWith('/')) return a + b + '/'
-  else return a + '/' + b + '/'
-}
-*/
 
 const request = async (ip: string, endpoint: string, opts?: RequestInit): Promise<Response> => {
   const token = localStorage.getItem('token')
@@ -45,12 +39,16 @@ const request = async (ip: string, endpoint: string, opts?: RequestInit): Promis
 let euc: (uriComponent: string | number | boolean) => string
 try { euc = encodeURIComponent } catch (e) { euc = e => e.toString() }
 
-const Files = (props: { path: string }) => {
+const Files = (props: {
+  path: string,
+  setServerExists: React.Dispatch<React.SetStateAction<boolean>>,
+  setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
   const router = useRouter()
+  const { server, ip } = useOctyneData() // nodeExists is handled above.
   const xs = useMediaQuery(useTheme().breakpoints.only('xs'))
 
   const path = router.query.path?.toString() || props.path
-  // const [path, setPath] = useState(props.path)
 
   const [menuOpen, setMenuOpen] = useState('')
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
@@ -70,44 +68,30 @@ const Files = (props: { path: string }) => {
   const [massActionDialogOpen, setMassActionDialogOpen] = useState<'move' | 'copy' | 'compress' | false>(false)
   const opip = !!(fetching)
 
-  const serverIp = typeof router.query.node === 'string'
-    ? (config.nodes as { [index: string]: string })[router.query.node]
-    : config.ip
-
   // Used to fetch files.
-  const fetchFiles = async () => {
+  const { setAuthenticated, setServerExists } = props
+  const fetchFiles = useCallback(async () => {
     setFetching(true) // TODO: Make it show up after 1.0 seconds.
     let files: any
     try {
-      files = await (await request(serverIp, `/server/${router.query.server}/files?path=${euc(path)}`)).json()
+      files = await (await request(ip, `/server/${server}/files?path=${euc(path)}`)).json()
     } catch (e) {
       setMessage(e.message)
     }
-    if (files) {
+    if (files.error === 'This server does not exist!') setServerExists(false)
+    else if (files.error === 'You are not authenticated to access this resource!') setAuthenticated(false)
+    else if (files) {
       setFiles(files.contents)
       setFilesSelected([])
     }
     setFetching(false)
-  }
+  }, [path, ip, server, setAuthenticated, setServerExists])
 
   // Check if the user is authenticated.
   useEffect(() => {
-    (async () => {
-      if (!router.query.server) return
-      setFetching(true) // TODO: Make it show up after 1.0 seconds.
-      let files: any
-      try {
-        files = await (await request(serverIp, `/server/${router.query.server}/files?path=${euc(path)}`)).json()
-      } catch (e) {
-        setMessage(e.message)
-      }
-      if (files) {
-        setFiles(files.contents)
-        setFilesSelected([])
-      }
-      setFetching(false)
-    })()
-  }, [path, router.query.server, serverIp])
+    if (!server) return
+    fetchFiles()
+  }, [fetchFiles, server])
 
   // Update path when URL changes.
   const updatePath = (newPath: string) => {
@@ -116,7 +100,7 @@ const Files = (props: { path: string }) => {
       query: { ...router.query, path: newPath, server: undefined }
     }
     const as = {
-      pathname: `/dashboard/${router.query.server}/files`,
+      pathname: `/dashboard/${server}/files`,
       query: { ...router.query, path: newPath, server: undefined }
     }
     delete route.query.server
@@ -132,7 +116,7 @@ const Files = (props: { path: string }) => {
     ) {
       // Fetch the file.
       setFetching(true)
-      const req = await request(serverIp, `/server/${router.query.server}/file?path=${euc(path + name)}`)
+      const req = await request(ip, `/server/${server}/file?path=${euc(joinPath(path, name))}`)
       if (req.status !== 200) {
         setMessage((await req.json()).error)
         setFetching(false)
@@ -141,7 +125,7 @@ const Files = (props: { path: string }) => {
       const content = await req.text()
       setFile({ name, content })
       setFetching(false)
-    } else setDownload(`${serverIp}/server/${router.query.server}/file?path=${euc(path + name)}`)
+    } else setDownload(`${ip}/server/${server}/file?path=${euc(joinPath(path, name))}`)
   }
 
   // Multiple file logic requests.
@@ -150,7 +134,7 @@ const Files = (props: { path: string }) => {
     setFetching(true)
     try {
       const createFolder = await request(
-        serverIp, `/server/${router.query.server}/folder?path=/${euc(path + name)}`,
+        ip, `/server/${server}/folder?path=/${euc(joinPath(path, name))}`,
         { method: 'POST' }
       ).then(async e => await e.json())
       if (createFolder.success) fetchFiles()
@@ -173,7 +157,7 @@ const Files = (props: { path: string }) => {
     }
     const target = action === 'rename' ? path + pathToMove : pathToMove
     try {
-      const editFile = await request(serverIp, `/server/${router.query.server}/file`, {
+      const editFile = await request(ip, `/server/${server}/file`, {
         method: 'PATCH',
         body: `${action === 'copy' ? 'cp' : 'mv'}\n${path}${menuOpen}\n${target}`
       }).then(async e => await e.json())
@@ -195,7 +179,7 @@ const Files = (props: { path: string }) => {
       // setOverlay('Deleting ' + file)
       // Save the file.
       ops.push(await request(
-        serverIp, `/server/${router.query.server}/file?path=${euc(path + file)}`, { method: 'DELETE' }
+        ip, `/server/${server}/file?path=${euc(path + file)}`, { method: 'DELETE' }
       ).then(async r => {
         if (r.status !== 200) setMessage(`Error deleting ${file}\n${(await r.json()).error}`)
         setOverlay(`Deleting ${--total} out of ${filesSelected.length} files.`)
@@ -215,7 +199,7 @@ const Files = (props: { path: string }) => {
       // Save the file.
       const formData = new FormData()
       formData.append('upload', file, file.name)
-      const r = await request(serverIp, `/server/${router.query.server}/file?path=${euc(path)}`, {
+      const r = await request(ip, `/server/${server}/file?path=${euc(path)}`, {
         method: 'POST',
         body: formData
       })
@@ -234,9 +218,9 @@ const Files = (props: { path: string }) => {
               {...file}
               siblingFiles={files.map(e => e.name)}
               handleClose={() => { setFile(null); fetchFiles() }}
-              server={`${router.query.server}`}
+              server={server}
               path={path}
-              ip={serverIp}
+              ip={ip}
               setMessage={setMessage}
             />
           </Paper>
@@ -252,19 +236,10 @@ const Files = (props: { path: string }) => {
               handleFilesUpload(e.dataTransfer.files)
             }}
           >
-            <Typography variant='h5' gutterBottom>Files - {router.query.server}</Typography>
+            <Typography variant='h5' gutterBottom>Files - {server}</Typography>
             <div style={{ display: 'flex', alignItems: 'center', padding: 5, flexWrap: 'wrap' }}>
               {path !== '/' && (
-                <IconButton
-                  disabled={opip}
-                  onClick={() => {
-                    if (path !== '/') {
-                      const newPath = path.substring(0, path.lastIndexOf('/', path.length - 2) + 1)
-                      // setPath(newPath)
-                      updatePath(newPath)
-                    }
-                  }}
-                >
+                <IconButton disabled={opip} onClick={() => updatePath(parentPath(path))}>
                   <ArrowBack />
                 </IconButton>
               )}
@@ -324,7 +299,6 @@ const Files = (props: { path: string }) => {
               setFilesSelected={setFilesSelected}
               onClick={(file) => {
                 if (file.folder) {
-                  // setPath(`${path}${file.name}/`)
                   updatePath(`${path}${file.name}/`)
                 } else openFile(file.name, file.size, file.mimeType)
               }}
@@ -342,7 +316,7 @@ const Files = (props: { path: string }) => {
           autoHideDuration={10000}
           TransitionComponent={(props) => <Slide direction='up' {...props} />}
           onClose={() => setDownload('')}
-          message={`Do you want to download '${download.split('/')[download.split('/').length - 1]}'?`}
+          message={`Do you want to download '${download.replace(/%2F/g, '/').split('/').filter(e => e).pop()}'?`}
           action={[
             <Button
               key='download'
@@ -351,7 +325,7 @@ const Files = (props: { path: string }) => {
               onClick={async () => {
                 setDownload('')
                 // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
-                const ticket = await fetch(serverIp + '/ott', {
+                const ticket = await fetch(ip + '/ott', {
                   headers: { authorization: localStorage.getItem('token') || '' }
                 })
                 const ott = encodeURIComponent((await ticket.json()).ticket)
@@ -392,7 +366,7 @@ const Files = (props: { path: string }) => {
             setMassActionMenuOpen(null)
             setMassActionDialogOpen(false)
           }}
-          endpoint={`${serverIp}/server/${router.query.server}/${
+          endpoint={`${ip}/server/${server}/${
             massActionDialogOpen === 'compress' ? 'compress' : 'file'
           }`}
         />
@@ -425,8 +399,8 @@ const Files = (props: { path: string }) => {
               setMenuOpen('')
               setFetching(true)
               const a = await request(
-                serverIp,
-                `/server/${router.query.server}/file?path=${euc(path + menuOpen)}`,
+                ip,
+                `/server/${server}/file?path=${euc(path + menuOpen)}`,
                 { method: 'DELETE' }
               ).then(async e => await e.json())
               if (a.error) setMessage(a.error)
@@ -444,11 +418,11 @@ const Files = (props: { path: string }) => {
             <MenuItem
               onClick={async () => {
                 setMenuOpen('')
-                const ticket = await fetch(serverIp + '/ott', {
+                const ticket = await fetch(ip + '/ott', {
                   headers: { authorization: localStorage.getItem('token') || '' }
                 })
                 const ott = encodeURIComponent((await ticket.json()).ticket)
-                window.location.href = `${serverIp}/server/${router.query.server}/file?ticket=${ott}&path=${path}${menuOpen}`
+                window.location.href = `${ip}/server/${server}/file?ticket=${ott}&path=${path}${menuOpen}`
               }}
             >
               Download
@@ -463,8 +437,8 @@ const Files = (props: { path: string }) => {
                 setMenuOpen('')
                 setFetching(true)
                 const a = await request(
-                  serverIp,
-                  `/server/${router.query.server}/decompress?path=${euc(path + menuOpen)}`,
+                  ip,
+                  `/server/${server}/decompress?path=${euc(path + menuOpen)}`,
                   { method: 'POST' }
                 ).then(async e => await e.json())
                 if (a.error) setMessage(a.error)

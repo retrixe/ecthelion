@@ -1,19 +1,20 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 import { NextPage } from 'next'
 
 import Title from '../../../imports/helpers/title'
 import AuthFailure from '../../../imports/errors/authFailure'
-import DashboardLayout from '../../../imports/dashboard/dashboardLayout'
-import authWrapperCheck from '../../../imports/dashboard/authWrapperCheck'
 import FileManager from '../../../imports/dashboard/files/files'
+import NotExistsError from '../../../imports/errors/notExistsError'
+import useOctyneData from '../../../imports/dashboard/useOctyneData'
+import DashboardLayout from '../../../imports/dashboard/dashboardLayout'
+import { normalisePath } from '../../../imports/dashboard/files/fileUtils'
 
 const Files: NextPage<{ path: string }> = (props: { path: string }) => {
   const router = useRouter()
+  const { nodeExists } = useOctyneData()
+  const [serverExists, setServerExists] = useState(true)
   const [authenticated, setAuthenticated] = useState(true)
-
-  // Check if the user is authenticated.
-  useEffect(() => { authWrapperCheck().then(e => setAuthenticated(e || false)) }, [])
 
   const title = router.query.server ? ' - ' + router.query.server : ''
   return (
@@ -25,15 +26,23 @@ const Files: NextPage<{ path: string }> = (props: { path: string }) => {
       />
       <DashboardLayout loggedIn={authenticated}>
         <div style={{ padding: 20 }}>
-          {!authenticated ? <AuthFailure /> : <FileManager path={props.path} />}
+          {!nodeExists || !serverExists ? <NotExistsError node={!nodeExists} />
+            : !authenticated
+                ? <AuthFailure />
+                : <FileManager
+                    path={props.path}
+                    setServerExists={setServerExists}
+                    setAuthenticated={setAuthenticated}
+                  />}
         </div>
       </DashboardLayout>
     </React.StrictMode>
   )
 }
 
-const arrToStr = (e: string | string[]) => Array.isArray(e) ? e[0] : e
-const es = (str?: string) => str && (str.startsWith('/') ? '' : '/') + str + (str.endsWith('/') ? '' : '/')
-Files.getInitialProps = async (ctx) => Promise.resolve({ path: es(arrToStr(ctx.query.path)) || '/' })
+Files.getInitialProps = async ({ query }) => {
+  const path = normalisePath((Array.isArray(query.path) ? query.path.join('/') : query.path) || '/')
+  return await Promise.resolve({ path })
+}
 
 export default Files
