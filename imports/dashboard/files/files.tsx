@@ -141,7 +141,7 @@ const Files = (props: { path: string }) => {
       const content = await req.text()
       setFile({ name, content })
       setFetching(false)
-    } else setDownload(`${serverIp}/server/${router.query.server}/file?path=${path}${name}`)
+    } else setDownload(`${serverIp}/server/${router.query.server}/file?path=${euc(path + name)}`)
   }
 
   // Multiple file logic requests.
