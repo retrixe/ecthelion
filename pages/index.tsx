@@ -1,12 +1,33 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { Button, Typography, TextField, useTheme, useMediaQuery, Paper } from '@material-ui/core'
+import { Button, Typography, TextField, makeStyles, Paper } from '@material-ui/core'
 import config from '../config.json'
 import Layout from '../imports/layout'
 import Title from '../imports/helpers/title'
 import AnchorLink from '../imports/helpers/anchorLink'
 
+const useStyles = makeStyles(theme => ({
+  paperStyle: {
+    margin: 10,
+    padding: 20,
+    [theme.breakpoints.down('sm')]: { flex: 1 },
+    [theme.breakpoints.up('md')]: { maxWidth: '33vw', width: '420px' }
+  },
+  buttonContainerStyle: {
+    [theme.breakpoints.down('sm')]: {},
+    [theme.breakpoints.up('md')]: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'flex-end'
+    }
+  },
+  buttonStyle: {
+    [theme.breakpoints.down('sm')]: { width: '100%' }
+  }
+}))
+
 const Index = () => {
+  const classes = useStyles()
   const [failedAuth, setFailedAuth] = useState(false) // Unable to authorize with the server.
   const [invalid, setInvalid] = useState(false) // Invalid credentials.
   const [username, setUsername] = useState('')
@@ -59,23 +80,6 @@ const Index = () => {
     } catch (e) { setFailedAuth(true) }
   }
 
-  // Responsive styling.
-  const small = !useMediaQuery(useTheme().breakpoints.up('md'))
-  const paperStyle = small ? { flex: 1 } : { maxWidth: '33vw', width: '420px' }
-  const ResponsiveButton = (
-    <div style={small ? {} : { display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-      <Button
-        variant='contained'
-        color='secondary'
-        onClick={handleLogin}
-        fullWidth={small}
-        disabled={!username || !password}
-      >Log In
-      </Button>
-    </div>
-  )
-
-  // Return final code.
   return (
     <React.StrictMode>
       <Title
@@ -102,7 +106,7 @@ const Index = () => {
           overflow: 'auto'
         }}
         >
-          <Paper elevation={24} style={{ padding: 20, margin: 10, ...paperStyle }}>
+          <Paper elevation={24} className={classes.paperStyle}>
             <Typography variant='h5'>Log In</Typography><br />
             <Typography gutterBottom>
               Enter your designated username and password to access Octyne.
@@ -142,7 +146,16 @@ const Index = () => {
               </>
             )}
             <br />
-            {ResponsiveButton}
+            <div className={classes.buttonContainerStyle}>
+              <Button
+                variant='contained'
+                color='secondary'
+                onClick={handleLogin}
+                disabled={!username || !password}
+                className={classes.buttonStyle}
+              >Log In
+              </Button>
+            </div>
           </Paper>
         </div>
       </Layout>

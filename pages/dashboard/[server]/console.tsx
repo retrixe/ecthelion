@@ -59,18 +59,19 @@ const CommandTextField = ({ ws, setConsole }: {
 }
 
 // TODO: Batch console updates.
-const Console = () => {
-  const { ip, server, nodeExists } = useOctyneData()
+const Console = ({ setAuthenticated }: {
+  // setServerExists: React.Dispatch<React.SetStateAction<boolean>>,
+  setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
+  const { ip, server } = useOctyneData()
 
   const [ws, setWs] = useState<WebSocket | null>(null)
   const [listening, setListening] = useState<boolean|null>(null)
   const [consoleText, setConsole] = useState([{ id: id, text: 'Loading...' }])
-  const [serverExists] = useState(true) // TODO: setServerExists
-  const [authenticated, setAuthenticated] = useState(true)
 
   // Check if the user is authenticated.
   useEffect(() => {
-    if (!server || !nodeExists) return
+    if (!server) return
     let ws: WebSocket
     (async () => {
       try {
@@ -106,7 +107,7 @@ const Console = () => {
     return () => {
       if (ws) ws.close()
     }
-  }, [ip, nodeExists, server])
+  }, [ip, server, setAuthenticated])
 
   const stopStartServer = async (operation: 'START' | 'STOP') => {
     try {
@@ -123,6 +124,24 @@ const Console = () => {
     } catch (e) {}
   }
 
+  return !listening
+    ? <ConnectionFailure loading={listening === null} />
+    : (
+      <Paper style={{ padding: 20 }}>
+        <Typography variant='h5' gutterBottom>Console - {server}</Typography>
+        <Paper style={{ height: '60vh', padding: 10, background: '#333', color: '#fff' }}>
+          <ConsoleView console={consoleText} />
+        </Paper>
+        <CommandTextField ws={ws} setConsole={setConsole} />
+        <ConsoleButtons ws={ws} stopStartServer={stopStartServer} />
+      </Paper>
+      )
+}
+
+const ConsolePage = () => {
+  const { server, nodeExists } = useOctyneData()
+  const [serverExists] = useState(true) // TODO: setServerExists
+  const [authenticated, setAuthenticated] = useState(true)
   return (
     <React.StrictMode>
       <Title
@@ -130,25 +149,17 @@ const Console = () => {
         description='The output terminal console of a process running on Octyne.'
         url={`/dashboard/${server}/console`}
       />
-      <DashboardLayout loggedIn={authenticated}>
+      <DashboardLayout loggedIn={nodeExists && serverExists && authenticated}>
         <div style={{ padding: 20 }}>
-          {!nodeExists || !serverExists ? <NotExistsError node={!nodeExists} />
-            : !authenticated ? <AuthFailure /> : (
-              !listening ? <ConnectionFailure loading={listening === null} /> : (
-                <Paper style={{ padding: 20 }}>
-                  <Typography variant='h5' gutterBottom>Console - {server}</Typography>
-                  <Paper style={{ height: '60vh', padding: 10, background: '#333', color: '#fff' }}>
-                    <ConsoleView console={consoleText} />
-                  </Paper>
-                  <CommandTextField ws={ws} setConsole={setConsole} />
-                  <ConsoleButtons ws={ws} stopStartServer={stopStartServer} />
-                </Paper>
-              )
-            )}
+          {!nodeExists || !serverExists
+            ? <NotExistsError node={!nodeExists} />
+            : !authenticated
+                ? <AuthFailure />
+                : <Console setAuthenticated={setAuthenticated} />}
         </div>
       </DashboardLayout>
     </React.StrictMode>
   )
 }
 
-export default Console
+export default ConsolePage

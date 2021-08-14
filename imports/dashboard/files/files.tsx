@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
 
 import {
-  Paper, Typography, CircularProgress, IconButton, Divider, Tooltip, Menu, MenuItem, Slide, Snackbar,
-  Button, useMediaQuery, useTheme
+  Paper, Typography, CircularProgress, IconButton, Divider, Tooltip, Menu, MenuItem, Slide,
+  Snackbar, Button
 } from '@material-ui/core'
 import Add from '@material-ui/icons/Add'
 import Replay from '@material-ui/icons/Replay'
@@ -46,7 +46,6 @@ const Files = (props: {
 }) => {
   const router = useRouter()
   const { server, ip } = useOctyneData() // nodeExists is handled above.
-  const xs = useMediaQuery(useTheme().breakpoints.only('xs'))
 
   const path = router.query.path?.toString() || props.path
 
@@ -453,7 +452,7 @@ const Files = (props: {
         </Menu>
       )}
       {message && <Message message={message} setMessage={setMessage} />}
-      {overlay && <Overlay message={overlay} xs={xs} />}
+      {overlay && <Overlay message={overlay} />}
     </>
   )
 }

@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useRouter } from 'next/router'
 import { NextPage } from 'next'
 
 import Title from '../../../imports/helpers/title'
@@ -11,20 +10,18 @@ import DashboardLayout from '../../../imports/dashboard/dashboardLayout'
 import { normalisePath } from '../../../imports/dashboard/files/fileUtils'
 
 const Files: NextPage<{ path: string }> = (props: { path: string }) => {
-  const router = useRouter()
-  const { nodeExists } = useOctyneData()
+  const { server, nodeExists } = useOctyneData()
   const [serverExists, setServerExists] = useState(true)
   const [authenticated, setAuthenticated] = useState(true)
 
-  const title = router.query.server ? ' - ' + router.query.server : ''
   return (
     <React.StrictMode>
       <Title
-        title={`Files${title} - Ecthelion`}
+        title={`Files${server ? ' - ' + server : ''} - Ecthelion`}
         description='The files of a process running on Octyne.'
-        url={`/dashboard/${router.query.server}/files`}
+        url={`/dashboard/${server}/files`}
       />
-      <DashboardLayout loggedIn={authenticated}>
+      <DashboardLayout loggedIn={nodeExists && serverExists && authenticated}>
         <div style={{ padding: 20 }}>
           {!nodeExists || !serverExists ? <NotExistsError node={!nodeExists} />
             : !authenticated
