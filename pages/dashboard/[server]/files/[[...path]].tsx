@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import { NextPage } from 'next'
 
-import Title from '../../../imports/helpers/title'
-import AuthFailure from '../../../imports/errors/authFailure'
-import FileManager from '../../../imports/dashboard/files/files'
-import NotExistsError from '../../../imports/errors/notExistsError'
-import useOctyneData from '../../../imports/dashboard/useOctyneData'
-import DashboardLayout from '../../../imports/dashboard/dashboardLayout'
-import { normalisePath } from '../../../imports/dashboard/files/fileUtils'
+import Title from '../../../../imports/helpers/title'
+import AuthFailure from '../../../../imports/errors/authFailure'
+import FileManager from '../../../../imports/dashboard/files/files'
+import NotExistsError from '../../../../imports/errors/notExistsError'
+import useOctyneData from '../../../../imports/dashboard/useOctyneData'
+import DashboardLayout from '../../../../imports/dashboard/dashboardLayout'
+import { normalisePath } from '../../../../imports/dashboard/files/fileUtils'
 
 const Files: NextPage<{ path: string }> = (props: { path: string }) => {
   const { server, nodeExists } = useOctyneData()

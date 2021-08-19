@@ -18,7 +18,7 @@ import useOctyneData from '../../../imports/dashboard/useOctyneData'
 
 import Editor from './editor'
 import Overlay from './overlay'
-import { joinPath, parentPath } from './fileUtils'
+import { joinPath, normalisePath, parentPath } from './fileUtils'
 import UploadButton from './uploadButton'
 import FileList, { File } from './fileList'
 import MassActionDialog from './massActionDialog'
@@ -47,7 +47,8 @@ const Files = (props: {
   const router = useRouter()
   const { server, ip } = useOctyneData() // nodeExists is handled above.
 
-  const path = router.query.path?.toString() || props.path
+  const queryPath = router.query.path
+  const path = normalisePath((Array.isArray(queryPath) ? queryPath.join('/') : queryPath) || props.path)
 
   const [menuOpen, setMenuOpen] = useState('')
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
@@ -92,18 +93,20 @@ const Files = (props: {
     fetchFiles()
   }, [fetchFiles, server])
 
-  // Update path when URL changes.
+  // Update path when URL changes. Requires normalised path.
   const updatePath = (newPath: string) => {
     const route = {
-      pathname: '/dashboard/[server]/files',
-      query: { ...router.query, path: newPath, server: undefined }
+      pathname: '/dashboard/[server]/files/[[...path]]',
+      query: { ...router.query }
     }
     const as = {
-      pathname: `/dashboard/${server}/files`,
-      query: { ...router.query, path: newPath, server: undefined }
+      pathname: `/dashboard/${server}/files${newPath}`,
+      query: { ...router.query }
     }
     delete route.query.server
+    delete route.query.path
     delete as.query.server
+    delete as.query.path
     router.push(route, as, { shallow: true })
   }
 
@@ -297,9 +300,8 @@ const Files = (props: {
               filesSelected={filesSelected}
               setFilesSelected={setFilesSelected}
               onClick={(file) => {
-                if (file.folder) {
-                  updatePath(`${path}${file.name}/`)
-                } else openFile(file.name, file.size, file.mimeType)
+                if (file.folder) updatePath(joinPath(path, file.name))
+                else openFile(file.name, file.size, file.mimeType)
               }}
               openMenu={(fn, anchor) => {
                 setMenuOpen(fn)

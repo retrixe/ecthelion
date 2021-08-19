@@ -6,11 +6,7 @@ import { useRouter } from 'next/router'
 import Folder from '@material-ui/icons/Folder'
 import MoreVert from '@material-ui/icons/MoreVert'
 import InsertDriveFile from '@material-ui/icons/InsertDriveFile'
-
-const joinPath = (a: string, b: string) => {
-  if (a.endsWith('/')) return a + b + '/'
-  else return a + '/' + b + '/'
-}
+import { joinPath } from './fileUtils'
 
 export interface File {
   folder: boolean,
@@ -47,7 +43,7 @@ const FileList = ({ files, path, onClick, openMenu, filesSelected, setFilesSelec
       }).map(file => (
         <a
           key={file.name}
-          href={`/dashboard/${router.query.server}/files?path=${file.folder ? joinPath(path, file.name) : path}`}
+          href={`/dashboard/${router.query.server}/files${file.folder ? joinPath(path, file.name) : path}`}
           onClick={e => e.preventDefault()}
           style={{ textDecoration: 'none', color: 'inherit' }}
         >
