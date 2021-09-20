@@ -88,7 +88,7 @@ const Servers = () => {
       })
       if (res.status === 400) throw new Error()
       else setRefetch(!refetch)
-    } catch (e) { setMessage(e) }
+    } catch (e: any) { setMessage(e) }
   }
 
   // Return final code.

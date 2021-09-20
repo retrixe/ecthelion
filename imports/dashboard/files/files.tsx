@@ -75,7 +75,7 @@ const Files = (props: {
     let files: any
     try {
       files = await (await request(ip, `/server/${server}/files?path=${euc(path)}`)).json()
-    } catch (e) {
+    } catch (e: any) {
       setMessage(e.message)
     }
     if (files.error === 'This server does not exist!') setServerExists(false)
@@ -142,7 +142,7 @@ const Files = (props: {
       if (createFolder.success) fetchFiles()
       else setMessage(createFolder.error)
       setFetching(false)
-    } catch (e) {
+    } catch (e: any) {
       setMessage(e.message)
       setFetching(false)
     }
@@ -166,7 +166,7 @@ const Files = (props: {
       if (editFile.success) fetchFiles()
       else setMessage(editFile.error)
       setFetching(false)
-    } catch (e) {
+    } catch (e: any) {
       setMessage(e.message)
       setFetching(false)
     }
