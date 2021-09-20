@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { Typography, Button, TextField, LinearProgress, IconButton, Tooltip } from '@material-ui/core'
-import GetApp from '@material-ui/icons/GetApp'
+import { Typography, Button, TextField, LinearProgress, IconButton, Tooltip } from '@mui/material'
+import GetApp from '@mui/icons-material/GetApp'
 
 // TODO: Refresh button.
 const Editor = (props: {
@@ -75,7 +75,7 @@ const Editor = (props: {
         multiline
         variant='outlined'
         fullWidth
-        rowsMax={30}
+        maxRows={30}
         value={content}
         InputProps={{ style: { fontFamily: 'monospace', fontSize: '14px' } }}
         onChange={e => setContent(e.target.value)}

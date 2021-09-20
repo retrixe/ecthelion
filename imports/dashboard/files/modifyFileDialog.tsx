@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import {
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField
-} from '@material-ui/core'
+} from '@mui/material'
 
 const ModifyFileDialog = ({ handleEdit, handleClose, operation, filename }: {
   handleEdit: (path: string) => any,
@@ -25,7 +25,7 @@ const ModifyFileDialog = ({ handleEdit, handleClose, operation, filename }: {
           <TextField
             autoFocus
             fullWidth
-            margin='dense'
+            margin='normal'
             label={`New ${pathOrName}`}
             value={path}
             onChange={e => setPath(e.target.value)}

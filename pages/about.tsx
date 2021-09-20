@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Typography, Paper, Divider } from '@material-ui/core'
+import { Button, Typography, Paper, Divider } from '@mui/material'
 
 import Layout from '../imports/layout'
 import Title from '../imports/helpers/title'

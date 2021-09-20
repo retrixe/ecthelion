@@ -3,13 +3,13 @@ import { useRouter } from 'next/router'
 import {
   ListItem, ListItemAvatar, ListItemText, ListItemSecondaryAction,
   Avatar, Tooltip, IconButton
-} from '@material-ui/core'
+} from '@mui/material'
 
-import Storage from '@material-ui/icons/Storage'
-import Stop from '@material-ui/icons/Stop'
-import Close from '@material-ui/icons/Close'
-import PlayArrow from '@material-ui/icons/PlayArrow'
-import Comment from '@material-ui/icons/Comment'
+import Storage from '@mui/icons-material/Storage'
+import Stop from '@mui/icons-material/Stop'
+import Close from '@mui/icons-material/Close'
+import PlayArrow from '@mui/icons-material/PlayArrow'
+import Comment from '@mui/icons-material/Comment'
 
 export const ServerListItem = ({ name, status, openDialog, stopStartServer }: {
   name: string,

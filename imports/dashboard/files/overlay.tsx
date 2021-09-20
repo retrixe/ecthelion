@@ -1,17 +1,5 @@
 import React from 'react'
-import { Paper, Typography, LinearProgress, makeStyles } from '@material-ui/core'
-
-const useStyles = makeStyles(theme => ({
-  paperStyle: {
-    height: 80,
-    margin: 20,
-    padding: 20,
-    marginLeft: 220,
-    [theme.breakpoints.only('xs')]: {
-      marginLeft: 20
-    }
-  }
-}))
+import { Paper, Typography, LinearProgress } from '@mui/material'
 
 const Overlay = ({ message }: { message: string }) => (
   <div
@@ -29,7 +17,7 @@ const Overlay = ({ message }: { message: string }) => (
     }}
   >
     <div style={{ flex: 1 }} />
-    <Paper className={useStyles().paperStyle}>
+    <Paper sx={{ height: '80px', m: '20px', p: '20px', ml: { xs: '20px', sm: '220px' } }}>
       <LinearProgress />
       <br />
       <Typography variant='body1'>{message}</Typography>
