@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import {
-  Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField
+  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField
 } from '@mui/material'
 
 const CommandDialog = ({ server, handleClose, runCommand }: {
@@ -13,11 +13,12 @@ const CommandDialog = ({ server, handleClose, runCommand }: {
     <Dialog open fullWidth onClose={handleClose}>
       <DialogTitle>Run Command on {server}</DialogTitle>
       <DialogContent>
+        <DialogContentText>Enter the input to send to process:</DialogContentText>
         <TextField
           autoFocus
-          margin='dense'
           id='command'
           label='Command'
+          margin='normal'
           value={command}
           onChange={e => setCommand(e.target.value)}
           onSubmit={() => runCommand(command)}

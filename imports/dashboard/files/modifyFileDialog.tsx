@@ -25,7 +25,7 @@ const ModifyFileDialog = ({ handleEdit, handleClose, operation, filename }: {
           <TextField
             autoFocus
             fullWidth
-            margin='dense'
+            margin='normal'
             label={`New ${pathOrName}`}
             value={path}
             onChange={e => setPath(e.target.value)}

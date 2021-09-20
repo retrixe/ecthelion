@@ -19,7 +19,7 @@ const FolderCreationDialog = ({ handleCreateFolder, handleClose }: {
           <TextField
             autoFocus
             fullWidth
-            margin='dense'
+            margin='normal'
             label='Folder Name'
             value={name}
             onChange={e => setName(e.target.value)}

@@ -1,6 +1,6 @@
 import React from 'react'
-import { Snackbar, Button, IconButton } from '@material-ui/core'
-import Close from '@material-ui/icons/Close'
+import { Snackbar, Button, IconButton } from '@mui/material'
+import Close from '@mui/icons-material/Close'
 
 const Message = ({ message, setMessage }: { message: string, setMessage: (a: string) => void }) => (
   <Snackbar
