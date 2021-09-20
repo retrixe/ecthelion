@@ -73,7 +73,11 @@ const FileList = ({ files, path, onClick, openMenu, filesSelected, setFilesSelec
             />
             <ListItemSecondaryAction>
               <div>
-                <IconButton disabled={opip} onClick={e => openMenu(file.name, e.currentTarget)}>
+                <IconButton
+                  disabled={opip}
+                  onClick={e => openMenu(file.name, e.currentTarget)}
+                  size='large'
+                >
                   <MoreVert />
                 </IconButton>
                 <Checkbox
