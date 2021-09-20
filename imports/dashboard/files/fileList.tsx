@@ -1,11 +1,11 @@
 import React from 'react'
 import {
   List, ListItem, ListItemText, ListItemAvatar, ListItemSecondaryAction, Avatar, IconButton, Checkbox
-} from '@material-ui/core'
+} from '@mui/material'
 import { useRouter } from 'next/router'
-import Folder from '@material-ui/icons/Folder'
-import MoreVert from '@material-ui/icons/MoreVert'
-import InsertDriveFile from '@material-ui/icons/InsertDriveFile'
+import Folder from '@mui/icons-material/Folder'
+import MoreVert from '@mui/icons-material/MoreVert'
+import InsertDriveFile from '@mui/icons-material/InsertDriveFile'
 import { joinPath } from './fileUtils'
 
 export interface File {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Paper, Typography, TextField, Fab } from '@material-ui/core'
-import Check from '@material-ui/icons/Check'
+import { Paper, Typography, TextField, Fab } from '@mui/material'
+import Check from '@mui/icons-material/Check'
 
 import Title from '../../../imports/helpers/title'
 import AuthFailure from '../../../imports/errors/authFailure'

@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { Paper, Button, useMediaQuery, useTheme } from '@material-ui/core'
-import Stop from '@material-ui/icons/Stop'
-import Close from '@material-ui/icons/Close'
-import PlayArrow from '@material-ui/icons/PlayArrow'
+import { Paper, Button, useMediaQuery, useTheme } from '@mui/material'
+import Stop from '@mui/icons-material/Stop'
+import Close from '@mui/icons-material/Close'
+import PlayArrow from '@mui/icons-material/PlayArrow'
 
 const ConsoleButtons = ({ stopStartServer, ws }: {
   stopStartServer: (operation: 'START' | 'STOP') => Promise<void>, ws: WebSocket | null
@@ -14,7 +14,6 @@ const ConsoleButtons = ({ stopStartServer, ws }: {
     <Button
       startIcon={<Close />}
       variant='contained'
-      color='default'
       onClick={() => {
         if (confirmingKill) {
           setConfirmingKill(false)

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import {
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField
-} from '@material-ui/core'
+} from '@mui/material'
 
 const ModifyFileDialog = ({ handleEdit, handleClose, operation, filename }: {
   handleEdit: (path: string) => any,

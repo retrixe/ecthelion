@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField
-} from '@material-ui/core'
+} from '@mui/material'
 
 const CommandDialog = ({ server, handleClose, runCommand }: {
   server: string,
@@ -26,7 +26,7 @@ const CommandDialog = ({ server, handleClose, runCommand }: {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color='default'>Cancel</Button>
+        <Button onClick={handleClose}>Cancel</Button>
         <Button onClick={() => runCommand(command)} color='primary'>Run</Button>
       </DialogActions>
     </Dialog>

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Paper, Typography, LinearProgress } from '@material-ui/core'
+import { Paper, Typography, LinearProgress } from '@mui/material'
 
 export const ConnectionFailure = (props: { loading: boolean }) => (
   <Paper style={{ padding: 10 }}>
