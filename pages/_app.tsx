@@ -26,6 +26,10 @@ export default function MyApp (props: AppProps & { emotionCache?: EmotionCache }
       <ThemeProvider theme={theme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
+        {/* TODO: https://github.com/mui-org/material-ui/issues/28477 */}
+        <style jsx global>
+          {'body {font-size: 0.875rem !important; line-height: 1.43 !important}'}
+        </style>
         <Component {...pageProps} />
       </ThemeProvider>
     </CacheProvider>
