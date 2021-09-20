@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Paper, Typography, TextField, Fab } from '@material-ui/core'
 import Check from '@material-ui/icons/Check'
 
@@ -17,17 +17,32 @@ const lastEls = (array: any[], size: number) => {
   else return array
 }
 
+// https://overreacted.io/making-setinterval-declarative-with-react-hooks/
+const useInterval = (callback: (...args: any[]) => void, delay: number) => {
+  const savedCallback = useRef<() => void>()
+  // Remember the latest callback.
+  useEffect(() => { savedCallback.current = callback }, [callback])
+  // Set up the interval.
+  useEffect(() => {
+    const tick = () => savedCallback.current && savedCallback.current()
+    if (delay !== null) {
+      const id = setInterval(tick, delay)
+      return () => clearInterval(id)
+    }
+  }, [delay])
+}
+
 let id = 0
-const CommandTextField = ({ ws, setConsole }: {
+const CommandTextField = ({ ws, buffer }: {
   ws: WebSocket | null,
-  setConsole: React.Dispatch<React.SetStateAction<Array<{ id: number, text: string }>>>
+  buffer: React.MutableRefObject<Array<{ id: number, text: string }>>
 }) => {
   const [command, setCommand] = useState('')
   const [lastCmd, setLastCmd] = useState('')
   const handleCommand = () => {
     try {
       if (!command || !ws) return
-      setConsole(c => c.concat([{ id: ++id, text: '>' + command }]))
+      buffer.current.push({ id: ++id, text: '>' + command })
       ws.send(command)
       setLastCmd(command)
       setCommand('')
@@ -58,7 +73,6 @@ const CommandTextField = ({ ws, setConsole }: {
   )
 }
 
-// TODO: Batch console updates.
 const Console = ({ setAuthenticated }: {
   // setServerExists: React.Dispatch<React.SetStateAction<boolean>>,
   setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
@@ -66,8 +80,16 @@ const Console = ({ setAuthenticated }: {
   const { ip, server } = useOctyneData()
 
   const [ws, setWs] = useState<WebSocket | null>(null)
-  const [listening, setListening] = useState<boolean|null>(null)
+  const [listening, setListening] = useState<boolean | null>(null)
   const [consoleText, setConsole] = useState([{ id: id, text: 'Loading...' }])
+
+  const buffer = useRef<Array<{ id: number, text: string }>>([])
+  useInterval(() => {
+    if (buffer.current.length === 0) return
+    const oldBuffer = buffer.current
+    buffer.current = []
+    setConsole(lastEls(consoleText.concat(oldBuffer), 650))
+  }, 50)
 
   // Check if the user is authenticated.
   useEffect(() => {
@@ -90,14 +112,15 @@ const Console = ({ setAuthenticated }: {
         ws = new WebSocket(`${wsIp}/server/${server}/console?ticket=${ott}`)
         // This listener needs to be loaded ASAP.
         // Limit the amount of lines in memory to prevent out of memory site crashes :v
-        ws.onmessage = (event) => setConsole(c => (
-          lastEls(c.concat(event.data.split('\n').map((line: string) => ({ id: ++id, text: line }))), 650)
-        ))
+        ws.onmessage = (event) => {
+          buffer.current = buffer.current
+            .concat(event.data.split('\n').map((line: string) => ({ id: ++id, text: line })))
+        }
         setWs(ws)
         // Register listeners.
-        ws.onerror = () => setConsole(c => c.concat([{ id: ++id, text: 'An unknown error occurred.' }]))
+        ws.onerror = () => buffer.current.push({ id: ++id, text: 'An unknown error occurred.' })
         ws.onclose = () => { // takes argument event
-          setConsole(c => c.concat([{ id: ++id, text: 'The connection to the server was abruptly closed.' }]))
+          buffer.current.push({ id: ++id, text: 'The connection to the server was abruptly closed.' })
         }
       } catch (e) {
         setListening(false)
@@ -132,7 +155,7 @@ const Console = ({ setAuthenticated }: {
         <Paper style={{ height: '60vh', padding: 10, background: '#333', color: '#fff' }}>
           <ConsoleView console={consoleText} />
         </Paper>
-        <CommandTextField ws={ws} setConsole={setConsole} />
+        <CommandTextField ws={ws} buffer={buffer} />
         <ConsoleButtons ws={ws} stopStartServer={stopStartServer} />
       </Paper>
       )
