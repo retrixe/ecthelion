@@ -73,6 +73,9 @@ const CommandTextField = ({ ws, buffer }: {
   )
 }
 
+const terminalUi = typeof localStorage === 'object' && localStorage.getItem('terminal-ui') === 'true'
+  ? { backgroundColor: '#121224', color: '#00ff00' } : {}
+
 const Console = ({ setAuthenticated }: {
   // setServerExists: React.Dispatch<React.SetStateAction<boolean>>,
   setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
@@ -152,7 +155,7 @@ const Console = ({ setAuthenticated }: {
     : (
       <Paper style={{ padding: 20 }}>
         <Typography variant='h5' gutterBottom>Console - {server}</Typography>
-        <Paper style={{ height: '60vh', padding: 10, background: '#333', color: '#fff' }}>
+        <Paper variant='outlined' style={{ height: '60vh', padding: 10, ...terminalUi }}>
           <ConsoleView console={consoleText} />
         </Paper>
         <CommandTextField ws={ws} buffer={buffer} />

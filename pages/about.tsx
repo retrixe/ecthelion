@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { Button, Typography, Paper, Divider } from '@mui/material'
+import React, { useState, useLayoutEffect } from 'react'
+import { Button, Typography, Paper, Divider, Switch, FormGroup, FormControlLabel } from '@mui/material'
 
 import Layout from '../imports/layout'
 import Title from '../imports/helpers/title'
@@ -10,25 +10,25 @@ const { version } = packageJson
 
 const About = () => {
   const [loggedIn, setLoggedIn] = useState(true)
+  const [lightMode, setLightMode] = useState(false)
+  const [terminalUi, setTerminalUi] = useState(false)
 
-  useEffect(() => {
-    // (async () => {
-    try {
-      const token = localStorage.getItem('token')
-      setLoggedIn(!!token)
-      /*
-        if (!token) return
-        const servers = await fetch(ip + '/servers', { headers: { Authorization: token } })
-        if (servers.ok) {
-          setLoggedIn(true)
-        } else if (servers.status === 401) setLoggedIn('failed')
-        else setLoggedIn(false)
-        */
-    } catch (e) {
-      setLoggedIn(false)
-    }
-    // })()
+  useLayoutEffect(() => {
+    if (typeof localStorage !== 'object') return
+    setLoggedIn(!!localStorage.getItem('token'))
+    setLightMode(localStorage.getItem('light-mode') === 'true')
+    setTerminalUi(localStorage.getItem('terminal-ui') === 'true')
   }, [])
+  const handleTerminalUiToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTerminalUi(e.target.checked)
+    if (e.target.checked) localStorage.setItem('terminal-ui', 'true')
+    else localStorage.removeItem('terminal-ui')
+  }
+  const handleLightModeToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLightMode(e.target.checked)
+    if (e.target.checked) localStorage.setItem('light-mode', 'true')
+    else localStorage.removeItem('light-mode')
+  }
 
   // Return final code.
   return (
@@ -64,6 +64,20 @@ const About = () => {
               </li>
               {/* <li>The stop button updates after 10 seconds and console is limited to 650 lines.</li> */}
             </Typography>
+          </Paper>
+          <Paper style={{ padding: 20, marginTop: 16 }}>
+            <Typography gutterBottom variant='h5'>UI Settings</Typography>
+            <Divider style={{ marginBottom: '0.70em' }} />
+            <FormGroup>
+              <FormControlLabel
+                label='Terminal Coloured Console'
+                control={<Switch color='info' checked={terminalUi} onChange={handleTerminalUiToggle} />}
+              />
+              <FormControlLabel
+                label='Light Mode (Here be dragons)'
+                control={<Switch color='info' checked={lightMode} onChange={handleLightModeToggle} />}
+              />
+            </FormGroup>
           </Paper>
         </div>
       </Layout>
