@@ -1,24 +1,21 @@
-import { createTheme } from '@mui/material'
+import { createTheme, ThemeOptions } from '@mui/material'
 
 // A theme with custom primary and secondary color.
 // It's optional.
-// TODO: Run these updates in _app.tsx and not here.
-const squareCorners = typeof localStorage === 'object' && localStorage.getItem('square-corners') === 'true'
-const lightMode = typeof localStorage === 'object' && localStorage.getItem('light-mode') === 'true'
-const black = { main: '#000000', dark: '#000000' }
-const white = { main: '#ffffff', dark: '#ffffff' }
-const theme = createTheme({
+export const black = { main: '#000000', dark: '#000000' } // colors.blue
+export const white = { main: '#ffffff', dark: '#ffffff' } // colors.purple
+export const defaultThemeOptions: ThemeOptions = {
   palette: {
-    primary: lightMode ? white : black, // colors.blue
-    secondary: lightMode ? black : white, // colors.purple
-    mode: lightMode ? 'light' : 'dark'
+    primary: black,
+    secondary: white,
+    mode: 'dark'
   },
   components: {
     MuiTextField: { defaultProps: { color: 'secondary' } },
     MuiCheckbox: { defaultProps: { color: 'secondary' } },
-    MuiButton: { defaultProps: { color: 'secondary' } },
-    MuiPaper: { defaultProps: { square: squareCorners } }
+    MuiButton: { defaultProps: { color: 'secondary' } }
   }
-})
+}
+const theme = createTheme(defaultThemeOptions)
 
 export default theme

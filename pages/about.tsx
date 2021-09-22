@@ -1,9 +1,10 @@
-import React, { useState, useLayoutEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button, Typography, Paper, Divider, Switch, FormGroup, FormControlLabel } from '@mui/material'
 
 import Layout from '../imports/layout'
 import Title from '../imports/helpers/title'
 import AnchorLink from '../imports/helpers/anchorLink'
+import { UpdateThemeContext } from './_app'
 import packageJson from '../package.json'
 
 const { version } = packageJson
@@ -12,22 +13,33 @@ const About = () => {
   const [loggedIn, setLoggedIn] = useState(true)
   const [lightMode, setLightMode] = useState(false)
   const [terminalUi, setTerminalUi] = useState(false)
+  const [squareCorners, setSquareCorners] = useState(false)
+  const updateTheme = React.useContext(UpdateThemeContext)
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (typeof localStorage !== 'object') return
     setLoggedIn(!!localStorage.getItem('token'))
     setLightMode(localStorage.getItem('light-mode') === 'true')
     setTerminalUi(localStorage.getItem('terminal-ui') === 'true')
+    setSquareCorners(localStorage.getItem('square-corners') === 'true')
   }, [])
+  const handleSquareCornersToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSquareCorners(e.target.checked)
+    if (e.target.checked) localStorage.setItem('square-corners', 'true')
+    else localStorage.removeItem('square-corners')
+    updateTheme()
+  }
   const handleTerminalUiToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTerminalUi(e.target.checked)
     if (e.target.checked) localStorage.setItem('terminal-ui', 'true')
     else localStorage.removeItem('terminal-ui')
+    updateTheme()
   }
   const handleLightModeToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLightMode(e.target.checked)
     if (e.target.checked) localStorage.setItem('light-mode', 'true')
     else localStorage.removeItem('light-mode')
+    updateTheme()
   }
 
   // Return final code.
@@ -76,6 +88,10 @@ const About = () => {
               <FormControlLabel
                 label='Light Mode (Here be dragons)'
                 control={<Switch color='info' checked={lightMode} onChange={handleLightModeToggle} />}
+              />
+              <FormControlLabel
+                label='Square Corners'
+                control={<Switch color='info' checked={squareCorners} onChange={handleSquareCornersToggle} />}
               />
             </FormGroup>
           </Paper>

@@ -3,15 +3,41 @@ import Head from 'next/head'
 import { AppProps } from 'next/app'
 import createCache from '@emotion/cache'
 import { CacheProvider, EmotionCache } from '@emotion/react'
-import { ThemeProvider } from '@mui/material/styles'
+import { ThemeProvider, createTheme } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
-import theme from '../imports/theme'
+import defaultTheme, { defaultThemeOptions, white, black } from '../imports/theme'
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createCache({ key: 'css' })
 
+export const UpdateThemeContext = React.createContext(() => {})
+
 export default function MyApp (props: AppProps & { emotionCache?: EmotionCache }) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
+
+  // Customisable theming options.
+  const [currentTheme, setCurrentTheme] = React.useState(defaultTheme)
+  const updateTheme = () => {
+    if (typeof localStorage !== 'object') return
+    const squareCorners = localStorage.getItem('square-corners') === 'true'
+    const lightMode = localStorage.getItem('light-mode') === 'true'
+
+    // If no square corners and no light theme...
+    if (!squareCorners && !lightMode) return setCurrentTheme(defaultTheme)
+    const newThemeOptions = { ...defaultThemeOptions }
+
+    // Set square corners.
+    if (squareCorners) {
+      if (!newThemeOptions.components) newThemeOptions.components = {}
+      newThemeOptions.components.MuiPaper = { defaultProps: { square: squareCorners } }
+    }
+    // Set light theme.
+    if (lightMode) {
+      newThemeOptions.palette = { primary: white, secondary: black, mode: 'light' }
+    }
+    setCurrentTheme(createTheme(newThemeOptions))
+  }
+  React.useEffect(updateTheme, [])
 
   return (
     <CacheProvider value={emotionCache}>
@@ -23,10 +49,12 @@ export default function MyApp (props: AppProps & { emotionCache?: EmotionCache }
           minimum-scale=1, width=device-width, height=device-height'
         />
       </Head>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={currentTheme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
-        <Component {...pageProps} />
+        <UpdateThemeContext.Provider value={updateTheme}>
+          <Component {...pageProps} />
+        </UpdateThemeContext.Provider>
       </ThemeProvider>
     </CacheProvider>
   )
