@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-import { Paper, Typography /* , TextField, LinearProgress, Button */ } from '@material-ui/core'
+import { Paper, Typography /* , TextField, LinearProgress, Button */ } from '@mui/material'
 
 import Title from '../../../imports/helpers/title'
 import Message from '../../../imports/helpers/message'

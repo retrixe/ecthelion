@@ -1,33 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { Button, Typography, TextField, makeStyles, Paper } from '@material-ui/core'
+import { Button, Typography, TextField, Paper, styled } from '@mui/material'
 import config from '../config.json'
 import Layout from '../imports/layout'
 import Title from '../imports/helpers/title'
 import AnchorLink from '../imports/helpers/anchorLink'
 
-const useStyles = makeStyles(theme => ({
-  paperStyle: {
-    margin: 10,
-    padding: 20,
-    [theme.breakpoints.down('sm')]: { flex: 1 },
-    [theme.breakpoints.up('md')]: { maxWidth: '33vw', width: '420px' }
-  },
-  buttonContainerStyle: {
-    [theme.breakpoints.down('sm')]: {},
-    [theme.breakpoints.up('md')]: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'flex-end'
-    }
-  },
-  buttonStyle: {
-    [theme.breakpoints.down('sm')]: { width: '100%' }
+const ButtonContainer = styled('div')(({ theme }) => ({
+  [theme.breakpoints.up('md')]: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end'
   }
 }))
 
 const Index = () => {
-  const classes = useStyles()
   const [failedAuth, setFailedAuth] = useState(false) // Unable to authorize with the server.
   const [invalid, setInvalid] = useState(false) // Invalid credentials.
   const [username, setUsername] = useState('')
@@ -106,11 +93,18 @@ const Index = () => {
           overflow: 'auto'
         }}
         >
-          <Paper elevation={24} className={classes.paperStyle}>
-            <Typography variant='h5'>Log In</Typography><br />
-            <Typography gutterBottom>
-              Enter your designated username and password to access Octyne.
-            </Typography>
+          <Paper
+            elevation={24} sx={{
+              margin: '10px',
+              padding: '20px',
+              width: { md: '420px' },
+              maxWidth: { md: '33vw' },
+              flex: { xs: 1, md: 'initial' }
+            }}
+          >
+            <Typography variant='h5' gutterBottom>Log In</Typography>
+            <Typography>Enter your designated username and password to access Octyne.</Typography>
+            <br />
             <TextField
               required
               fullWidth
@@ -146,16 +140,16 @@ const Index = () => {
               </>
             )}
             <br />
-            <div className={classes.buttonContainerStyle}>
+            <ButtonContainer>
               <Button
                 variant='contained'
                 color='secondary'
                 onClick={handleLogin}
                 disabled={!username || !password}
-                className={classes.buttonStyle}
+                sx={{ width: { xs: '100%', md: 'initial' } }}
               >Log In
               </Button>
-            </div>
+            </ButtonContainer>
           </Paper>
         </div>
       </Layout>

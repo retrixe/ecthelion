@@ -4,13 +4,13 @@ import { useRouter } from 'next/router'
 import {
   Paper, Typography, CircularProgress, IconButton, Divider, Tooltip, Menu, MenuItem, Slide,
   Snackbar, Button
-} from '@material-ui/core'
-import Add from '@material-ui/icons/Add'
-import Replay from '@material-ui/icons/Replay'
-// import Close from '@material-ui/icons/Close'
-import MoreVert from '@material-ui/icons/MoreVert'
-import ArrowBack from '@material-ui/icons/ArrowBack'
-import CreateNewFolder from '@material-ui/icons/CreateNewFolder'
+} from '@mui/material'
+import Add from '@mui/icons-material/Add'
+import Replay from '@mui/icons-material/Replay'
+// import Close from '@mui/icons-material/Close'
+import MoreVert from '@mui/icons-material/MoreVert'
+import ArrowBack from '@mui/icons-material/ArrowBack'
+import CreateNewFolder from '@mui/icons-material/CreateNewFolder'
 
 import Message from '../../helpers/message'
 import ConnectionFailure from '../../errors/connectionFailure'

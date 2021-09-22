@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import {
-  Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField
-} from '@material-ui/core'
+  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField
+} from '@mui/material'
 
 const CommandDialog = ({ server, handleClose, runCommand }: {
   server: string,
@@ -13,11 +13,12 @@ const CommandDialog = ({ server, handleClose, runCommand }: {
     <Dialog open fullWidth onClose={handleClose}>
       <DialogTitle>Run Command on {server}</DialogTitle>
       <DialogContent>
+        <DialogContentText>Enter the input to send to process:</DialogContentText>
         <TextField
           autoFocus
-          margin='dense'
           id='command'
           label='Command'
+          margin='normal'
           value={command}
           onChange={e => setCommand(e.target.value)}
           onSubmit={() => runCommand(command)}
@@ -26,7 +27,7 @@ const CommandDialog = ({ server, handleClose, runCommand }: {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color='default'>Cancel</Button>
+        <Button onClick={handleClose}>Cancel</Button>
         <Button onClick={() => runCommand(command)} color='primary'>Run</Button>
       </DialogActions>
     </Dialog>

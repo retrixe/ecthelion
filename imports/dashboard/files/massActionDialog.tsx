@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import {
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField
-} from '@material-ui/core'
+} from '@mui/material'
 
 const MassActionDialog = ({
   operation, reload, files, endpoint, handleClose, path, setOverlay, setMessage
@@ -77,7 +77,7 @@ const MassActionDialog = ({
           <TextField
             autoFocus
             fullWidth
-            margin='dense'
+            margin='normal'
             label='New Path'
             value={newPath}
             onChange={e => setNewPath(e.target.value)}

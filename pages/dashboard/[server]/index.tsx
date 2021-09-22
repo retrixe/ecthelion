@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-import { Paper, Typography, Divider, LinearProgress } from '@material-ui/core'
+import { Paper, Typography, Divider, LinearProgress } from '@mui/material'
 
 import Title from '../../../imports/helpers/title'
 import AuthFailure from '../../../imports/errors/authFailure'

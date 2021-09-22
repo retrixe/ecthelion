@@ -1,5 +1,5 @@
 import React, { useRef, useLayoutEffect } from 'react'
-import Typography from '@material-ui/core/Typography'
+import Typography from '@mui/material/Typography'
 
 let chrome = false
 try {

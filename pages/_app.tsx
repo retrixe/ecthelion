@@ -1,40 +1,61 @@
 import React from 'react'
-import App from 'next/app'
 import Head from 'next/head'
-import { ThemeProvider } from '@material-ui/styles'
-import CssBaseline from '@material-ui/core/CssBaseline'
-import theme from '../imports/theme'
+import { AppProps } from 'next/app'
+import createCache from '@emotion/cache'
+import { CacheProvider, EmotionCache } from '@emotion/react'
+import { ThemeProvider, createTheme } from '@mui/material/styles'
+import CssBaseline from '@mui/material/CssBaseline'
+import defaultTheme, { defaultThemeOptions, white, black } from '../imports/theme'
 
-class MyApp extends App {
-  componentDidMount () {
-    // Remove the server-side injected CSS.
-    const jssStyles = document.querySelector('#jss-server-side')
-    if (jssStyles && jssStyles.parentNode) {
-      jssStyles.parentNode.removeChild(jssStyles)
+// Client-side cache, shared for the whole session of the user in the browser.
+const clientSideEmotionCache = createCache({ key: 'css' })
+
+export const UpdateThemeContext = React.createContext(() => {})
+
+export default function MyApp (props: AppProps & { emotionCache?: EmotionCache }) {
+  const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
+
+  // Customisable theming options.
+  const [currentTheme, setCurrentTheme] = React.useState(defaultTheme)
+  const updateTheme = () => {
+    if (typeof localStorage !== 'object') return
+    const squareCorners = localStorage.getItem('square-corners') === 'true'
+    const lightMode = localStorage.getItem('light-mode') === 'true'
+
+    // If no square corners and no light theme...
+    if (!squareCorners && !lightMode) return setCurrentTheme(defaultTheme)
+    const newThemeOptions = { ...defaultThemeOptions }
+
+    // Set square corners.
+    if (squareCorners) {
+      if (!newThemeOptions.components) newThemeOptions.components = {}
+      newThemeOptions.components.MuiPaper = { defaultProps: { square: squareCorners } }
     }
+    // Set light theme.
+    if (lightMode) {
+      newThemeOptions.palette = { primary: white, secondary: black, mode: 'light' }
+    }
+    setCurrentTheme(createTheme(newThemeOptions))
   }
+  React.useEffect(updateTheme, [])
 
-  render () {
-    const { Component, pageProps } = this.props
-
-    return (
-      <>
-        <Head>
-          {/* Use minimum-scale=1 to enable GPU rasterization */}
-          <meta
-            name='viewport'
-            content='user-scalable=0, initial-scale=1,
-            minimum-scale=1, width=device-width, height=device-height'
-          />
-        </Head>
-        <ThemeProvider theme={theme}>
-          {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-          <CssBaseline />
+  return (
+    <CacheProvider value={emotionCache}>
+      <Head>
+        {/* Use minimum-scale=1 to enable GPU rasterization */}
+        <meta
+          name='viewport'
+          content='user-scalable=0, initial-scale=1,
+          minimum-scale=1, width=device-width, height=device-height'
+        />
+      </Head>
+      <ThemeProvider theme={currentTheme}>
+        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+        <CssBaseline />
+        <UpdateThemeContext.Provider value={updateTheme}>
           <Component {...pageProps} />
-        </ThemeProvider>
-      </>
-    )
-  }
+        </UpdateThemeContext.Provider>
+      </ThemeProvider>
+    </CacheProvider>
+  )
 }
-
-export default MyApp

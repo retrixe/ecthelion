@@ -1,6 +1,6 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import { ListItem, ListItemIcon, ListItemText, Divider } from '@material-ui/core'
+import { ListItem, ListItemIcon, ListItemText, Divider } from '@mui/material'
 import AnchorLink from '../helpers/anchorLink'
 
 const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: string }) => (

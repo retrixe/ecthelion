@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import {
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField
-} from '@material-ui/core'
+} from '@mui/material'
 
 const FolderCreationDialog = ({ handleCreateFolder, handleClose }: {
   handleCreateFolder: (name: string) => any,
@@ -19,7 +19,7 @@ const FolderCreationDialog = ({ handleCreateFolder, handleClose }: {
           <TextField
             autoFocus
             fullWidth
-            margin='dense'
+            margin='normal'
             label='Folder Name'
             value={name}
             onChange={e => setName(e.target.value)}

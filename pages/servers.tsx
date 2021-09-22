@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Typography, Paper, Divider, List, IconButton, Tooltip } from '@material-ui/core'
-import Replay from '@material-ui/icons/Replay'
+import { Button, Typography, Paper, Divider, List, IconButton, Tooltip } from '@mui/material'
+import Replay from '@mui/icons-material/Replay'
 
 import Link from 'next/link'
 import config from '../config.json'
