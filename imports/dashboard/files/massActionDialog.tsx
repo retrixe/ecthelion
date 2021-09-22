@@ -77,7 +77,7 @@ const MassActionDialog = ({
           <TextField
             autoFocus
             fullWidth
-            margin='dense'
+            margin='normal'
             label='New Path'
             value={newPath}
             onChange={e => setNewPath(e.target.value)}
