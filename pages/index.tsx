@@ -73,6 +73,7 @@ const Index = () => {
         title='Login - Ecthelion'
         description='The login page for Ecthelion, an Octyne frontend.'
         url='/'
+        index
       />
       <Layout
         appBar={

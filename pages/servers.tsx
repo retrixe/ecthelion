@@ -23,25 +23,24 @@ const Servers = () => {
   const [servers, setServers] = useState<{ [name: string]: number } | undefined>(undefined)
   const [loggedIn, setLoggedIn] = useState<boolean|null|'failed'>(null) // null - not yet fetched.
   const [server, setServer] = useState('')
-  const [refetch, setRefetch] = useState(true)
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const token = localStorage.getItem('token')
-        if (!token) return
-        const servers = await fetch(
-          ip + '/servers', { headers: { Authorization: token } }
-        )
-        const parsed = await servers.json()
-        if (servers.ok) {
-          setServers(parsed.servers)
-          setLoggedIn(true)
-        } else if (servers.status === 401) setLoggedIn('failed')
-        else setLoggedIn(false)
-      } catch (e) { setLoggedIn(false) }
-    })()
-  }, [refetch])
+  const refetch = async () => {
+    try {
+      const token = localStorage.getItem('token')
+      if (!token) return
+      const servers = await fetch(
+        ip + '/servers', { headers: { Authorization: token } }
+      )
+      const parsed = await servers.json()
+      if (servers.ok) {
+        setServers(parsed.servers)
+        setLoggedIn(true)
+      } else if (servers.status === 401) setLoggedIn('failed')
+      else setLoggedIn(false)
+    } catch (e) { setLoggedIn(false) }
+  }
+
+  useEffect(() => { refetch() }, [])
 
   const handleClose = () => setServer('')
   const runCommand = async (command: string) => {
@@ -72,7 +71,7 @@ const Servers = () => {
         ws.send('save-all')
         setTimeout(() => ws.send('end'), 1000)
         setTimeout(() => { ws.send('stop'); ws.close() }, 5000)
-        setTimeout(() => setRefetch(!refetch), 10000)
+        setTimeout(() => { refetch() }, 10000)
       }
       ws.onerror = () => setMessage('Failed to send commands!')
       return
@@ -87,7 +86,7 @@ const Servers = () => {
         body: operation === 'kill' ? 'STOP' : operation.toUpperCase()
       })
       if (res.status === 400) throw new Error()
-      else setRefetch(!refetch)
+      else refetch()
     } catch (e: any) { setMessage(e) }
   }
 
@@ -132,7 +131,7 @@ const Servers = () => {
                   <div style={{ flex: 1 }} />
                   <Tooltip title='Reload'>
                     <span style={{ marginBottom: '0.35em' }}>
-                      <IconButton onClick={() => setRefetch(!refetch)}>
+                      <IconButton onClick={async () => await refetch()}>
                         <Replay />
                       </IconButton>
                     </span>

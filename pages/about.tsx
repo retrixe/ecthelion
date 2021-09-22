@@ -49,6 +49,7 @@ const About = () => {
         title='About - Ecthelion'
         description='About this running instance of Ecthelion.'
         url='/about'
+        index
       />
       <Layout
         appBar={
