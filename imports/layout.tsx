@@ -25,7 +25,7 @@ const Layout = (props: React.PropsWithChildren<{
       }
       `}
     </style>
-    <AppBar sx={{ zIndex: theme => theme.zIndex.drawer + 1 }}>
+    <AppBar sx={{ zIndex: { xs: 'appBar', sm: 1201 /* theme => theme.zIndex.drawer + 1 */ } }}>
       <Toolbar style={{ minWidth: '100vw' }}>
         {props.appBar}
       </Toolbar>
