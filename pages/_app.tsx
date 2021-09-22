@@ -27,14 +27,11 @@ export default function MyApp (props: AppProps & { emotionCache?: EmotionCache }
     const newThemeOptions = { ...defaultThemeOptions }
 
     // Set square corners.
-    if (squareCorners) {
-      if (!newThemeOptions.components) newThemeOptions.components = {}
-      newThemeOptions.components.MuiPaper = { defaultProps: { square: squareCorners } }
-    }
+    if (!newThemeOptions.components) newThemeOptions.components = {}
+    if (squareCorners) newThemeOptions.components.MuiPaper = { defaultProps: { square: true } }
+    else if (newThemeOptions.components.MuiPaper) delete newThemeOptions.components.MuiPaper
     // Set light theme.
-    if (lightMode) {
-      newThemeOptions.palette = { primary: white, secondary: black, mode: 'light' }
-    }
+    if (lightMode) newThemeOptions.palette = { primary: white, secondary: black, mode: 'light' }
     setCurrentTheme(createTheme(newThemeOptions))
   }
   React.useEffect(updateTheme, [])
