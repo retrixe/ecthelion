@@ -66,7 +66,6 @@ const Files = (props: {
   const [massActionMenuOpen, setMassActionMenuOpen] = useState<HTMLButtonElement | null>(null)
   const [modifyFileDialogOpen, setModifyFileDialogOpen] = useState<''|'move'|'copy'|'rename'>('')
   const [massActionDialogOpen, setMassActionDialogOpen] = useState<'move' | 'copy' | 'compress' | false>(false)
-  const opip = !!(fetching)
 
   // Used to fetch files.
   const { setAuthenticated, setServerExists } = props
@@ -241,7 +240,7 @@ const Files = (props: {
             <Typography variant='h5' gutterBottom>Files - {server}</Typography>
             <div style={{ display: 'flex', alignItems: 'center', padding: 5, flexWrap: 'wrap' }}>
               {path !== '/' && (
-                <IconButton disabled={opip} onClick={() => updatePath(parentPath(path))}>
+                <IconButton disabled={fetching} onClick={() => updatePath(parentPath(path))}>
                   <ArrowBack />
                 </IconButton>
               )}
@@ -251,7 +250,7 @@ const Files = (props: {
               {filesSelected.length > 0 && (
                 <>
                   <Tooltip title='Mass Actions'>
-                    <IconButton disabled={opip} onClick={e => setMassActionMenuOpen(e.currentTarget)}>
+                    <IconButton disabled={fetching} onClick={e => setMassActionMenuOpen(e.currentTarget)}>
                       <MoreVert />
                     </IconButton>
                   </Tooltip>
@@ -260,7 +259,7 @@ const Files = (props: {
               )}
               <Tooltip title='Reload'>
                 <span>
-                  <IconButton disabled={opip} onClick={fetchFiles}>
+                  <IconButton disabled={fetching} onClick={fetchFiles}>
                     <Replay />
                   </IconButton>
                 </span>
@@ -268,7 +267,7 @@ const Files = (props: {
               <div style={{ paddingRight: 5 }} />
               <Tooltip title='Create Folder'>
                 <span>
-                  <IconButton disabled={opip} onClick={() => setFolderPromptOpen(true)}>
+                  <IconButton disabled={fetching} onClick={() => setFolderPromptOpen(true)}>
                     <CreateNewFolder />
                   </IconButton>
                 </span>
@@ -276,7 +275,7 @@ const Files = (props: {
               <div style={{ paddingRight: 5 }} />
               <Tooltip title='Create File'>
                 <span>
-                  <IconButton disabled={opip} onClick={() => setFile({ name: '', content: '' })}>
+                  <IconButton disabled={fetching} onClick={() => setFile({ name: '', content: '' })}>
                     <Add />
                   </IconButton>
                 </span>
@@ -295,8 +294,8 @@ const Files = (props: {
             {/* List of files and folders. */}
             <FileList
               path={path}
-              opip={opip}
               files={files}
+              disabled={fetching}
               filesSelected={filesSelected}
               setFilesSelected={setFilesSelected}
               onClick={(file) => {

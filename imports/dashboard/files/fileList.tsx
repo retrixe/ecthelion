@@ -8,6 +8,14 @@ import MoreVert from '@mui/icons-material/MoreVert'
 import InsertDriveFile from '@mui/icons-material/InsertDriveFile'
 import { joinPath } from './fileUtils'
 
+const rtd = (num: number) => Math.round(num * 100) / 100
+const bytesToGb = (bytes: number) => {
+  if (bytes < 1024) return bytes + ' bytes'
+  else if (bytes < (1024 * 1024)) return rtd(bytes / 1024) + ' KB'
+  else if (bytes < (1024 * 1024 * 1024)) return rtd(bytes / (1024 * 1024)) + ' MB'
+  else if (bytes < (1024 * 1024 * 1024 * 1024)) return rtd(bytes / (1024 * 1024 * 1024)) + ' GB'
+}
+
 export interface File {
   folder: boolean,
   name: string,
@@ -16,23 +24,65 @@ export interface File {
   mimeType: string
 }
 
-const FileList = ({ files, path, onClick, openMenu, filesSelected, setFilesSelected, opip }: {
+const FileListItem = ({ file, disabled, filesSelected, onItemClick, onCheck, openMenu }: {
+  file: File,
+  disabled: boolean,
+  filesSelected: string[],
+  onCheck: React.MouseEventHandler<HTMLButtonElement>,
+  onItemClick: React.MouseEventHandler<HTMLDivElement>,
+  openMenu: (fileName: string, anchorEl: HTMLButtonElement) => void,
+}) => (
+  <ListItem
+    key={file.name}
+    dense
+    button
+    disabled={disabled}
+    onClick={onItemClick}
+  >
+    <ListItemAvatar>
+      <Avatar>
+        {file.folder ? <Folder /> : <InsertDriveFile />}
+      </Avatar>
+    </ListItemAvatar>
+    <ListItemText
+      primary={file.name}
+      secondary={
+        'Last modified on ' +
+        new Date(file.lastModified * 1000).toISOString().substr(0, 19).replace('T', ' ') +
+        ' | Size: ' + bytesToGb(file.size)
+      }
+    />
+    <ListItemSecondaryAction>
+      <div>
+        <IconButton
+          disabled={disabled}
+          onClick={e => openMenu(file.name, e.currentTarget)}
+          size='large'
+        >
+          <MoreVert />
+        </IconButton>
+        <Checkbox
+          disableRipple
+          disabled={disabled}
+          checked={filesSelected.includes(file.name)}
+          onClick={onCheck}
+        />
+      </div>
+    </ListItemSecondaryAction>
+  </ListItem>
+)
+const FileListItemMemo = React.memo(FileListItem)
+
+const FileList = ({ files, path, onClick, openMenu, filesSelected, setFilesSelected, disabled }: {
   files: File[],
   path: string,
   openMenu: (fileName: string, anchorEl: HTMLButtonElement) => void,
   onClick: (name: File) => void,
   filesSelected: string[],
   setFilesSelected: (filesSelected: string[]) => void,
-  opip: boolean
+  disabled: boolean
 }) => {
   const router = useRouter()
-  const rtd = (num: number) => Math.round(num * 100) / 100
-  const bytesToGb = (bytes: number) => {
-    if (bytes < 1024) return bytes + ' bytes'
-    else if (bytes < (1024 * 1024)) return rtd(bytes / 1024) + ' KB'
-    else if (bytes < (1024 * 1024 * 1024)) return rtd(bytes / (1024 * 1024)) + ' MB'
-    else if (bytes < (1024 * 1024 * 1024 * 1024)) return rtd(bytes / (1024 * 1024 * 1024)) + ' GB'
-  }
 
   return (
     <List>
@@ -47,52 +97,22 @@ const FileList = ({ files, path, onClick, openMenu, filesSelected, setFilesSelec
           onClick={e => e.preventDefault()}
           style={{ textDecoration: 'none', color: 'inherit' }}
         >
-          <ListItem
-            key={file.name}
-            dense
-            button
-            disabled={opip}
-            onClick={(e) => e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey
+          <FileListItemMemo
+            file={file}
+            disabled={disabled}
+            openMenu={openMenu}
+            filesSelected={filesSelected}
+            onItemClick={(e) => e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey
               ? setFilesSelected(!filesSelected.includes(file.name)
                 ? [...filesSelected, file.name]
                 : filesSelected.filter(e => e !== file.name))
               : onClick(file)}
-          >
-            <ListItemAvatar>
-              <Avatar>
-                {file.folder ? <Folder /> : <InsertDriveFile />}
-              </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-              primary={file.name}
-              secondary={
-                'Last modified on ' +
-                new Date(file.lastModified * 1000).toISOString().substr(0, 19).replace('T', ' ') +
-                ' | Size: ' + bytesToGb(file.size)
-              }
-            />
-            <ListItemSecondaryAction>
-              <div>
-                <IconButton
-                  disabled={opip}
-                  onClick={e => openMenu(file.name, e.currentTarget)}
-                  size='large'
-                >
-                  <MoreVert />
-                </IconButton>
-                <Checkbox
-                  disableRipple
-                  disabled={opip}
-                  checked={filesSelected.includes(file.name)}
-                  onClick={() => {
-                    // TODO: Support shift+click.
-                    if (!filesSelected.includes(file.name)) setFilesSelected([...filesSelected, file.name])
-                    else setFilesSelected(filesSelected.filter(e => e !== file.name))
-                  }}
-                />
-              </div>
-            </ListItemSecondaryAction>
-          </ListItem>
+            onCheck={() => {
+              // TODO: Support shift+click.
+              if (!filesSelected.includes(file.name)) setFilesSelected([...filesSelected, file.name])
+              else setFilesSelected(filesSelected.filter(e => e !== file.name))
+            }}
+          />
         </a>
       )) : <ListItem><ListItemText primary='Looks like this place is empty.' /></ListItem>}
     </List>
