@@ -12,9 +12,9 @@ import PlayArrow from '@mui/icons-material/PlayArrow'
 import Comment from '@mui/icons-material/Comment'
 
 export const ServerListItem = ({ name, status, openDialog, stopStartServer }: {
-  name: string,
-  status: number,
-  openDialog: () => void,
+  name: string
+  status: number
+  openDialog: () => void
   stopStartServer: (operation: string, server: string) => void
 }) => {
   const router = useRouter()

@@ -34,7 +34,7 @@ const useInterval = (callback: (...args: any[]) => void, delay: number) => {
 
 let id = 0
 const CommandTextField = ({ ws, buffer }: {
-  ws: WebSocket | null,
+  ws: WebSocket | null
   buffer: React.MutableRefObject<Array<{ id: number, text: string }>>
 }) => {
   const [command, setCommand] = useState('')
@@ -128,7 +128,7 @@ const Console = ({ setAuthenticated }: {
         }
       } catch (e) {
         setListening(false)
-        console.error('Looks like an error occurred while connecting to console.\n' + e)
+        console.error(`Looks like an error occurred while connecting to console.\n${e}`)
       }
     })()
     return () => {

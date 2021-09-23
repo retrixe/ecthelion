@@ -4,14 +4,14 @@ import GetApp from '@mui/icons-material/GetApp'
 
 // TODO: Refresh button.
 const Editor = (props: {
-  name: string,
-  content: string,
-  siblingFiles: string[],
-  handleClose: (setContent: React.Dispatch<React.SetStateAction<string>>) => void,
-  server: string,
-  path: string,
-  ip: string,
-  setMessage: (message: string) => void,
+  name: string
+  content: string
+  siblingFiles: string[]
+  handleClose: (setContent: React.Dispatch<React.SetStateAction<string>>) => void
+  server: string
+  path: string
+  ip: string
+  setMessage: (message: string) => void
   closeText?: string
 }) => {
   const [content, setContent] = useState(props.content)

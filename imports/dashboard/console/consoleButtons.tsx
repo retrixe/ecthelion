@@ -5,7 +5,8 @@ import Close from '@mui/icons-material/Close'
 import PlayArrow from '@mui/icons-material/PlayArrow'
 
 const ConsoleButtons = ({ stopStartServer, ws }: {
-  stopStartServer: (operation: 'START' | 'STOP') => Promise<void>, ws: WebSocket | null
+  ws: WebSocket | null
+  stopStartServer: (operation: 'START' | 'STOP') => Promise<void>
 }) => {
   const smallScreen = useMediaQuery(useTheme().breakpoints.only('xs'))
   const [confirmingKill, setConfirmingKill] = useState(false)

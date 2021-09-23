@@ -5,7 +5,7 @@ import {
 } from '@mui/material'
 
 const FolderCreationDialog = ({ handleCreateFolder, handleClose }: {
-  handleCreateFolder: (name: string) => any,
+  handleCreateFolder: (name: string) => any
   handleClose: () => void
 }) => {
   const [name, setName] = useState('')

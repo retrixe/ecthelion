@@ -4,8 +4,8 @@ import {
 } from '@mui/material'
 
 const CommandDialog = ({ server, handleClose, runCommand }: {
-  server: string,
-  handleClose: () => void,
+  server: string
+  handleClose: () => void
   runCommand: (command: string) => void
 }) => {
   const [command, setCommand] = useState('')

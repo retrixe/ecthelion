@@ -21,22 +21,22 @@ const parseDuration = (durationNano: number): string => {
   units.seconds = Math.floor(leftoverSeconds / 1000)
 
   let res = ''
-  if (units.days === 1) res += units.days + ' day '
-  else if (units.days) res += units.days + ' days '
-  if (units.hours === 1) res += units.hours + ' hour '
-  else if (units.hours) res += units.hours + ' hours '
-  if (units.minutes === 1) res += units.minutes + ' minute '
-  else if (units.minutes) res += units.minutes + ' minutes '
-  if (units.seconds === 1) res += units.seconds + ' second '
-  else if (units.seconds) res += units.seconds + ' seconds '
+  if (units.days === 1) res += `${units.days} day `
+  else if (units.days) res += `${units.days} days `
+  if (units.hours === 1) res += `${units.hours} hour `
+  else if (units.hours) res += `${units.hours} hours `
+  if (units.minutes === 1) res += `${units.minutes} minute `
+  else if (units.minutes) res += `${units.minutes} minutes `
+  if (units.seconds === 1) res += `${units.seconds} second `
+  else if (units.seconds) res += `${units.seconds} seconds `
   return res.trimRight()
 }
 
 interface ServerStatus {
-  status: 0 | 1 | 2,
-  uptime: number,
-  cpuUsage: number,
-  memoryUsage: number,
+  status: 0 | 1 | 2
+  uptime: number
+  cpuUsage: number
+  memoryUsage: number
   totalMemory: number
 }
 

@@ -2,7 +2,7 @@ import React from 'react'
 import { AppBar, Toolbar } from '@mui/material'
 
 const Layout = (props: React.PropsWithChildren<{
-  appBar?: React.ReactNode,
+  appBar?: React.ReactNode
   removeToolbar?: boolean
 }>) => (
   <div

@@ -7,13 +7,13 @@ import {
 const MassActionDialog = ({
   operation, reload, files, endpoint, handleClose, path, setOverlay, setMessage
 }: {
-  reload: () => void,
-  operation: 'move' | 'copy' | 'compress',
-  setOverlay: (message: string) => void,
-  setMessage: (message: string) => void,
-  handleClose: () => void,
-  endpoint: string,
-  files: string[],
+  reload: () => void
+  operation: 'move' | 'copy' | 'compress'
+  setOverlay: (message: string) => void
+  setMessage: (message: string) => void
+  handleClose: () => void
+  endpoint: string
+  files: string[]
   path: string
 }) => {
   const [newPath, setNewPath] = useState('')

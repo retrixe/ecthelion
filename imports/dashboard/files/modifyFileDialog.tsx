@@ -5,9 +5,9 @@ import {
 } from '@mui/material'
 
 const ModifyFileDialog = ({ handleEdit, handleClose, operation, filename }: {
-  handleEdit: (path: string) => any,
-  handleClose: () => void,
-  operation: 'move'|'copy'|'rename',
+  handleEdit: (path: string) => any
+  handleClose: () => void
+  operation: 'move'|'copy'|'rename'
   filename: string
 }) => {
   const [path, setPath] = useState(operation === 'rename' ? filename : '')

@@ -40,8 +40,8 @@ let euc: (uriComponent: string | number | boolean) => string
 try { euc = encodeURIComponent } catch (e) { euc = e => e.toString() }
 
 const Files = (props: {
-  path: string,
-  setServerExists: React.Dispatch<React.SetStateAction<boolean>>,
+  path: string
+  setServerExists: React.Dispatch<React.SetStateAction<boolean>>
   setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const router = useRouter()
