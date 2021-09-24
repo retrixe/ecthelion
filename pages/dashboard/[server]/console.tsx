@@ -11,12 +11,6 @@ import ConsoleView from '../../../imports/dashboard/console/consoleView'
 import ConsoleButtons from '../../../imports/dashboard/console/consoleButtons'
 import ConnectionFailure from '../../../imports/errors/connectionFailure'
 
-const lastEls = (array: any[], size: number) => {
-  const length = array.length
-  if (length > size) return array.slice(length - (size - 1))
-  else return array
-}
-
 // https://overreacted.io/making-setinterval-declarative-with-react-hooks/
 const useInterval = (callback: (...args: any[]) => void, delay: number) => {
   const savedCallback = useRef<() => void>()
@@ -92,7 +86,16 @@ const Console = ({ setAuthenticated }: {
     if (buffer.current.length === 0) return
     const oldBuffer = buffer.current
     buffer.current = []
-    setConsole(lastEls(consoleText.concat(oldBuffer), 650))
+    if (oldBuffer.length >= 650) setConsole(oldBuffer.slice(oldBuffer.length - 650))
+    else if (consoleText.length + oldBuffer.length >= 650) {
+      const consoleSlice = consoleText.slice(consoleText.length - (650 - oldBuffer.length))
+      consoleSlice.push(...oldBuffer)
+      setConsole(consoleSlice)
+    } else {
+      const dupe = consoleText.slice(0)
+      dupe.push(...oldBuffer)
+      setConsole(dupe)
+    }
   }, 50)
 
   // Check if the user is authenticated.
@@ -117,8 +120,7 @@ const Console = ({ setAuthenticated }: {
         // This listener needs to be loaded ASAP.
         // Limit the amount of lines in memory to prevent out of memory site crashes :v
         ws.onmessage = (event) => {
-          buffer.current = buffer.current
-            .concat(event.data.split('\n').map((line: string) => ({ id: ++id, text: line })))
+          buffer.current.push(...event.data.split('\n').map((text: string) => ({ id: ++id, text })))
         }
         setWs(ws)
         // Register listeners.

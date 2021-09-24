@@ -210,6 +210,52 @@ const Files = (props: {
     setMessage('Uploaded all files successfully!')
     fetchFiles()
   }
+  // Single file logic.
+  const handleDeleteMenuButton = async () => {
+    setMenuOpen('')
+    setFetching(true)
+    const a = await request(
+      ip,
+      `/server/${server}/file?path=${euc(path + menuOpen)}`,
+      { method: 'DELETE' }
+    ).then(async e => await e.json())
+    if (a.error) setMessage(a.error)
+    setFetching(false)
+    setMenuOpen('')
+    fetchFiles()
+  }
+  const handleDownloadMenuButton = async () => {
+    setMenuOpen('')
+    const ticket = await fetch(ip + '/ott', {
+      headers: { authorization: localStorage.getItem('token') || '' }
+    })
+    const ott = encodeURIComponent((await ticket.json()).ticket)
+    window.location.href = `${ip}/server/${server}/file?ticket=${ott}&path=${path}${menuOpen}`
+  }
+  const handleDecompressMenuButton = async () => {
+    setMenuOpen('')
+    setFetching(true)
+    const a = await request(
+      ip,
+      `/server/${server}/decompress?path=${euc(path + menuOpen)}`,
+      { method: 'POST' }
+    ).then(async e => await e.json())
+    if (a.error) setMessage(a.error)
+    setFetching(false)
+    setMenuOpen('')
+    fetchFiles()
+  }
+  const handleDownloadButton = async () => {
+    setDownload('')
+    // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
+    const ticket = await fetch(ip + '/ott', {
+      headers: { authorization: localStorage.getItem('token') || '' }
+    })
+    const ott = encodeURIComponent((await ticket.json()).ticket)
+    window.location.href = download.replace('?path', `?ticket=${ott}&path`)
+  }
+
+  const selectedFile = menuOpen && files && files.find(e => e.name === menuOpen)
   return (
     <>
       {!files ? <ConnectionFailure loading={fetching} /> : (
@@ -258,27 +304,21 @@ const Files = (props: {
                 </>
               )}
               <Tooltip title='Reload'>
-                <span>
-                  <IconButton disabled={fetching} onClick={fetchFiles}>
-                    <Replay />
-                  </IconButton>
-                </span>
+                <IconButton disabled={fetching} onClick={fetchFiles}>
+                  <Replay />
+                </IconButton>
               </Tooltip>
               <div style={{ paddingRight: 5 }} />
               <Tooltip title='Create Folder'>
-                <span>
-                  <IconButton disabled={fetching} onClick={() => setFolderPromptOpen(true)}>
-                    <CreateNewFolder />
-                  </IconButton>
-                </span>
+                <IconButton disabled={fetching} onClick={() => setFolderPromptOpen(true)}>
+                  <CreateNewFolder />
+                </IconButton>
               </Tooltip>
               <div style={{ paddingRight: 5 }} />
               <Tooltip title='Create File'>
-                <span>
-                  <IconButton disabled={fetching} onClick={() => setFile({ name: '', content: '' })}>
-                    <Add />
-                  </IconButton>
-                </span>
+                <IconButton disabled={fetching} onClick={() => setFile({ name: '', content: '' })}>
+                  <Add />
+                </IconButton>
               </Tooltip>
               <div style={{ paddingRight: 5 }} />
               <UploadButton
@@ -318,20 +358,7 @@ const Files = (props: {
           onClose={() => setDownload('')}
           message={`Do you want to download '${download.replace(/%2F/g, '/').split('/').filter(e => e).pop()}'?`}
           action={[
-            <Button
-              key='download'
-              size='small'
-              color='primary'
-              onClick={async () => {
-                setDownload('')
-                // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
-                const ticket = await fetch(ip + '/ott', {
-                  headers: { authorization: localStorage.getItem('token') || '' }
-                })
-                const ott = encodeURIComponent((await ticket.json()).ticket)
-                window.location.href = download.replace('?path', `?ticket=${ott}&path`)
-              }}
-            >
+            <Button key='download' size='small' color='primary' onClick={handleDownloadButton}>
               Download
             </Button>,
             <Button key='close' size='small' aria-label='close' color='inherit' onClick={() => setDownload('')}>
@@ -372,83 +399,22 @@ const Files = (props: {
         />
       )}
       {massActionMenuOpen && (
-        <Menu
-          keepMounted
-          anchorEl={massActionMenuOpen}
-          onClose={() => setMassActionMenuOpen(null)}
-          open
-        >
+        <Menu open keepMounted anchorEl={massActionMenuOpen} onClose={() => setMassActionMenuOpen(null)}>
           <MenuItem onClick={() => setMassActionDialogOpen('move')}>Move</MenuItem>
           <MenuItem onClick={() => setMassActionDialogOpen('copy')}>Copy</MenuItem>
           <MenuItem onClick={async () => await handleFilesDelete()}>Delete</MenuItem>
           <MenuItem onClick={() => setMassActionDialogOpen('compress')}>Compress</MenuItem>
         </Menu>
       )}
-      {menuOpen && (
-        <Menu
-          keepMounted
-          anchorEl={anchorEl}
-          onClose={() => setMenuOpen('')}
-          open
-        >
+      {selectedFile && (
+        <Menu open keepMounted anchorEl={anchorEl} onClose={() => setMenuOpen('')}>
           <MenuItem onClick={() => setModifyFileDialogOpen('rename')}>Rename</MenuItem>
           <MenuItem onClick={() => setModifyFileDialogOpen('move')}>Move</MenuItem>
           <MenuItem onClick={() => setModifyFileDialogOpen('copy')}>Copy</MenuItem>
-          <MenuItem
-            onClick={async () => {
-              setMenuOpen('')
-              setFetching(true)
-              const a = await request(
-                ip,
-                `/server/${server}/file?path=${euc(path + menuOpen)}`,
-                { method: 'DELETE' }
-              ).then(async e => await e.json())
-              if (a.error) setMessage(a.error)
-              setFetching(false)
-              setMenuOpen('')
-              fetchFiles()
-            }}
-          >
-            Delete
-          </MenuItem>
-          {!(() => {
-            const file = files && files.find(e => e.name === menuOpen)
-            return file && file.folder
-          })() && (
-            <MenuItem
-              onClick={async () => {
-                setMenuOpen('')
-                const ticket = await fetch(ip + '/ott', {
-                  headers: { authorization: localStorage.getItem('token') || '' }
-                })
-                const ott = encodeURIComponent((await ticket.json()).ticket)
-                window.location.href = `${ip}/server/${server}/file?ticket=${ott}&path=${path}${menuOpen}`
-              }}
-            >
-              Download
-            </MenuItem>
-          )}
-          {(() => {
-            const file = files && files.find(e => e.name === menuOpen)
-            return file && !file.folder && file.name.endsWith('.zip')
-          })() && (
-            <MenuItem
-              onClick={async () => {
-                setMenuOpen('')
-                setFetching(true)
-                const a = await request(
-                  ip,
-                  `/server/${server}/decompress?path=${euc(path + menuOpen)}`,
-                  { method: 'POST' }
-                ).then(async e => await e.json())
-                if (a.error) setMessage(a.error)
-                setFetching(false)
-                setMenuOpen('')
-                fetchFiles()
-              }}
-            >
-              Decompress
-            </MenuItem>
+          <MenuItem onClick={handleDeleteMenuButton}>Delete</MenuItem>
+          {!selectedFile.folder && <MenuItem onClick={handleDownloadMenuButton}>Download</MenuItem>}
+          {!selectedFile.folder && selectedFile.name.endsWith('.zip') && (
+            <MenuItem onClick={handleDecompressMenuButton}>Decompress</MenuItem>
           )}
         </Menu>
       )}
