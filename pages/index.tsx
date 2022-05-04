@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { Button, Typography, TextField, Paper, styled } from '@mui/material'
+import { Button, Typography, TextField, Paper, NoSsr, styled } from '@mui/material'
 import config from '../config.json'
 import Layout from '../imports/layout'
 import Title from '../imports/helpers/title'
@@ -94,64 +94,66 @@ const Index = () => {
           overflow: 'auto'
         }}
         >
-          <Paper
-            elevation={24} sx={{
-              margin: '10px',
-              padding: '20px',
-              width: { md: '420px' },
-              maxWidth: { md: '33vw' },
-              flex: { xs: 1, md: 'initial' }
-            }}
-          >
-            <Typography variant='h5' gutterBottom>Log In</Typography>
-            <Typography>Enter your designated username and password to access Octyne.</Typography>
-            <br />
-            <TextField
-              required
-              fullWidth
-              label='Username'
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-              error={failedAuth || invalid}
-              onKeyDown={e => e.key === 'Enter' && passRef && passRef.focus()}
-              autoFocus
-            />
-            <br /><br />
-            <TextField
-              required
-              fullWidth
-              inputRef={ref => setPassRef(ref)}
-              label='Password'
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              error={failedAuth || invalid}
-              type='password'
-              onSubmit={handleLogin}
-              onKeyDown={e => e.key === 'Enter' && handleLogin()}
-            />
-            <br />
-            {(failedAuth || invalid) && (
-              <>
-                <br />
-                <Typography color='error'>
-                  {failedAuth
-                    ? 'An unknown error occurred. Is the server online?'
-                    : 'Your username or password is incorrect.'}
-                </Typography>
-              </>
-            )}
-            <br />
-            <ButtonContainer>
-              <Button
-                variant='contained'
-                color='secondary'
-                onClick={handleLogin}
-                disabled={!username || !password}
-                sx={{ width: { xs: '100%', md: 'initial' } }}
-              >Log In
-              </Button>
-            </ButtonContainer>
-          </Paper>
+          <NoSsr>
+            <Paper
+              elevation={24} sx={{
+                margin: '10px',
+                padding: '20px',
+                width: { md: '420px' },
+                maxWidth: { md: '33vw' },
+                flex: { xs: 1, md: 'initial' }
+              }}
+            >
+              <Typography variant='h5' gutterBottom>Log In</Typography>
+              <Typography>Enter your designated username and password to access Octyne.</Typography>
+              <br />
+              <TextField
+                required
+                fullWidth
+                label='Username'
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+                error={failedAuth || invalid}
+                onKeyDown={e => e.key === 'Enter' && passRef && passRef.focus()}
+                autoFocus
+              />
+              <br /><br />
+              <TextField
+                required
+                fullWidth
+                inputRef={ref => setPassRef(ref)}
+                label='Password'
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                error={failedAuth || invalid}
+                type='password'
+                onSubmit={handleLogin}
+                onKeyDown={e => e.key === 'Enter' && handleLogin()}
+              />
+              <br />
+              {(failedAuth || invalid) && (
+                <>
+                  <br />
+                  <Typography color='error'>
+                    {failedAuth
+                      ? 'An unknown error occurred. Is the server online?'
+                      : 'Your username or password is incorrect.'}
+                  </Typography>
+                </>
+              )}
+              <br />
+              <ButtonContainer>
+                <Button
+                  variant='contained'
+                  color='secondary'
+                  onClick={handleLogin}
+                  disabled={!username || !password}
+                  sx={{ width: { xs: '100%', md: 'initial' } }}
+                >Log In
+                </Button>
+              </ButtonContainer>
+            </Paper>
+          </NoSsr>
         </div>
       </Layout>
     </React.StrictMode>
