@@ -22,7 +22,7 @@ const Index = () => {
   const [passRef, setPassRef] = useState<HTMLInputElement | null>(null)
 
   const router = useRouter()
-  try { router.prefetch('/servers') } catch {} // Prefetch the servers page for performance.
+  const route = typeof router.query.redirect === 'string' ? router.query.redirect : '/servers'
 
   // Check if already logged in when the page loads.
   useEffect(() => {
@@ -31,10 +31,13 @@ const Index = () => {
     try {
       if (localStorage && localStorage.getItem('token')) {
         // Then we redirect to the new page.
-        router.push('/servers')
+        router.push(route)
+      } else {
+        // Prefetch the servers page for performance.
+        router.prefetch(route)
       }
     } catch (e) {}
-  }, [router])
+  }, [router, route])
 
   const handleLogin = async () => {
     try {
@@ -62,7 +65,7 @@ const Index = () => {
         setFailedAuth(false)
         setInvalid(false)
         // Then we redirect to the new page.
-        router.push('/servers')
+        router.push(route)
       }
     } catch (e) { setFailedAuth(true) }
   }
