@@ -117,14 +117,12 @@ const Statistics = () => {
         url={`/dashboard/${server}`}
       />
       <DashboardLayout loggedIn={nodeExists && serverExists && authenticated}>
-        <div style={{ padding: 20 }}>
-          {!nodeExists || !serverExists ? <NotExistsError node={!nodeExists} />
-            : !authenticated ? <AuthFailure /> : (
-              (!listening || !statistics) ? <ConnectionFailure loading={listening === null} /> : (
-                <StatisticsDisplayMemo statistics={statistics} />
-              )
-            )}
-        </div>
+        {!nodeExists || !serverExists ? <NotExistsError node={!nodeExists} />
+          : !authenticated ? <AuthFailure /> : (
+            (!listening || !statistics) ? <ConnectionFailure loading={listening === null} /> : (
+              <StatisticsDisplayMemo statistics={statistics} />
+            )
+          )}
       </DashboardLayout>
     </React.StrictMode>
   )

@@ -84,7 +84,14 @@ const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) 
             </List>
           </Drawer>
         )}
-        <div style={{ marginLeft: drawerVariant === 'permanent' && props.loggedIn ? '200px' : undefined }}>
+        <div style={{
+          padding: 20,
+          marginLeft: drawerVariant === 'permanent' && props.loggedIn ? '200px' : undefined,
+          flexDirection: 'column',
+          display: 'flex',
+          flex: 1
+        }}
+        >
           {props.children}
         </div>
       </Layout>

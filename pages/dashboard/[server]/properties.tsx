@@ -62,39 +62,37 @@ const ServerProperties = () => {
         url={`/dashboard/${server}/properties`}
       />
       <DashboardLayout loggedIn={nodeExists && serverExists && authenticated}>
-        <div style={{ padding: 20 }}>
-          {!nodeExists || !serverExists ? <NotExistsError node={!nodeExists} />
-            : !authenticated ? <AuthFailure /> : (
-              !listening ? <ConnectionFailure loading={listening === null} /> : (
-                <Paper style={{ padding: 20 }}>
-                  {originalFileContent === null || fileContent === null ? (
-                    <>
-                      <Typography variant='h5' gutterBottom>server.properties</Typography>
-                      <div style={{ paddingBottom: 10 }} />
-                      <Typography>
-                        Looks like this server does not have a server.properties file.
-                      </Typography>
-                    </>
-                  ) : (
-                    <>
-                      <Editor
-                        name='server.properties'
-                        content={fileContent}
-                        siblingFiles={[]}
-                        handleClose={(setContent) => setContent(originalFileContent)}
-                        server={server as string}
-                        path='/'
-                        ip={ip}
-                        setMessage={setMessage}
-                        closeText='Cancel'
-                      />
-                      {message && <Message message={message} setMessage={setMessage} />}
-                    </>
-                  )}
-                </Paper>
-              )
-            )}
-        </div>
+        {!nodeExists || !serverExists ? <NotExistsError node={!nodeExists} />
+          : !authenticated ? <AuthFailure /> : (
+            !listening ? <ConnectionFailure loading={listening === null} /> : (
+              <Paper style={{ padding: 20 }}>
+                {originalFileContent === null || fileContent === null ? (
+                  <>
+                    <Typography variant='h5' gutterBottom>server.properties</Typography>
+                    <div style={{ paddingBottom: 10 }} />
+                    <Typography>
+                      Looks like this server does not have a server.properties file.
+                    </Typography>
+                  </>
+                ) : (
+                  <>
+                    <Editor
+                      name='server.properties'
+                      content={fileContent}
+                      siblingFiles={[]}
+                      handleClose={(setContent) => setContent(originalFileContent)}
+                      server={server as string}
+                      path='/'
+                      ip={ip}
+                      setMessage={setMessage}
+                      closeText='Cancel'
+                    />
+                    {message && <Message message={message} setMessage={setMessage} />}
+                  </>
+                )}
+              </Paper>
+            )
+          )}
       </DashboardLayout>
     </React.StrictMode>
   )

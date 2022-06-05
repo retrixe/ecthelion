@@ -164,9 +164,9 @@ const Console = ({ setAuthenticated }: {
   return !listening
     ? <ConnectionFailure loading={listening === null} />
     : (
-      <Paper style={{ padding: 20 }}>
+      <Paper style={{ padding: 20, flex: 1, display: 'flex', flexDirection: 'column' }}>
         <Typography variant='h5' gutterBottom>Console - {server}</Typography>
-        <Paper variant='outlined' style={{ height: '60vh', padding: 10, color, ...terminalUi }}>
+        <Paper variant='outlined' style={{ flex: 1, padding: 10, color, ...terminalUi }}>
           <ConsoleView console={consoleText} />
         </Paper>
         <CommandTextField ws={ws} buffer={buffer} id={id} />
@@ -187,13 +187,11 @@ const ConsolePage = () => {
         url={`/dashboard/${server}/console`}
       />
       <DashboardLayout loggedIn={nodeExists && serverExists && authenticated}>
-        <div style={{ padding: 20 }}>
-          {!nodeExists || !serverExists
-            ? <NotExistsError node={!nodeExists} />
-            : !authenticated
-                ? <AuthFailure />
-                : <Console setAuthenticated={setAuthenticated} />}
-        </div>
+        {!nodeExists || !serverExists
+          ? <NotExistsError node={!nodeExists} />
+          : !authenticated
+              ? <AuthFailure />
+              : <Console setAuthenticated={setAuthenticated} />}
       </DashboardLayout>
     </React.StrictMode>
   )

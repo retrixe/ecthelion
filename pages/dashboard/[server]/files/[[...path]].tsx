@@ -16,16 +16,14 @@ const Files: NextPage<{ path: string }> = (props: { path: string }) => {
   return (
     <React.StrictMode>
       <DashboardLayout loggedIn={nodeExists && serverExists && authenticated}>
-        <div style={{ padding: 20 }}>
-          {!nodeExists || !serverExists ? <NotExistsError node={!nodeExists} />
-            : !authenticated
-                ? <AuthFailure />
-                : <FileManager
-                    path={props.path}
-                    setServerExists={setServerExists}
-                    setAuthenticated={setAuthenticated}
-                  />}
-        </div>
+        {!nodeExists || !serverExists ? <NotExistsError node={!nodeExists} />
+          : !authenticated
+              ? <AuthFailure />
+              : <FileManager
+                  path={props.path}
+                  setServerExists={setServerExists}
+                  setAuthenticated={setAuthenticated}
+                />}
       </DashboardLayout>
     </React.StrictMode>
   )

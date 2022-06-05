@@ -10,7 +10,9 @@ const Layout = (props: React.PropsWithChildren<{
       // background: 'linear-gradient(to top, #fc00ff, #00dbde)',
       minHeight: '100vh',
       width: '100vw',
-      maxWidth: '100%'
+      maxWidth: '100%',
+      display: 'flex',
+      flexDirection: 'column'
       // minWidth: '100%'
     }}
   >
