@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 
 export const AuthFailure = () => (
-  <Paper style={{ padding: 10 }}>
+  <Paper style={{ padding: 10, marginBottom: '2em' }}>
     <Typography>It doesn&apos;t look like you should be here.</Typography>
     <Link href={{ pathname: '/', query: { redirect: useRouter().asPath } }}>
       <Typography

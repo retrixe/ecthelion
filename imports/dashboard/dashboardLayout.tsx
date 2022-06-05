@@ -1,16 +1,33 @@
 import React, { useState } from 'react'
-import { Typography, Button, IconButton, Drawer, List, useMediaQuery, useTheme, Toolbar } from '@mui/material'
+import {
+  Typography, Button, IconButton, Drawer,
+  List, ListItem, ListItemIcon, ListItemText,
+  Divider, useMediaQuery, useTheme, Toolbar
+} from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import TrendingUp from '@mui/icons-material/TrendingUp'
 import Settings from '@mui/icons-material/Settings'
 import CallToAction from '@mui/icons-material/CallToAction'
 import Storage from '@mui/icons-material/Storage'
 
+import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Layout from '../layout'
-import DrawerItem from './drawerItem'
 import useOctyneData from './useOctyneData'
 import AnchorLink from '../helpers/anchorLink'
+
+const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: string }) => (
+  <AnchorLink
+    href={`/dashboard/[server]/${props.subUrl}`}
+    as={`/dashboard/${useRouter().query.server}/${props.subUrl}`}
+  >
+    <ListItem style={{ width: 200 }} button>
+      <ListItemIcon>{props.icon}</ListItemIcon>
+      <ListItemText primary={props.name} />
+    </ListItem>
+    <Divider />
+  </AnchorLink>
+)
 
 const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) => {
   const { ip } = useOctyneData()
