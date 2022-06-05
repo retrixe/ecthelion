@@ -26,9 +26,9 @@ const useInterval = (callback: (...args: any[]) => void, delay: number) => {
   }, [delay])
 }
 
-let id = 0
-const CommandTextField = ({ ws, buffer }: {
+const CommandTextField = ({ ws, id, buffer }: {
   ws: WebSocket | null
+  id: React.MutableRefObject<number>
   buffer: React.MutableRefObject<Array<{ id: number, text: string }>>
 }) => {
   const [command, setCommand] = useState('')
@@ -36,7 +36,7 @@ const CommandTextField = ({ ws, buffer }: {
   const handleCommand = () => {
     try {
       if (!command || !ws) return
-      buffer.current.push({ id: ++id, text: '>' + command })
+      buffer.current.push({ id: ++id.current, text: '>' + command })
       ws.send(command)
       setLastCmd(command)
       setCommand('')
@@ -77,9 +77,10 @@ const Console = ({ setAuthenticated }: {
   const color = useTheme().palette.mode === 'dark' ? '#d9d9d9' : undefined
   const { ip, server } = useOctyneData()
 
+  const id = useRef(0)
   const [ws, setWs] = useState<WebSocket | null>(null)
   const [listening, setListening] = useState<boolean | null>(null)
-  const [consoleText, setConsole] = useState([{ id: id, text: 'Loading...' }])
+  const [consoleText, setConsole] = useState([{ id: id.current, text: 'Loading...' }])
 
   const buffer = useRef<Array<{ id: number, text: string }>>([])
   useInterval(() => {
@@ -119,22 +120,22 @@ const Console = ({ setAuthenticated }: {
         }
         const ott = encodeURIComponent((await ticket.json()).ticket)
         const wsIp = ip.replace('http', 'ws').replace('https', 'wss')
+        let firstMessage = true
         ws = new WebSocket(`${wsIp}/server/${server}/console?ticket=${ott}`)
-        // This listener needs to be loaded ASAP.
-        // Limit the amount of lines in memory to prevent out of memory site crashes :v
-        ws.onmessage = (event) => {
-          if (!connectedOnce.current) {
-            connectedOnce.current = true
-            return
+        ws.onmessage = (event) => { // This listener needs to be loaded ASAP.
+          if (firstMessage) {
+            firstMessage = false
+            if (connectedOnce.current) return // If we already connected once, drop this message.
           }
-          buffer.current.push(...event.data.split('\n').map((text: string) => ({ id: ++id, text })))
+          if (!connectedOnce.current) connectedOnce.current = true
+          buffer.current.push(...event.data.split('\n').map((text: string) => ({ id: ++id.current, text })))
+        }
+        // TODO: Support reconnect now that we plumbed support for reconnecting in onmessage.
+        ws.onerror = () => buffer.current.push({ id: ++id.current, text: 'An unknown error occurred.' })
+        ws.onclose = () => { // takes argument event
+          buffer.current.push({ id: ++id.current, text: 'The connection to the server was abruptly closed.' })
         }
         setWs(ws)
-        // Register listeners.
-        ws.onerror = () => buffer.current.push({ id: ++id, text: 'An unknown error occurred.' })
-        ws.onclose = () => { // takes argument event
-          buffer.current.push({ id: ++id, text: 'The connection to the server was abruptly closed.' })
-        }
       } catch (e) {
         setListening(false)
         console.error(`Looks like an error occurred while connecting to console.\n${e}`)
@@ -168,7 +169,7 @@ const Console = ({ setAuthenticated }: {
         <Paper variant='outlined' style={{ height: '60vh', padding: 10, color, ...terminalUi }}>
           <ConsoleView console={consoleText} />
         </Paper>
-        <CommandTextField ws={ws} buffer={buffer} />
+        <CommandTextField ws={ws} buffer={buffer} id={id} />
         <ConsoleButtons ws={ws} stopStartServer={stopStartServer} />
       </Paper>
       )
