@@ -86,10 +86,12 @@ const Files = (props: {
     setFetching(false)
   }, [path, ip, server, setAuthenticated, setServerExists])
 
-  // Check if the user is authenticated.
+  // Fetch files on load.
+  const fetchedFiles = React.useRef(false)
   useEffect(() => {
-    if (!server) return
+    if (!server || fetchedFiles.current) return
     fetchFiles()
+    fetchedFiles.current = true
   }, [fetchFiles, server])
 
   // Update path when URL changes. Requires normalised path.
@@ -258,7 +260,7 @@ const Files = (props: {
   const selectedFile = menuOpen && files && files.find(e => e.name === menuOpen)
   return (
     <>
-      {!files ? <ConnectionFailure loading={fetching} /> : (
+      {!files || !server ? <ConnectionFailure loading={fetching && !!server} /> : (
         file !== null ? (
           <Paper style={{ padding: 20 }}>
             <Editor

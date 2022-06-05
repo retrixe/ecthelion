@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, startTransition } from 'react'
 import { Paper, Typography, TextField, Fab, useTheme } from '@mui/material'
 import Check from '@mui/icons-material/Check'
 
@@ -83,22 +83,25 @@ const Console = ({ setAuthenticated }: {
 
   const buffer = useRef<Array<{ id: number, text: string }>>([])
   useInterval(() => {
-    if (buffer.current.length === 0) return
-    const oldBuffer = buffer.current
-    buffer.current = []
-    if (oldBuffer.length >= 650) setConsole(oldBuffer.slice(oldBuffer.length - 650))
-    else if (consoleText.length + oldBuffer.length >= 650) {
-      const consoleSlice = consoleText.slice(consoleText.length - (650 - oldBuffer.length))
-      consoleSlice.push(...oldBuffer)
-      setConsole(consoleSlice)
-    } else {
-      const dupe = consoleText.slice(0)
-      dupe.push(...oldBuffer)
-      setConsole(dupe)
-    }
+    startTransition(() => {
+      if (buffer.current.length === 0) return
+      const oldBuffer = buffer.current
+      buffer.current = []
+      if (oldBuffer.length >= 650) setConsole(oldBuffer.slice(oldBuffer.length - 650))
+      else if (consoleText.length + oldBuffer.length >= 650) {
+        const consoleSlice = consoleText.slice(consoleText.length - (650 - oldBuffer.length))
+        consoleSlice.push(...oldBuffer)
+        setConsole(consoleSlice)
+      } else {
+        const dupe = consoleText.slice(0)
+        dupe.push(...oldBuffer)
+        setConsole(dupe)
+      }
+    })
   }, 50)
 
   // Check if the user is authenticated.
+  const connectedOnce = useRef(false)
   useEffect(() => {
     if (!server) return
     let ws: WebSocket
@@ -120,6 +123,10 @@ const Console = ({ setAuthenticated }: {
         // This listener needs to be loaded ASAP.
         // Limit the amount of lines in memory to prevent out of memory site crashes :v
         ws.onmessage = (event) => {
+          if (!connectedOnce.current) {
+            connectedOnce.current = true
+            return
+          }
           buffer.current.push(...event.data.split('\n').map((text: string) => ({ id: ++id, text })))
         }
         setWs(ws)
@@ -141,7 +148,7 @@ const Console = ({ setAuthenticated }: {
   const stopStartServer = async (operation: 'START' | 'STOP') => {
     try {
       const token = localStorage.getItem('token')
-      if (!token) return
+      if (!token || !server) return
       // Send the request to stop or start the server.
       const res = await fetch(ip + '/server/' + server, {
         headers: { Authorization: token },

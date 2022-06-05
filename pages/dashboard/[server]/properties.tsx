@@ -19,12 +19,13 @@ const ServerProperties = () => {
   const [fileContent, setFileContent] = useState<string | null>(null)
   const [originalFileContent, setOriginalFileContent] = useState<string | null>(null)
   const [listening, setListening] = useState<boolean | null>(null)
-  const [serverExists, setServerExists] = useState(true)
+  const [serverExists, setServerExists] = useState(!!server)
   const [authenticated, setAuthenticated] = useState(true)
 
   // Check if the user is authenticated.
+  const fetchedProperties = React.useRef(false)
   useEffect(() => {
-    if (!server || !nodeExists) return
+    if (!serverExists || !nodeExists || fetchedProperties.current) return
     (async () => {
       try {
         // Fetch server properties.
@@ -50,7 +51,8 @@ const ServerProperties = () => {
         }
       } catch (e) { setListening(false) }
     })()
-  }, [ip, server, nodeExists])
+    fetchedProperties.current = true
+  }, [ip, server, serverExists, nodeExists])
 
   return (
     <React.StrictMode>
@@ -80,7 +82,7 @@ const ServerProperties = () => {
                         content={fileContent}
                         siblingFiles={[]}
                         handleClose={(setContent) => setContent(originalFileContent)}
-                        server={server}
+                        server={server as string}
                         path='/'
                         ip={ip}
                         setMessage={setMessage}
