@@ -56,7 +56,7 @@ const Servers = () => {
               <>
                 <ServerList ip={ip} setMessage={setMessage} setFailure={setFailure} />
                 {Object.keys(nodes).map(key => (
-                  <ServerList key={key} name={key} ip={nodes[key]} setMessage={setMessage} />
+                  <ServerList key={key} node={key} ip={nodes[key]} setMessage={setMessage} />
                 ))}
               </>
               ))}

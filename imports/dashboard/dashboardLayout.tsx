@@ -16,18 +16,19 @@ import Layout from '../layout'
 import useOctyneData from './useOctyneData'
 import AnchorLink from '../helpers/anchorLink'
 
-const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: string }) => (
-  <AnchorLink
-    href={`/dashboard/[server]/${props.subUrl}`}
-    as={`/dashboard/${useRouter().query.server}/${props.subUrl}`}
-  >
-    <ListItem style={{ width: 200 }} button>
-      <ListItemIcon>{props.icon}</ListItemIcon>
-      <ListItemText primary={props.name} />
-    </ListItem>
-    <Divider />
-  </AnchorLink>
-)
+const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: string }) => {
+  const { server, node } = useRouter().query
+  const nodeUri = typeof node === 'string' ? `?node=${encodeURIComponent(node)}` : ''
+  return (
+    <AnchorLink href={`/dashboard/${server}/${props.subUrl}${nodeUri}`}>
+      <ListItem style={{ width: 200 }} button>
+        <ListItemIcon>{props.icon}</ListItemIcon>
+        <ListItemText primary={props.name} />
+      </ListItem>
+      <Divider />
+    </AnchorLink>
+  )
+}
 
 const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) => {
   const { ip } = useOctyneData()

@@ -104,7 +104,9 @@ const FileList = ({ files, path, onClick, openMenu, filesSelected, setFilesSelec
             if (!filesSelected.includes(file.name)) setFilesSelected([...filesSelected, file.name])
             else setFilesSelected(filesSelected.filter(e => e !== file.name))
           }}
-          url={`/dashboard/${router.query.server}/files${file.folder ? joinPath(path, file.name) : path}`}
+          url={`/dashboard/${router.query.server}/files${
+            file.folder ? joinPath(path, file.name) : path
+          }${typeof router.query.node === 'string' ? '?node=' + router.query.node : ''}`}
         />
       )) : <ListItem><ListItemText primary='Looks like this place is empty.' /></ListItem>}
     </div>

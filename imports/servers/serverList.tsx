@@ -5,9 +5,9 @@ import ConnectionFailure from '../errors/connectionFailure'
 import ServerListItem from './serverListItem'
 import CommandDialog from './commandDialog'
 
-const ServerList = ({ ip, name, setMessage, setFailure }: {
+const ServerList = ({ ip, node, setMessage, setFailure }: {
   ip: string
-  name?: string
+  node?: string
   setMessage: React.Dispatch<React.SetStateAction<string>>
   setFailure?: React.Dispatch<React.SetStateAction<false | 'logged out' | 'failed'>>
 }) => {
@@ -90,18 +90,17 @@ const ServerList = ({ ip, name, setMessage, setFailure }: {
     } catch (e: any) { setMessage(e) }
   }
 
-  // TODO: For these failures, you need special titles for these failures hmm.
   if (loggedIn === null || loggedIn === 'failed') {
     return (
       <ConnectionFailure
-        title={name ? 'Octyne node - ' + name : ''}
+        title={node ? 'Octyne node - ' + node : ''}
         loading={loggedIn === null}
       />
     )
   } else if (!loggedIn) {
     return (
       <Paper style={{ padding: 10 }}>
-        <Typography color='red'>Unable to authenticate with Octyne node: {name}!</Typography>
+        <Typography color='red'>Unable to authenticate with Octyne node: {node}!</Typography>
         <Typography>Make sure your nodes are pointed to the same Redis server for authentication!</Typography>
       </Paper>
     )
@@ -112,7 +111,7 @@ const ServerList = ({ ip, name, setMessage, setFailure }: {
         {server &&
           <CommandDialog server={server} handleClose={handleClose} runCommand={runCommand} />}
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Typography gutterBottom variant='h5'>Servers{name ? (' - ' + name) : ''}</Typography>
+          <Typography gutterBottom variant='h5'>Servers{node ? (' - ' + node) : ''}</Typography>
           <div style={{ flex: 1 }} />
           <Tooltip title='Reload'>
             <span style={{ marginBottom: '0.35em' }}>
@@ -127,7 +126,8 @@ const ServerList = ({ ip, name, setMessage, setFailure }: {
           {Object.keys(servers).map(server => (
             <div key={server}>
               <ServerListItem
-                name={server}
+                node={node}
+                server={server}
                 status={servers[server]}
                 openDialog={() => setServer(server)}
                 stopStartServer={stopStartServer}
