@@ -12,9 +12,10 @@ import MoreVert from '@mui/icons-material/MoreVert'
 import ArrowBack from '@mui/icons-material/ArrowBack'
 import CreateNewFolder from '@mui/icons-material/CreateNewFolder'
 
+import Title from '../../helpers/title'
 import Message from '../../helpers/message'
 import ConnectionFailure from '../../errors/connectionFailure'
-import useOctyneData from '../../../imports/dashboard/useOctyneData'
+import useOctyneData from '../useOctyneData'
 
 import Editor from './editor'
 import Overlay from './overlay'
@@ -86,12 +87,8 @@ const Files = (props: {
     setFetching(false)
   }, [path, ip, server, setAuthenticated, setServerExists])
 
-  // Fetch files on load.
-  const fetchedFiles = React.useRef(false)
-  useEffect(() => {
-    if (!server || fetchedFiles.current) return
-    fetchFiles()
-    fetchedFiles.current = true
+  useEffect(() => { // Fetch files.
+    if (server) fetchFiles()
   }, [fetchFiles, server])
 
   // Update path when URL changes. Requires normalised path.
@@ -258,8 +255,14 @@ const Files = (props: {
   }
 
   const selectedFile = menuOpen && files && files.find(e => e.name === menuOpen)
+  const titleName = file?.name ? file.name + ' - ' : (path ? path + ' - ' : '')
   return (
     <>
+      <Title
+        title={`${titleName}Files${server ? ' - ' + server : ''} - Ecthelion`}
+        description='The files of a process running on Octyne.'
+        url={`/dashboard/${server}/files`}
+      />
       {!files || !server ? <ConnectionFailure loading={fetching && !!server} /> : (
         file !== null ? (
           <Paper style={{ padding: 20 }}>
