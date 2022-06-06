@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { IconButton, Tooltip } from '@mui/material'
 import CloudUpload from '@mui/icons-material/CloudUpload'
 
-const UploadButton = ({ uploadFiles, disabled }: { uploadFiles: (files: FileList) => void, disabled: boolean }) => {
+const UploadButton = ({ uploadFiles, disabled }: {
+  uploadFiles: (files: FileList) => void
+  disabled: boolean
+}) => {
   const [files, setFiles] = useState<null | FileList>(null)
   useEffect(() => {
     if (files) {
