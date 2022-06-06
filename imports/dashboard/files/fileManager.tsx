@@ -278,7 +278,8 @@ const Files = (props: {
           </Paper>
         ) : (
           <Paper
-            style={{ padding: 20 }} onDragOver={e => {
+            style={{ padding: 20, flex: 1, display: 'flex', flexDirection: 'column' }}
+            onDragOver={e => {
               e.stopPropagation()
               e.preventDefault()
               e.dataTransfer.dropEffect = 'copy'
