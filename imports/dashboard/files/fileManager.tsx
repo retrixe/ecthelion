@@ -301,29 +301,37 @@ const Files = (props: {
               {filesSelected.length > 0 && (
                 <>
                   <Tooltip title='Mass Actions'>
-                    <IconButton disabled={fetching} onClick={e => setMassActionMenuOpen(e.currentTarget)}>
-                      <MoreVert />
-                    </IconButton>
+                    <span>
+                      <IconButton disabled={fetching} onClick={e => setMassActionMenuOpen(e.currentTarget)}>
+                        <MoreVert />
+                      </IconButton>
+                    </span>
                   </Tooltip>
                   <div style={{ paddingRight: 5 }} />
                 </>
               )}
               <Tooltip title='Reload'>
-                <IconButton disabled={fetching} onClick={fetchFiles}>
-                  <Replay />
-                </IconButton>
+                <span>
+                  <IconButton disabled={fetching} onClick={fetchFiles}>
+                    <Replay />
+                  </IconButton>
+                </span>
               </Tooltip>
               <div style={{ paddingRight: 5 }} />
               <Tooltip title='Create Folder'>
-                <IconButton disabled={fetching} onClick={() => setFolderPromptOpen(true)}>
-                  <CreateNewFolder />
-                </IconButton>
+                <span>
+                  <IconButton disabled={fetching} onClick={() => setFolderPromptOpen(true)}>
+                    <CreateNewFolder />
+                  </IconButton>
+                </span>
               </Tooltip>
               <div style={{ paddingRight: 5 }} />
               <Tooltip title='Create File'>
-                <IconButton disabled={fetching} onClick={() => setFile({ name: '', content: '' })}>
-                  <Add />
-                </IconButton>
+                <span>
+                  <IconButton disabled={fetching} onClick={() => setFile({ name: '', content: '' })}>
+                    <Add />
+                  </IconButton>
+                </span>
               </Tooltip>
               <div style={{ paddingRight: 5 }} />
               <UploadButton
