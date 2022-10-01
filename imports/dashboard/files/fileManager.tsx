@@ -65,7 +65,7 @@ const Files = (props: {
   const [download, setDownload] = useState('')
   const [folderPromptOpen, setFolderPromptOpen] = useState(false)
   const [massActionMenuOpen, setMassActionMenuOpen] = useState<HTMLButtonElement | null>(null)
-  const [modifyFileDialogOpen, setModifyFileDialogOpen] = useState<''|'move'|'copy'|'rename'>('')
+  const [modifyFileDialogOpen, setModifyFileDialogOpen] = useState<'' | 'move' | 'copy' | 'rename'>('')
   const [massActionDialogOpen, setMassActionDialogOpen] = useState<'move' | 'copy' | 'compress' | false>(false)
 
   // Used to fetch files.
@@ -145,7 +145,7 @@ const Files = (props: {
       setFetching(false)
     }
   }
-  const handleModifyFile = async (pathToMove: string, action: 'move'|'copy'|'rename') => {
+  const handleModifyFile = async (pathToMove: string, action: 'move' | 'copy' | 'rename') => {
     setModifyFileDialogOpen('')
     setMenuOpen('')
     setAnchorEl(null)
