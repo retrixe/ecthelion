@@ -23,7 +23,8 @@
     ],
     "forceConsistentCasingInFileNames": true,
     "noEmit": false,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "incremental": true
   },
   "include": [
     "pages/**/*",
