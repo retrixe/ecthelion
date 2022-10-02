@@ -119,7 +119,6 @@ const FileList = (props: FileItemData) => {
         <AutoSizer>
           {({ height, width }) => {
             // TODO: itemSize is hard-coded
-            // TODO: Find file functionality needs overriding
             const itemSize = 60
             return (
               <FixedSizeList
