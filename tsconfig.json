@@ -10,7 +10,7 @@
     "preserveConstEnums": true,
     "esModuleInterop": true,
     "sourceMap": true,
-    "outDir": "lib/",
+    "noEmit": true,
     "pretty": true,
     "skipLibCheck": true,
     "allowJs": true,
@@ -22,7 +22,6 @@
       "esnext"
     ],
     "forceConsistentCasingInFileNames": true,
-    "noEmit": false,
     "isolatedModules": true,
     "incremental": true
   },
