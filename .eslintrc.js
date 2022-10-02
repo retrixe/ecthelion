@@ -23,6 +23,7 @@ module.exports = {
     '@typescript-eslint/restrict-template-expressions': 'off',
     '@typescript-eslint/prefer-optional-chain': 'off',
     '@typescript-eslint/prefer-nullish-coalescing': 'off',
+    '@typescript-eslint/no-misused-promises': 'off',
     'multiline-ternary': 'off', // Temporary.
     // Allow no-multi-str.
     'no-multi-str': 'off'

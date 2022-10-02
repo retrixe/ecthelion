@@ -65,7 +65,7 @@ const Files = (props: {
   const [download, setDownload] = useState('')
   const [folderPromptOpen, setFolderPromptOpen] = useState(false)
   const [massActionMenuOpen, setMassActionMenuOpen] = useState<HTMLButtonElement | null>(null)
-  const [modifyFileDialogOpen, setModifyFileDialogOpen] = useState<''|'move'|'copy'|'rename'>('')
+  const [modifyFileDialogOpen, setModifyFileDialogOpen] = useState<'' | 'move' | 'copy' | 'rename'>('')
   const [massActionDialogOpen, setMassActionDialogOpen] = useState<'move' | 'copy' | 'compress' | false>(false)
 
   // Used to fetch files.
@@ -145,7 +145,7 @@ const Files = (props: {
       setFetching(false)
     }
   }
-  const handleModifyFile = async (pathToMove: string, action: 'move'|'copy'|'rename') => {
+  const handleModifyFile = async (pathToMove: string, action: 'move' | 'copy' | 'rename') => {
     setModifyFileDialogOpen('')
     setMenuOpen('')
     setAnchorEl(null)
@@ -302,29 +302,37 @@ const Files = (props: {
               {filesSelected.length > 0 && (
                 <>
                   <Tooltip title='Mass Actions'>
-                    <IconButton disabled={fetching} onClick={e => setMassActionMenuOpen(e.currentTarget)}>
-                      <MoreVert />
-                    </IconButton>
+                    <span>
+                      <IconButton disabled={fetching} onClick={e => setMassActionMenuOpen(e.currentTarget)}>
+                        <MoreVert />
+                      </IconButton>
+                    </span>
                   </Tooltip>
                   <div style={{ paddingRight: 5 }} />
                 </>
               )}
               <Tooltip title='Reload'>
-                <IconButton disabled={fetching} onClick={fetchFiles}>
-                  <Replay />
-                </IconButton>
+                <span>
+                  <IconButton disabled={fetching} onClick={fetchFiles}>
+                    <Replay />
+                  </IconButton>
+                </span>
               </Tooltip>
               <div style={{ paddingRight: 5 }} />
               <Tooltip title='Create Folder'>
-                <IconButton disabled={fetching} onClick={() => setFolderPromptOpen(true)}>
-                  <CreateNewFolder />
-                </IconButton>
+                <span>
+                  <IconButton disabled={fetching} onClick={() => setFolderPromptOpen(true)}>
+                    <CreateNewFolder />
+                  </IconButton>
+                </span>
               </Tooltip>
               <div style={{ paddingRight: 5 }} />
               <Tooltip title='Create File'>
-                <IconButton disabled={fetching} onClick={() => setFile({ name: '', content: '' })}>
-                  <Add />
-                </IconButton>
+                <span>
+                  <IconButton disabled={fetching} onClick={() => setFile({ name: '', content: '' })}>
+                    <Add />
+                  </IconButton>
+                </span>
               </Tooltip>
               <div style={{ paddingRight: 5 }} />
               <UploadButton
