@@ -1,6 +1,7 @@
 import React from 'react'
 import {
-  ListItem, ListItemButton, ListItemText, ListItemAvatar, Avatar, IconButton, Checkbox
+  ListItem, ListItemButton, ListItemText, ListItemAvatar, Avatar, IconButton, Checkbox,
+  useMediaQuery, Theme
 } from '@mui/material'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList, ListChildComponentProps } from 'react-window'
@@ -108,6 +109,18 @@ interface FileItemData { /* eslint-disable react/no-unused-prop-types */
 } /* eslint-enable react/no-unused-prop-types */
 
 const FileList = (props: FileItemData) => {
+  const px60 = useMediaQuery('(min-width:713px)')
+  const smDisplay = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm')) // 600px
+  const px60sm = useMediaQuery('(min-width:513px)')
+  const px80sm = useMediaQuery('(min-width:364px)')
+  const px100sm = useMediaQuery('(min-width:328px)')
+  const px120sm = useMediaQuery('(min-width:288px)')
+  const px140sm = useMediaQuery('(min-width:280px)')
+  const itemSize = px60 ? 60 : (
+    !smDisplay ? 80 : ( // Sidebar is hidden when smDisplay is true, use 60/80/100/120/140/160px.
+      px60sm ? 60 : (px80sm ? 80 : (px100sm ? 100 : (px120sm ? 120 : px140sm ? 140 : 160)))
+    )
+  )
   const sortedList = props.files.sort((a, b) => {
     if (a.folder && !b.folder) return -1
     else if (!a.folder && b.folder) return 1
@@ -118,8 +131,6 @@ const FileList = (props: FileItemData) => {
       {props.files.length ? (
         <AutoSizer>
           {({ height, width }) => {
-            // TODO: itemSize is hard-coded
-            const itemSize = 60
             return (
               <FixedSizeList
                 width={width}
