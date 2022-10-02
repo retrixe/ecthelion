@@ -40,8 +40,7 @@ const request = async (ip: string, endpoint: string, opts?: RequestInit): Promis
 let euc: (uriComponent: string | number | boolean) => string
 try { euc = encodeURIComponent } catch (e) { euc = e => e.toString() }
 
-const Files = (props: {
-  path: string
+const FileManager = (props: {
   setServerExists: React.Dispatch<React.SetStateAction<boolean>>
   setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
@@ -49,7 +48,7 @@ const Files = (props: {
   const { server, ip } = useOctyneData() // nodeExists is handled above.
 
   const queryPath = router.query.path
-  const path = normalisePath((Array.isArray(queryPath) ? queryPath.join('/') : queryPath) || props.path)
+  const path = normalisePath((Array.isArray(queryPath) ? queryPath.join('/') : queryPath) || '/')
 
   const [menuOpen, setMenuOpen] = useState('')
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
@@ -437,4 +436,4 @@ const Files = (props: {
   )
 }
 
-export default Files
+export default FileManager
