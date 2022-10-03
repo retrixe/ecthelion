@@ -1,7 +1,10 @@
 import React from 'react'
 import {
-  ListItem, ListItemButton, ListItemText, ListItemAvatar, Avatar, IconButton, Checkbox
+  ListItem, ListItemButton, ListItemText, ListItemAvatar, Avatar, IconButton, Checkbox,
+  useMediaQuery, Theme
 } from '@mui/material'
+import AutoSizer from 'react-virtualized-auto-sizer'
+import { FixedSizeList, ListChildComponentProps } from 'react-window'
 import { useRouter } from 'next/router'
 import Folder from '@mui/icons-material/Folder'
 import MoreVert from '@mui/icons-material/MoreVert'
@@ -26,16 +29,17 @@ export interface File {
   mimeType: string
 }
 
-const FileListItem = ({ file, disabled, filesSelected, onItemClick, onCheck, openMenu, url }: {
+const FileListItem = ({ file, style, disabled, filesSelected, onItemClick, onCheck, openMenu, url }: {
   file: File
   url: string
   disabled: boolean
   filesSelected: string[]
+  style: React.CSSProperties
   onCheck: React.MouseEventHandler<HTMLButtonElement>
   onItemClick: React.MouseEventHandler<HTMLDivElement>
   openMenu: (fileName: string, anchorEl: HTMLButtonElement) => void
 }) => (
-  <a href={url} onClick={e => e.preventDefault()} style={{ textDecoration: 'none', color: 'inherit' }}>
+  <a href={url} onClick={e => e.preventDefault()} style={{ textDecoration: 'none', color: 'inherit', ...style }}>
     <ListItem
       key={file.name} disablePadding secondaryAction={
         <div>
@@ -66,49 +70,82 @@ const FileListItem = ({ file, disabled, filesSelected, onItemClick, onCheck, ope
     </ListItem>
   </a>
 )
-const FileListItemMemo = React.memo(FileListItem)
+const FileListItemRenderer = ({ index, data, style }: ListChildComponentProps) => {
+  const { files, path, disabled, filesSelected, setFilesSelected, openMenu, onClick } = data as FileItemData
+  const router = useRouter()
+  const file = files[index]
+  return (
+    <FileListItem
+      style={style}
+      file={file}
+      key={file.name}
+      disabled={disabled}
+      openMenu={openMenu}
+      filesSelected={filesSelected}
+      onItemClick={(e) => e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey
+        ? setFilesSelected(!filesSelected.includes(file.name)
+          ? [...filesSelected, file.name]
+          : filesSelected.filter(e => e !== file.name))
+        : onClick(file)}
+      onCheck={() => {
+      // TODO: Support shift+click.
+        if (!filesSelected.includes(file.name)) setFilesSelected([...filesSelected, file.name])
+        else setFilesSelected(filesSelected.filter(e => e !== file.name))
+      }}
+      url={`/dashboard/${router.query.server}/files${file.folder ? joinPath(path, file.name) : path
+      }${typeof router.query.node === 'string' ? '?node=' + router.query.node : ''}`}
+    />
+  )
+}
 
-const FileList = ({ files, path, onClick, openMenu, filesSelected, setFilesSelected, disabled }: {
+interface FileItemData { /* eslint-disable react/no-unused-prop-types */
   files: File[]
   path: string
-  openMenu: (fileName: string, anchorEl: HTMLButtonElement) => void
-  onClick: (name: File) => void
+  disabled: boolean
   filesSelected: string[]
   setFilesSelected: (filesSelected: string[]) => void
-  disabled: boolean
-}) => {
-  const router = useRouter()
+  openMenu: (fileName: string, anchorEl: HTMLButtonElement) => void
+  onClick: (name: File) => void
+} /* eslint-enable react/no-unused-prop-types */
 
-  // const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
-  // const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
+const FileList = (props: FileItemData) => {
+  const px60 = useMediaQuery('(min-width:713px)')
+  const smDisplay = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm')) // 600px
+  const px60sm = useMediaQuery('(min-width:513px)')
+  const px80sm = useMediaQuery('(min-width:364px)')
+  const px100sm = useMediaQuery('(min-width:328px)')
+  const px120sm = useMediaQuery('(min-width:288px)')
+  const px140sm = useMediaQuery('(min-width:280px)')
+  const itemSize = px60 ? 60 : (
+    !smDisplay ? 80 : ( // Sidebar is hidden when smDisplay is true, use 60/80/100/120/140/160px.
+      px60sm ? 60 : (px80sm ? 80 : (px100sm ? 100 : (px120sm ? 120 : px140sm ? 140 : 160)))
+    )
+  )
+  const sortedList = props.files.sort((a, b) => {
+    if (a.folder && !b.folder) return -1
+    else if (!a.folder && b.folder) return 1
+    else return a.name === b.name ? 0 : (a.name > b.name ? 1 : -1)
+  })
   return (
-    <div style={{ /* maxHeight: '60vh', */ listStyle: 'none', paddingTop: 8, paddingBottom: 8 }}>
-      {files.length ? files.sort((a, b) => {
-        if (a.folder && !b.folder) return -1
-        else if (!a.folder && b.folder) return 1
-        else return a.name === b.name ? 0 : (a.name > b.name ? 1 : -1)
-      }).map(file => (
-        <FileListItemMemo
-          file={file}
-          key={file.name}
-          disabled={disabled}
-          openMenu={openMenu}
-          filesSelected={filesSelected}
-          onItemClick={(e) => e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey
-            ? setFilesSelected(!filesSelected.includes(file.name)
-              ? [...filesSelected, file.name]
-              : filesSelected.filter(e => e !== file.name))
-            : onClick(file)}
-          onCheck={() => {
-            // TODO: Support shift+click.
-            if (!filesSelected.includes(file.name)) setFilesSelected([...filesSelected, file.name])
-            else setFilesSelected(filesSelected.filter(e => e !== file.name))
+    <div style={{ flex: 1, listStyle: 'none', paddingTop: 8, paddingBottom: 8 }}>
+      {props.files.length ? (
+        <AutoSizer>
+          {({ height, width }) => {
+            return (
+              <FixedSizeList
+                width={width}
+                height={height}
+                overscanCount={5}
+                itemCount={sortedList.length}
+                itemSize={itemSize}
+                itemData={props}
+              >
+                {FileListItemRenderer}
+              </FixedSizeList>
+            )
           }}
-          url={`/dashboard/${router.query.server}/files${
-            file.folder ? joinPath(path, file.name) : path
-          }${typeof router.query.node === 'string' ? '?node=' + router.query.node : ''}`}
-        />
-      )) : <ListItem><ListItemText primary='Looks like this place is empty.' /></ListItem>}
+        </AutoSizer>
+      ) : <ListItem><ListItemText primary='Looks like this place is empty.' /></ListItem>}
     </div>
   )
 }

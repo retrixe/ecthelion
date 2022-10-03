@@ -161,7 +161,7 @@ const Console = ({ setAuthenticated }: {
     } catch (e) {}
   }
 
-  return !listening
+  return !listening // TODO: Get rid of height 60vh like Files did.
     ? <ConnectionFailure loading={listening === null} />
     : (
       <Paper style={{ padding: 20 }}>

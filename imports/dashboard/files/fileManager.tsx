@@ -1,12 +1,13 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/router'
 
 import {
   Paper, Typography, CircularProgress, IconButton, Divider, Tooltip, Menu, MenuItem, Slide,
-  Snackbar, Button
+  Snackbar, Button, TextField
 } from '@mui/material'
 import Add from '@mui/icons-material/Add'
 import Replay from '@mui/icons-material/Replay'
+import Search from '@mui/icons-material/Search'
 // import Close from '@mui/icons-material/Close'
 import MoreVert from '@mui/icons-material/MoreVert'
 import ArrowBack from '@mui/icons-material/ArrowBack'
@@ -52,6 +53,7 @@ const FileManager = (props: {
 
   const [menuOpen, setMenuOpen] = useState('')
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
+  const [search, setSearch] = useState<string | null>(null)
 
   const [overlay, setOverlay] = useState('')
   const [message, setMessage] = useState('')
@@ -66,6 +68,8 @@ const FileManager = (props: {
   const [massActionMenuOpen, setMassActionMenuOpen] = useState<HTMLButtonElement | null>(null)
   const [modifyFileDialogOpen, setModifyFileDialogOpen] = useState<'' | 'move' | 'copy' | 'rename'>('')
   const [massActionDialogOpen, setMassActionDialogOpen] = useState<'move' | 'copy' | 'compress' | false>(false)
+
+  const searchRef = useRef<HTMLInputElement>()
 
   // Used to fetch files.
   const { setAuthenticated, setServerExists } = props
@@ -89,6 +93,22 @@ const FileManager = (props: {
   useEffect(() => { // Fetch files.
     if (server) fetchFiles()
   }, [fetchFiles, server])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const eventListener = (e: KeyboardEvent) => {
+      if (e.code === 'F3' || (e.ctrlKey && e.code === 'KeyF')) {
+        e.preventDefault()
+        searchRef.current?.focus()
+        setSearch(search => typeof search === 'string' ? search : '')
+      } else if (e.code === 'Escape') {
+        e.preventDefault()
+        setSearch(null)
+      }
+    }
+    window.addEventListener('keydown', eventListener)
+    return () => window.removeEventListener('keydown', eventListener)
+  }, [])
 
   // Update path when URL changes. Requires normalised path.
   const updatePath = (newPath: string) => {
@@ -277,7 +297,8 @@ const FileManager = (props: {
           </Paper>
         ) : (
           <Paper
-            style={{ padding: 20 }} onDragOver={e => {
+            style={{ padding: 20, flex: 1, display: 'flex', flexDirection: 'column' }}
+            onDragOver={e => {
               e.stopPropagation()
               e.preventDefault()
               e.dataTransfer.dropEffect = 'copy'
@@ -316,6 +337,13 @@ const FileManager = (props: {
                   </IconButton>
                 </span>
               </Tooltip>
+              <Tooltip title='Search'>
+                <span>
+                  <IconButton onClick={() => setSearch(s => typeof s === 'string' ? null : '')}>
+                    <Search />
+                  </IconButton>
+                </span>
+              </Tooltip>
               <div style={{ paddingRight: 5 }} />
               <Tooltip title='Create Folder'>
                 <span>
@@ -341,12 +369,28 @@ const FileManager = (props: {
                 <><div style={{ paddingRight: 5 }} /><CircularProgress color='secondary' /></>
               )}
             </div>
-            <Divider />
+            <div style={{ paddingBottom: 10 }} />
+            {typeof search === 'string' && (
+              <TextField
+                autoFocus
+                fullWidth
+                size='small'
+                label='Search for files...'
+                value={search}
+                inputRef={searchRef}
+                onChange={e => setSearch(e.target.value)}
+              />
+            )}
+            {search === null && <Divider />}
             <div style={{ paddingBottom: 10 }} />
             {/* List of files and folders. */}
             <FileList
               path={path}
-              files={files}
+              files={files.filter(e => (
+                typeof search === 'string'
+                  ? e.name.toLowerCase().includes(search.toLowerCase())
+                  : true
+              ))}
               disabled={fetching}
               filesSelected={filesSelected}
               setFilesSelected={setFilesSelected}
