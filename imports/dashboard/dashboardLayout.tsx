@@ -13,7 +13,7 @@ import Storage from '@mui/icons-material/Storage'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Layout from '../layout'
-import useOctyneData from './useOctyneData'
+import config from '../../config.json'
 import AnchorLink from '../helpers/anchorLink'
 
 const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: string }) => {
@@ -31,13 +31,12 @@ const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: str
 }
 
 const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) => {
-  const { ip } = useOctyneData()
   const [openDrawer, setOpenDrawer] = useState(false)
   const drawerVariant = useMediaQuery(useTheme().breakpoints.only('xs')) ? 'temporary' : 'permanent'
   const onLogout = () => {
     const token = localStorage.getItem('token')
     if (token) {
-      fetch(`${ip}/logout`, { headers: { Authorization: token } })
+      fetch(`${config.ip}/logout`, { headers: { Authorization: token } })
       localStorage.removeItem('token')
     }
   }

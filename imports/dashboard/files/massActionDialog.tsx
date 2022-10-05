@@ -36,7 +36,7 @@ const MassActionDialog = ({
           reload()
           setMessage('Compressed all files successfully!')
         } else setMessage('Failed to compress the files!')
-      })
+      }).catch(() => setMessage('Failed to compress the files!'))
       return
     }
     let left = files.length

@@ -282,7 +282,7 @@ const FileManager = (props: {
         description='The files of a process running on Octyne.'
         url={`/dashboard/${server}/files`}
       />
-      {!files || !server ? <ConnectionFailure loading={fetching && !!server} /> : (
+      {!files || !server ? <ConnectionFailure loading={fetching} /> : (
         file !== null ? (
           <Paper style={{ padding: 20 }}>
             <Editor
