@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-
+import { KyInstance } from 'ky/distribution/types/ky'
 import {
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField
 } from '@mui/material'
 
 const MassActionDialog = ({
-  operation, reload, files, endpoint, handleClose, path, setOverlay, setMessage
+  operation, reload, files, endpoint, ky, handleClose, path, setOverlay, setMessage
 }: {
   reload: () => void
   operation: 'move' | 'copy' | 'compress'
@@ -15,6 +15,7 @@ const MassActionDialog = ({
   endpoint: string
   files: string[]
   path: string
+  ky: KyInstance
 }) => {
   const [newPath, setNewPath] = useState('')
   const move = operation === 'move' ? 'Move' : operation === 'compress' ? 'Compress' : 'Copy'
@@ -25,12 +26,8 @@ const MassActionDialog = ({
     handleClose()
     if (operation === 'compress') {
       setOverlay(`Compressing ${files.length} files on the server.`)
-      const authorization = localStorage.getItem('token')
-      if (!authorization) return
-      fetch(
-        `${endpoint}?path=${encodeURIComponent(path + newPath)}`,
-        { method: 'POST', body: JSON.stringify(files.map(f => path + f)), headers: { authorization } }
-      ).then(res => {
+      const json = files.map(f => path + f)
+      ky.post(`${endpoint}?path=${encodeURIComponent(path + newPath)}`, { json }).then(res => {
         setOverlay('')
         if (res.ok) {
           reload()
@@ -49,14 +46,14 @@ const MassActionDialog = ({
       if (!token) return
       const slash = newPath.endsWith('/') ? '' : '/'
       const body = `${operation === 'move' ? 'mv' : 'cp'}\n${path}${file}\n${newPath}${slash}${file}`
-      operations.push(fetch(
-        `${endpoint}?path=${encodeURIComponent(path + file)}`,
-        { method: 'PATCH', body, headers: { Authorization: token } }
-      ).then(async r => {
-        if (r.status !== 200) setMessage(`Error ${movingl} ${file}\n${(await r.json()).error}`)
-        setOverlay(`${moving} ${--left} out of ${files.length} files.`)
-        if (localStorage.getItem('logAsyncMassActions')) console.log(moved + ' ' + file)
-      }))
+      operations.push(ky.patch(`${endpoint}?path=${encodeURIComponent(path + file)}`, { body })
+        .then(async r => {
+          if (r.status !== 200) {
+            setMessage(`Error ${movingl} ${file}\n${(await r.json<{ error: string }>()).error}`)
+          }
+          setOverlay(`${moving} ${--left} out of ${files.length} files.`)
+          if (localStorage.getItem('logAsyncMassActions')) console.log(moved + ' ' + file)
+        }))
     }
     Promise.allSettled(operations).then(() => {
       reload()

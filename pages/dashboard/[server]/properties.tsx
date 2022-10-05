@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 
 import { Paper, Typography /* , TextField, LinearProgress, Button */ } from '@mui/material'
 
+import useKy from '../../../imports/helpers/useKy'
 import Title from '../../../imports/helpers/title'
 import Message from '../../../imports/helpers/message'
 import Editor from '../../../imports/dashboard/files/editor'
@@ -12,7 +13,8 @@ import DashboardLayout from '../../../imports/dashboard/dashboardLayout'
 import ConnectionFailure from '../../../imports/errors/connectionFailure'
 
 const ServerProperties = () => {
-  const { ip, server, nodeExists } = useOctyneData()
+  const { ip, node, server, nodeExists } = useOctyneData()
+  const ky = useKy(node)
 
   const [message, setMessage] = useState('')
   // const [saving, setSaving] = useState(false)
@@ -31,9 +33,7 @@ const ServerProperties = () => {
         // Fetch server properties.
         const authorization = localStorage.getItem('token')
         if (!authorization) return setAuthenticated(false)
-        const res = await fetch(
-          `${ip}/server/${server}/file?path=server.properties`, { headers: { authorization } }
-        )
+        const res = await ky.get(`server/${server}/file?path=server.properties`)
         const serverProperties = await res.text()
         if (res.status === 401) setAuthenticated(false)
         else if (res.status === 404) {
@@ -52,7 +52,7 @@ const ServerProperties = () => {
       } catch (e) { setListening(false) }
     })()
     fetchedProperties.current = true
-  }, [ip, server, serverExists, nodeExists])
+  }, [ky, server, serverExists, nodeExists])
 
   return (
     <React.StrictMode>
@@ -84,6 +84,7 @@ const ServerProperties = () => {
                       server={server as string}
                       path='/'
                       ip={ip}
+                      ky={ky}
                       setMessage={setMessage}
                       closeText='Cancel'
                     />

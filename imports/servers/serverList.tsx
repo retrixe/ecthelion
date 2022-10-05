@@ -4,6 +4,7 @@ import Replay from '@mui/icons-material/Replay'
 import ConnectionFailure from '../errors/connectionFailure'
 import ServerListItem from './serverListItem'
 import CommandDialog from './commandDialog'
+import useKy from '../helpers/useKy'
 
 const ServerList = ({ ip, node, setMessage, setFailure }: {
   ip: string
@@ -11,6 +12,8 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
   setMessage: React.Dispatch<React.SetStateAction<string>>
   setFailure?: React.Dispatch<React.SetStateAction<false | 'logged out' | 'failed'>>
 }) => {
+  const ky = useKy(node)
+
   const [server, setServer] = useState('')
   const [servers, setServers] = useState<{ [name: string]: number } | undefined>(undefined)
   // true/false - logged in or logged out.
@@ -28,26 +31,20 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
     try {
       const token = localStorage.getItem('token')
       if (!token) return
-      const servers = await fetch(
-        ip + '/servers', { headers: { Authorization: token } }
-      )
-      const parsed = await servers.json()
+      const servers = await ky.get('servers')
       if (servers.ok) {
-        setServers(parsed.servers)
+        setServers((await servers.json<{ servers: { [name: string]: number } }>()).servers)
         setLoggedIn(true)
       } else if (servers.status === 401) setLoggedIn(false)
       else setLoggedIn('failed')
     } catch (e) { setLoggedIn('failed') }
-  }, [ip, setLoggedIn, setServers])
+  }, [ky, setLoggedIn, setServers])
 
   useEffect(() => { refetch() }, [refetch])
 
   const handleClose = () => setServer('')
   const runCommand = async (command: string) => {
-    const ticket = await fetch(ip + '/ott', {
-      headers: { authorization: localStorage.getItem('token') || '' }
-    })
-    const ott = encodeURIComponent((await ticket.json()).ticket)
+    const ott = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
     // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
     const ws = new WebSocket(`${ip.split('http').join('ws')}/server/${server}/console?ticket=${ott}`)
     ws.onopen = () => {
@@ -61,10 +58,7 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
   const stopStartServer = async (operation: string, server: string) => {
     if (operation === 'stop') {
       // Send commands.
-      const ticket = await fetch(ip + '/ott', {
-        headers: { authorization: localStorage.getItem('token') || '' }
-      })
-      const ott = encodeURIComponent((await ticket.json()).ticket)
+      const ott = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
       // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
       const ws = new WebSocket(`${ip.split('http').join('ws')}/server/${server}/console?ticket=${ott}`)
       ws.onopen = () => {
@@ -80,9 +74,7 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
       const token = localStorage.getItem('token')
       if (token === null) return
       // Send the request to stop or start the server.
-      const res = await fetch(ip + '/server/' + server, {
-        headers: { Authorization: token },
-        method: 'POST',
+      const res = await ky.post('server/' + server, {
         body: operation === 'kill' ? 'STOP' : operation.toUpperCase()
       })
       if (res.status === 400) throw new Error()

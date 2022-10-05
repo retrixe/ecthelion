@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { KyInstance } from 'ky/distribution/types/ky'
 import { Typography, Button, TextField, LinearProgress, IconButton, Tooltip } from '@mui/material'
 import GetApp from '@mui/icons-material/GetApp'
 
@@ -11,6 +12,7 @@ const Editor = (props: {
   server: string
   path: string
   ip: string
+  ky: KyInstance
   setMessage: (message: string) => void
   closeText?: string
 }) => {
@@ -24,13 +26,8 @@ const Editor = (props: {
     // Save the file.
     const formData = new FormData()
     formData.append('upload', new Blob([content]), `${props.path}${name}`)
-    const token = localStorage.getItem('token')
-    if (!token) return
-    const r = await fetch(
-      `${props.ip}/server/${props.server}/file`,
-      { method: 'POST', body: formData, headers: { Authorization: token } }
-    )
-    if (r.status !== 200) props.setMessage((await r.json()).error)
+    const r = await props.ky.post(`server/${props.server}/file`, { body: formData })
+    if (r.status !== 200) props.setMessage((await r.json<{ error: string }>()).error)
     else props.setMessage('Saved successfully!')
     setSaving(false)
   }
@@ -58,10 +55,7 @@ const Editor = (props: {
           <Tooltip title='Download'>
             <IconButton
               onClick={async () => {
-                const ticket = await fetch(props.ip + '/ott', {
-                  headers: { authorization: localStorage.getItem('token') || '' }
-                })
-                const ott = encodeURIComponent((await ticket.json()).ticket)
+                const ott = encodeURIComponent((await props.ky.get('ott').json<{ ticket: string }>()).ticket)
                 window.location.href = `${props.ip}/server/${props.server}/file?path=${props.path}${name}&ticket=${ott}`
               }}
             >

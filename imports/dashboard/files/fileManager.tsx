@@ -17,6 +17,7 @@ import Title from '../../helpers/title'
 import Message from '../../helpers/message'
 import ConnectionFailure from '../../errors/connectionFailure'
 import useOctyneData from '../useOctyneData'
+import useKy from '../../helpers/useKy'
 
 import Editor from './editor'
 import Overlay from './overlay'
@@ -27,17 +28,6 @@ import MassActionDialog from './massActionDialog'
 import ModifyFileDialog from './modifyFileDialog'
 import FolderCreationDialog from './folderCreationDialog'
 
-const request = async (ip: string, endpoint: string, opts?: RequestInit): Promise<Response> => {
-  const token = localStorage.getItem('token')
-  if (!token) {
-    throw new Error('No token in localStorage!')
-  }
-  const res = await fetch(`${ip}${endpoint}`, {
-    ...opts, headers: { ...(opts && opts.headers ? opts.headers : {}), Authorization: token }
-  })
-  return res
-}
-
 let euc: (uriComponent: string | number | boolean) => string
 try { euc = encodeURIComponent } catch (e) { euc = e => e.toString() }
 
@@ -46,7 +36,8 @@ const FileManager = (props: {
   setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const router = useRouter()
-  const { server, ip } = useOctyneData() // nodeExists is handled above.
+  const { server, node, ip } = useOctyneData() // nodeExists is handled above.
+  const ky = useKy(node)
 
   const queryPath = router.query.path
   const path = normalisePath((Array.isArray(queryPath) ? queryPath.join('/') : queryPath) || '/')
@@ -75,9 +66,9 @@ const FileManager = (props: {
   const { setAuthenticated, setServerExists } = props
   const fetchFiles = useCallback(async () => {
     setFetching(true) // TODO: Make it show up after 1.0 seconds.
-    let files: any
+    let files: any = {}
     try {
-      files = await (await request(ip, `/server/${server}/files?path=${euc(path)}`)).json()
+      files = await ky.get(`server/${server}/files?path=${euc(path)}`).json()
     } catch (e: any) {
       setMessage(e.message)
     }
@@ -88,7 +79,7 @@ const FileManager = (props: {
       setFilesSelected([])
     }
     setFetching(false)
-  }, [path, ip, server, setAuthenticated, setServerExists])
+  }, [path, ky, server, setAuthenticated, setServerExists])
 
   useEffect(() => { // Fetch files.
     if (server) fetchFiles()
@@ -135,9 +126,9 @@ const FileManager = (props: {
     ) {
       // Fetch the file.
       setFetching(true)
-      const req = await request(ip, `/server/${server}/file?path=${euc(joinPath(path, name))}`)
+      const req = await ky.get(`server/${server}/file?path=${euc(joinPath(path, name))}`)
       if (req.status !== 200) {
-        setMessage((await req.json()).error)
+        setMessage((await req.json<{ error: string }>()).error)
         setFetching(false)
         return
       }
@@ -152,10 +143,8 @@ const FileManager = (props: {
     setFolderPromptOpen(false)
     setFetching(true)
     try {
-      const createFolder = await request(
-        ip, `/server/${server}/folder?path=/${euc(joinPath(path, name))}`,
-        { method: 'POST' }
-      ).then(async e => await e.json())
+      const endpoint = `server/${server}/folder?path=/${euc(joinPath(path, name))}`
+      const createFolder = await ky.post(endpoint).json<{ success: boolean, error: string }>()
       if (createFolder.success) fetchFiles()
       else setMessage(createFolder.error)
       setFetching(false)
@@ -176,10 +165,9 @@ const FileManager = (props: {
     }
     const target = action === 'rename' ? path + pathToMove : pathToMove
     try {
-      const editFile = await request(ip, `/server/${server}/file`, {
-        method: 'PATCH',
+      const editFile = await ky.patch(`server/${server}/file`, {
         body: `${action === 'copy' ? 'cp' : 'mv'}\n${path}${menuOpen}\n${target}`
-      }).then(async e => await e.json())
+      }).json<{ success: boolean, error: string }>()
       if (editFile.success) fetchFiles()
       else setMessage(editFile.error)
       setFetching(false)
@@ -197,11 +185,10 @@ const FileManager = (props: {
       const file = filesSelected[i]
       // setOverlay('Deleting ' + file)
       // Save the file.
-      ops.push(await request(
-        ip, `/server/${server}/file?path=${euc(path + file)}`, { method: 'DELETE' }
-      ).then(async r => {
-        if (r.status !== 200) setMessage(`Error deleting ${file}\n${(await r.json()).error}`)
-        setOverlay(`Deleting ${--total} out of ${filesSelected.length} files.`)
+      ops.push(await ky.delete(`server/${server}/file?path=${euc(path + file)}`).then(async r => {
+        if (r.status !== 200) {
+          setMessage(`Error deleting ${file}\n${(await r.json<{ error: string }>()).error}`)
+        } else setOverlay(`Deleting ${--total} out of ${filesSelected.length} files.`)
         if (localStorage.getItem('logAsyncMassActions')) console.log('Deleted ' + file)
       }))
     }
@@ -218,11 +205,10 @@ const FileManager = (props: {
       // Save the file.
       const formData = new FormData()
       formData.append('upload', file, file.name)
-      const r = await request(ip, `/server/${server}/file?path=${euc(path)}`, {
-        method: 'POST',
-        body: formData
-      })
-      if (r.status !== 200) setMessage(`Error uploading ${file.name}\n${(await r.json()).error}`)
+      const r = await ky.post(`server/${server}/file?path=${euc(path)}`, { body: formData })
+      if (r.status !== 200) {
+        setMessage(`Error uploading ${file.name}\n${(await r.json<{ error: string }>()).error}`)
+      }
       setOverlay('')
     }
     setMessage('Uploaded all files successfully!')
@@ -232,11 +218,8 @@ const FileManager = (props: {
   const handleDeleteMenuButton = async () => {
     setMenuOpen('')
     setFetching(true)
-    const a = await request(
-      ip,
-      `/server/${server}/file?path=${euc(path + menuOpen)}`,
-      { method: 'DELETE' }
-    ).then(async e => await e.json())
+    const a = await ky.delete(`server/${server}/file?path=${euc(path + menuOpen)}`)
+      .json<{ error: string }>()
     if (a.error) setMessage(a.error)
     setFetching(false)
     setMenuOpen('')
@@ -244,20 +227,14 @@ const FileManager = (props: {
   }
   const handleDownloadMenuButton = async () => {
     setMenuOpen('')
-    const ticket = await fetch(ip + '/ott', {
-      headers: { authorization: localStorage.getItem('token') || '' }
-    })
-    const ott = encodeURIComponent((await ticket.json()).ticket)
-    window.location.href = `${ip}/server/${server}/file?ticket=${ott}&path=${path}${menuOpen}`
+    const ticket = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
+    window.location.href = `${ip}/server/${server}/file?ticket=${ticket}&path=${path}${menuOpen}`
   }
   const handleDecompressMenuButton = async () => {
     setMenuOpen('')
     setFetching(true)
-    const a = await request(
-      ip,
-      `/server/${server}/decompress?path=${euc(path + menuOpen)}`,
-      { method: 'POST' }
-    ).then(async e => await e.json())
+    const a = await ky.post(`server/${server}/decompress?path=${euc(path + menuOpen)}`)
+      .json<{ error: string }>()
     if (a.error) setMessage(a.error)
     setFetching(false)
     setMenuOpen('')
@@ -266,11 +243,8 @@ const FileManager = (props: {
   const handleDownloadButton = async () => {
     setDownload('')
     // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
-    const ticket = await fetch(ip + '/ott', {
-      headers: { authorization: localStorage.getItem('token') || '' }
-    })
-    const ott = encodeURIComponent((await ticket.json()).ticket)
-    window.location.href = download.replace('?path', `?ticket=${ott}&path`)
+    const ticket = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
+    window.location.href = download.replace('?path', `?ticket=${ticket}&path`)
   }
 
   const selectedFile = menuOpen && files && files.find(e => e.name === menuOpen)
@@ -291,6 +265,7 @@ const FileManager = (props: {
               handleClose={() => { setFile(null); fetchFiles() }}
               server={server}
               path={path}
+              ky={ky}
               ip={ip}
               setMessage={setMessage}
             />
@@ -439,6 +414,7 @@ const FileManager = (props: {
       )}
       {massActionDialogOpen && (
         <MassActionDialog
+          ky={ky}
           path={path}
           files={filesSelected}
           reload={fetchFiles}
@@ -449,9 +425,7 @@ const FileManager = (props: {
             setMassActionMenuOpen(null)
             setMassActionDialogOpen(false)
           }}
-          endpoint={`${ip}/server/${server}/${
-            massActionDialogOpen === 'compress' ? 'compress' : 'file'
-          }`}
+          endpoint={`server/${server}/${massActionDialogOpen === 'compress' ? 'compress' : 'file'}`}
         />
       )}
       {massActionMenuOpen && (

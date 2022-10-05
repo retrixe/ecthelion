@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 
 import { Paper, Typography, Divider, LinearProgress } from '@mui/material'
 
+import useKy from '../../../imports/helpers/useKy'
 import Title from '../../../imports/helpers/title'
 import AuthFailure from '../../../imports/errors/authFailure'
 import NotExistsError from '../../../imports/errors/notExistsError'
@@ -78,7 +79,8 @@ const StatisticsDisplay = ({ statistics }: { statistics: ServerStatus }) => (
 const StatisticsDisplayMemo = React.memo(StatisticsDisplay)
 
 const Statistics = () => {
-  const { ip, server, nodeExists } = useOctyneData()
+  const { node, server, nodeExists } = useOctyneData()
+  const ky = useKy(node)
 
   const [listening, setListening] = useState<boolean | null>(null)
   const [statistics, setStatistics] = useState<ServerStatus | null>(null)
@@ -94,7 +96,7 @@ const Statistics = () => {
         // Fetch server stats.
         const authorization = localStorage.getItem('token')
         if (!authorization) return setAuthenticated(false)
-        const res = await fetch(`${ip}/server/${server}`, { headers: { authorization } })
+        const res = await ky.get(`server/${server}`)
         if (res.ok) {
           setListening(true)
           setServerExists(true)
@@ -107,7 +109,7 @@ const Statistics = () => {
       } catch (e) { setListening(false) }
     }, 1000)
     return () => clearInterval(interval)
-  }, [ip, server, nodeExists])
+  }, [ky, server, nodeExists])
 
   return (
     <React.StrictMode>

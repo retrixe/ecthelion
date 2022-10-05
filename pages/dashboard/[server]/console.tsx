@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, startTransition } from 'react'
 import { Paper, Typography, TextField, Fab, useTheme } from '@mui/material'
 import Check from '@mui/icons-material/Check'
 
+import useKy from '../../../imports/helpers/useKy'
 import Title from '../../../imports/helpers/title'
 import AuthFailure from '../../../imports/errors/authFailure'
 import NotExistsError from '../../../imports/errors/notExistsError'
@@ -75,7 +76,8 @@ const Console = ({ setAuthenticated }: {
   setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
 }) => {
   const color = useTheme().palette.mode === 'dark' ? '#d9d9d9' : undefined
-  const { ip, server } = useOctyneData()
+  const { ip, node, server } = useOctyneData()
+  const ky = useKy(node)
 
   const id = useRef(0)
   const [ws, setWs] = useState<WebSocket | null>(null)
@@ -110,15 +112,13 @@ const Console = ({ setAuthenticated }: {
       try {
         // Connect to console.
         // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
-        const ticket = await fetch(ip + '/ott', {
-          headers: { authorization: localStorage.getItem('token') || '' }
-        })
+        const ticket = await ky.get('ott')
         setListening(true)
         if (ticket.status === 401) {
           setAuthenticated(false)
           return
         }
-        const ott = encodeURIComponent((await ticket.json()).ticket)
+        const ott = encodeURIComponent((await ticket.json<{ ticket: string }>()).ticket)
         const wsIp = ip.replace('http', 'ws').replace('https', 'wss')
         let firstMessage = true
         ws = new WebSocket(`${wsIp}/server/${server}/console?ticket=${ott}`)
@@ -144,18 +144,14 @@ const Console = ({ setAuthenticated }: {
     return () => {
       if (ws) ws.close()
     }
-  }, [ip, server, setAuthenticated])
+  }, [ip, ky, server, setAuthenticated])
 
   const stopStartServer = async (operation: 'START' | 'STOP') => {
     try {
       const token = localStorage.getItem('token')
       if (!token || !server) return
       // Send the request to stop or start the server.
-      const res = await fetch(ip + '/server/' + server, {
-        headers: { Authorization: token },
-        method: 'POST',
-        body: operation.toUpperCase()
-      })
+      const res = await ky.post('server/' + server, { body: operation.toUpperCase() })
       if (res.status === 400) throw new Error(res.statusText)
       setListening(true)
     } catch (e) {}
