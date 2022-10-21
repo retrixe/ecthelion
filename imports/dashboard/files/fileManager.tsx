@@ -86,7 +86,7 @@ const FileManager = (props: {
   }, [fetchFiles, server])
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
+    if (typeof window === 'undefined' || file) return
     const eventListener = (e: KeyboardEvent) => {
       if (e.code === 'F3' || (e.ctrlKey && e.code === 'KeyF')) {
         e.preventDefault()
@@ -99,7 +99,7 @@ const FileManager = (props: {
     }
     window.addEventListener('keydown', eventListener)
     return () => window.removeEventListener('keydown', eventListener)
-  }, [])
+  }, [file])
 
   // Update path when URL changes. Requires normalised path.
   const updatePath = (newPath: string) => {
