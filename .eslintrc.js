@@ -10,7 +10,7 @@ module.exports = {
   parserOptions: {
     project: './tsconfig.json'
   },
-  ignorePatterns: ['.eslintrc.js'],
+  ignorePatterns: ['.eslintrc.js', 'next.config.js'],
   rules: {
     // React Hooks rules.
     'react-hooks/rules-of-hooks': 'error',

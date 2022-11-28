@@ -3,8 +3,9 @@ import Document, { Html, Head, Main, NextScript } from 'next/document'
 import createEmotionServer from '@emotion/server/create-instance'
 import createCache from '@emotion/cache'
 import theme from '../imports/theme'
+import config from '../config.json'
 
-const ico = '/favicon.png'
+const ico = `${config.basePath || ''}/favicon.png`
 
 class MyDocument extends Document {
   render () {
