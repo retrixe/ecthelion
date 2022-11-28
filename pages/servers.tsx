@@ -1,9 +1,7 @@
 import React, { useState } from 'react'
 import { Button, Typography } from '@mui/material'
-
 import Link from 'next/link'
-import config from '../config.json'
-
+import config from '../imports/config'
 import Layout from '../imports/layout'
 import Title from '../imports/helpers/title'
 import Message from '../imports/helpers/message'

@@ -4,7 +4,7 @@ module.exports = {
     node: true,
     browser: true
   },
-  extends: ['plugin:react/recommended', 'standard-with-typescript', 'standard-react', 'standard-jsx'],
+  extends: ['plugin:@next/next/recommended', 'plugin:react/recommended', 'standard-with-typescript', 'standard-react', 'standard-jsx'],
   plugins: ['react', 'react-hooks', '@typescript-eslint'],
   parser: '@typescript-eslint/parser',
   parserOptions: {

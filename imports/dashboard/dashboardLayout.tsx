@@ -13,7 +13,7 @@ import Storage from '@mui/icons-material/Storage'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Layout from '../layout'
-import config from '../../config.json'
+import config from '../config'
 import AnchorLink from '../helpers/anchorLink'
 
 const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: string }) => {

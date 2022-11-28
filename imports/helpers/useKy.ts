@@ -1,6 +1,6 @@
 import ky from 'ky'
 import React from 'react'
-import config from '../../config.json'
+import config from '../config'
 
 const nodes: { [node: string]: string } = config.nodes ?? {}
 

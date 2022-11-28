@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import config from '../../config.json'
+import config from '../config'
 import useKy from '../helpers/useKy'
 
 const nodeIps = config.nodes as { [index: string]: string }

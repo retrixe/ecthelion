@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { Button, Typography, TextField, Paper, NoSsr, styled } from '@mui/material'
-import config from '../config.json'
+import config from '../imports/config'
 import Layout from '../imports/layout'
 import Title from '../imports/helpers/title'
 import AnchorLink from '../imports/helpers/anchorLink'
