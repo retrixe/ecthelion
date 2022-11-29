@@ -11,7 +11,6 @@ import CallToAction from '@mui/icons-material/CallToAction'
 import Storage from '@mui/icons-material/Storage'
 
 import { useRouter } from 'next/router'
-import Link from 'next/link'
 import Layout from '../layout'
 import config from '../config'
 import AnchorLink from '../helpers/anchorLink'
@@ -56,9 +55,9 @@ const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) 
         </>
       )}
       <Typography variant='h6' color='inherit' style={{ flex: 1 }}>Octyne</Typography>
-      <Link href='/'>
+      <AnchorLink href='/'>
         <Button color='inherit' onClick={onLogout}>Logout</Button>
-      </Link>
+      </AnchorLink>
       <AnchorLink href='/servers'>
         <Button color='inherit'>Servers</Button>
       </AnchorLink>

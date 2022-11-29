@@ -3,8 +3,6 @@ import { useEffect, useState } from 'react'
 import config from '../config'
 import useKy from '../helpers/useKy'
 
-const nodeIps = config.nodes as { [index: string]: string }
-
 export const useOctyneAuth = () => {
   const octyneData = useOctyneData()
   const { node, server, nodeExists } = octyneData
@@ -33,11 +31,12 @@ export const useOctyneAuth = () => {
 }
 
 const useOctyneData = () => {
+  const nodes = config.nodes ?? {}
   const router = useRouter()
   const server = router.query.server && router.query.server.toString()
   const node = router.query.node && router.query.node.toString()
-  const ip = node ? nodeIps[node] : config.ip
-  const nodeExists = !node || !!(server && node && nodeIps[node])
+  const ip = node ? nodes[node] : config.ip
+  const nodeExists = !node || !!(server && node && nodes[node])
 
   return { server, node, ip, nodeExists }
 }

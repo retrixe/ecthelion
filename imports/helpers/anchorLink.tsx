@@ -1,16 +1,19 @@
 import React from 'react'
 import Link from 'next/link'
-import { Url } from 'url'
+import { UrlObject } from 'url'
 
 const AnchorLink = (props: React.PropsWithChildren<{
-  href: string | Url
-  as?: string | Url
+  href: string | UrlObject
+  as?: string | UrlObject
   prefetch?: boolean
 }>) => (
-  <Link passHref href={props.href} as={props.as} prefetch={props.prefetch}>
-    <a style={{ textDecoration: 'none', color: 'inherit' }}>
-      {props.children}
-    </a>
+  <Link
+    style={{ textDecoration: 'none', color: 'inherit' }}
+    prefetch={props.prefetch}
+    href={props.href}
+    as={props.as}
+  >
+    {props.children}
   </Link>
 )
 

@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Button, Typography } from '@mui/material'
-import Link from 'next/link'
 import config from '../imports/config'
 import Layout from '../imports/layout'
 import Title from '../imports/helpers/title'
@@ -9,7 +8,7 @@ import AnchorLink from '../imports/helpers/anchorLink'
 import ServerList from '../imports/servers/serverList'
 import AuthFailure from '../imports/errors/authFailure'
 import ConnectionFailure from '../imports/errors/connectionFailure'
-const { ip, nodes } = config as { ip: string, nodes: { [index: string]: string } }
+const { ip, nodes } = config
 
 const Servers = () => {
   const [message, setMessage] = useState('')
@@ -27,7 +26,7 @@ const Servers = () => {
         appBar={
           <>
             <Typography variant='h6' color='inherit' style={{ flex: 1 }}>Octyne</Typography>
-            <Link href='/'>
+            <AnchorLink href='/'>
               <Button
                 color='inherit'
                 onClick={() => {
@@ -39,7 +38,7 @@ const Servers = () => {
                 }}
               >Logout
               </Button>
-            </Link>
+            </AnchorLink>
             <div style={{ marginRight: 5 }} />
             <AnchorLink prefetch={false} href='/about'>
               <Button color='inherit'>About</Button>
@@ -53,7 +52,7 @@ const Servers = () => {
             : (failure === 'logged out' ? <AuthFailure /> : (
               <>
                 <ServerList ip={ip} setMessage={setMessage} setFailure={setFailure} />
-                {Object.keys(nodes).map(key => (
+                {nodes && Object.keys(nodes).map(key => (
                   <ServerList key={key} node={key} ip={nodes[key]} setMessage={setMessage} />
                 ))}
               </>
