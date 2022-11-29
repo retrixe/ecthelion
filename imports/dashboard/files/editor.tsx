@@ -25,8 +25,9 @@ const Editor = (props: {
     setSaving(true)
     // Save the file.
     const formData = new FormData()
-    formData.append('upload', new Blob([content]), `${props.path}${name}`)
-    const r = await props.ky.post(`server/${props.server}/file`, { body: formData })
+    formData.append('upload', new Blob([content]), name)
+    const path = encodeURIComponent(props.path)
+    const r = await props.ky.post(`server/${props.server}/file?path=${path}`, { body: formData })
     if (r.status !== 200) props.setMessage((await r.json<{ error: string }>()).error)
     else props.setMessage('Saved successfully!')
     setSaving(false)

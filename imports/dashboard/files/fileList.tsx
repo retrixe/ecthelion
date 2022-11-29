@@ -41,7 +41,7 @@ const FileListItem = ({ file, style, disabled, filesSelected, onItemClick, onChe
 }) => (
   <a href={url} onClick={e => e.preventDefault()} style={{ textDecoration: 'none', color: 'inherit', ...style }}>
     <ListItem
-      key={file.name} disablePadding secondaryAction={
+      key={file.name} title={file.name} disablePadding secondaryAction={
         <div>
           <IconButton
             disabled={disabled} onClick={e => openMenu(file.name, e.currentTarget)} size='large'
@@ -65,6 +65,7 @@ const FileListItem = ({ file, style, disabled, filesSelected, onItemClick, onChe
           primary={file.name}
           secondary={`Last modified ${tsts(file.lastModified)} | Size: ${bytesToGb(file.size)}`}
           secondaryTypographyProps={{/* variant: 'caption' */}}
+          primaryTypographyProps={{ noWrap: true }}
         />
       </ListItemButton>
     </ListItem>
@@ -122,9 +123,11 @@ const FileList = (props: FileItemData) => {
     )
   )
   const sortedList = props.files.sort((a, b) => {
+    const aName = a.name.toLowerCase()
+    const bName = b.name.toLowerCase()
     if (a.folder && !b.folder) return -1
     else if (!a.folder && b.folder) return 1
-    else return a.name === b.name ? 0 : (a.name > b.name ? 1 : -1)
+    else return aName === bName ? 0 : (aName > bName ? 1 : -1)
   })
   return (
     <div style={{ flex: 1, listStyle: 'none', paddingTop: 8, paddingBottom: 8 }}>

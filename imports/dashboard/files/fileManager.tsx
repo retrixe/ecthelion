@@ -233,7 +233,9 @@ const FileManager = (props: {
   const handleDecompressMenuButton = async () => {
     setMenuOpen('')
     setFetching(true)
-    const a = await ky.post(`server/${server}/decompress?path=${euc(path + menuOpen)}`)
+    const a = await ky.post(`server/${server}/decompress?path=${euc(path + menuOpen)}`, {
+      body: path + menuOpen.split('.').slice(0, -1).join('.')
+    })
       .json<{ error: string }>()
     if (a.error) setMessage(a.error)
     setFetching(false)
