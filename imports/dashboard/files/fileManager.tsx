@@ -45,6 +45,7 @@ const FileManager = (props: {
   const [menuOpen, setMenuOpen] = useState('')
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
   const [search, setSearch] = useState<string | null>(null)
+  const [searchApplies, setSearchApplies] = useState(true)
 
   const [overlay, setOverlay] = useState('')
   const [message, setMessage] = useState('')
@@ -115,7 +116,7 @@ const FileManager = (props: {
     delete route.query.path
     delete as.query.server
     delete as.query.path
-    router.push(route, as, { shallow: true })
+    router.push(route, as, { shallow: true }).then(() => setSearchApplies(false))
   }
 
   const extensions = ['properties', 'json', 'yaml', 'yml', 'xml', 'js', 'log', 'sh', 'txt']
@@ -356,6 +357,7 @@ const FileManager = (props: {
                 value={search}
                 inputRef={searchRef}
                 onChange={e => setSearch(e.target.value)}
+                onFocus={() => setSearchApplies(true)}
               />
             )}
             {search === null && <Divider />}
@@ -365,7 +367,7 @@ const FileManager = (props: {
               path={path}
               files={files.filter(e => (
                 typeof search === 'string'
-                  ? e.name.toLowerCase().includes(search.toLowerCase())
+                  ? e.name.toLowerCase().includes(search.toLowerCase()) || !searchApplies
                   : true
               ))}
               disabled={fetching}
