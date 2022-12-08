@@ -4,7 +4,7 @@ import { Button, Typography, TextField, Paper, NoSsr, styled } from '@mui/materi
 import config from '../imports/config'
 import Layout from '../imports/layout'
 import Title from '../imports/helpers/title'
-import AnchorLink from '../imports/helpers/anchorLink'
+import UnstyledLink from '../imports/helpers/unstyledLink'
 
 const ButtonContainer = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
@@ -82,9 +82,9 @@ const Index = () => {
         appBar={
           <>
             <Typography variant='h6' color='inherit' style={{ flex: 1 }}>Octyne</Typography>
-            <AnchorLink prefetch={false} href='/about'>
+            <UnstyledLink prefetch={false} href='/about'>
               <Button color='inherit'>About</Button>
-            </AnchorLink>
+            </UnstyledLink>
           </>
         }
         removeToolbar

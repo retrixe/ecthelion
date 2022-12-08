@@ -1,12 +1,12 @@
 import React from 'react'
 import { Paper, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
-import AnchorLink from '../helpers/anchorLink'
+import UnstyledLink from '../helpers/unstyledLink'
 
 export const AuthFailure = () => (
   <Paper style={{ padding: 10, marginBottom: '2em' }}>
     <Typography>It doesn&apos;t look like you should be here.</Typography>
-    <AnchorLink href={{ pathname: '/', query: { redirect: useRouter().asPath } }}>
+    <UnstyledLink href={{ pathname: '/', query: { redirect: useRouter().asPath } }}>
       <Typography
         style={{ textDecoration: 'underline' }}
         onClick={() => {
@@ -14,7 +14,7 @@ export const AuthFailure = () => (
         }}
       >Consider logging in?
       </Typography>
-    </AnchorLink>
+    </UnstyledLink>
   </Paper>
 )
 

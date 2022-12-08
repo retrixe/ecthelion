@@ -3,7 +3,7 @@ import { Button, Typography, Paper, Divider, Switch, FormGroup, FormControlLabel
 
 import Layout from '../imports/layout'
 import Title from '../imports/helpers/title'
-import AnchorLink from '../imports/helpers/anchorLink'
+import UnstyledLink from '../imports/helpers/unstyledLink'
 import { UpdateThemeContext } from './_app'
 import packageJson from '../package.json'
 
@@ -55,9 +55,9 @@ const About = () => {
         appBar={
           <>
             <Typography variant='h6' color='inherit' style={{ flex: 1 }}>Octyne</Typography>
-            <AnchorLink href={loggedIn ? '/servers' : '/'}>
+            <UnstyledLink href={loggedIn ? '/servers' : '/'}>
               <Button color='inherit'>{loggedIn ? 'Servers' : 'Login'}</Button>
-            </AnchorLink>
+            </UnstyledLink>
           </>
         }
       >

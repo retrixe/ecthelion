@@ -13,19 +13,19 @@ import Storage from '@mui/icons-material/Storage'
 import { useRouter } from 'next/router'
 import Layout from '../layout'
 import config from '../config'
-import AnchorLink from '../helpers/anchorLink'
+import UnstyledLink from '../helpers/unstyledLink'
 
 const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: string }) => {
   const { server, node } = useRouter().query
   const nodeUri = typeof node === 'string' ? `?node=${encodeURIComponent(node)}` : ''
   return (
-    <AnchorLink href={`/dashboard/${server}/${props.subUrl}${nodeUri}`}>
+    <UnstyledLink href={`/dashboard/${server}/${props.subUrl}${nodeUri}`}>
       <ListItemButton style={{ width: 200 }}>
         <ListItemIcon>{props.icon}</ListItemIcon>
         <ListItemText primary={props.name} />
       </ListItemButton>
       <Divider />
-    </AnchorLink>
+    </UnstyledLink>
   )
 }
 
@@ -55,12 +55,12 @@ const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) 
         </>
       )}
       <Typography variant='h6' color='inherit' style={{ flex: 1 }}>Octyne</Typography>
-      <AnchorLink href='/'>
+      <UnstyledLink href='/'>
         <Button color='inherit' onClick={onLogout}>Logout</Button>
-      </AnchorLink>
-      <AnchorLink href='/servers'>
+      </UnstyledLink>
+      <UnstyledLink href='/servers'>
         <Button color='inherit'>Servers</Button>
-      </AnchorLink>
+      </UnstyledLink>
     </>
   )
   return (

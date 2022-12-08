@@ -1,5 +1,4 @@
 import React from 'react'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import {
   ListItem, ListItemAvatar, ListItemButton, ListItemText, Avatar, Tooltip, IconButton
@@ -10,6 +9,7 @@ import Stop from '@mui/icons-material/Stop'
 import Close from '@mui/icons-material/Close'
 import PlayArrow from '@mui/icons-material/PlayArrow'
 import Comment from '@mui/icons-material/Comment'
+import UnstyledLink from '../helpers/unstyledLink'
 
 export const ServerListItem = ({ server, node, status, openDialog, stopStartServer }: {
   node?: string
@@ -21,7 +21,7 @@ export const ServerListItem = ({ server, node, status, openDialog, stopStartServ
   const router = useRouter()
   const href = { pathname: '/dashboard/[server]/console', query: node ? { server, node } : { server } }
   return (
-    <Link href={href} style={{ textDecoration: 'none', color: 'inherit' }} onClick={e => e.preventDefault()}>
+    <UnstyledLink href={href} onClick={e => e.preventDefault()}>
       <ListItem
         disablePadding
         secondaryAction={
@@ -69,7 +69,7 @@ export const ServerListItem = ({ server, node, status, openDialog, stopStartServ
           />
         </ListItemButton>
       </ListItem>
-    </Link>
+    </UnstyledLink>
   )
 }
 

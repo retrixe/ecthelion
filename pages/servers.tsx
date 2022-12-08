@@ -4,7 +4,7 @@ import config from '../imports/config'
 import Layout from '../imports/layout'
 import Title from '../imports/helpers/title'
 import Message from '../imports/helpers/message'
-import AnchorLink from '../imports/helpers/anchorLink'
+import UnstyledLink from '../imports/helpers/unstyledLink'
 import ServerList from '../imports/servers/serverList'
 import AuthFailure from '../imports/errors/authFailure'
 import ConnectionFailure from '../imports/errors/connectionFailure'
@@ -26,7 +26,7 @@ const Servers = () => {
         appBar={
           <>
             <Typography variant='h6' color='inherit' style={{ flex: 1 }}>Octyne</Typography>
-            <AnchorLink href='/'>
+            <UnstyledLink href='/'>
               <Button
                 color='inherit'
                 onClick={() => {
@@ -38,11 +38,11 @@ const Servers = () => {
                 }}
               >Logout
               </Button>
-            </AnchorLink>
+            </UnstyledLink>
             <div style={{ marginRight: 5 }} />
-            <AnchorLink prefetch={false} href='/about'>
+            <UnstyledLink prefetch={false} href='/about'>
               <Button color='inherit'>About</Button>
-            </AnchorLink>
+            </UnstyledLink>
           </>
         }
       >

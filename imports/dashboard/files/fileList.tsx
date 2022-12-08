@@ -1,5 +1,4 @@
 import React from 'react'
-import Link from 'next/link'
 import {
   ListItem, ListItemButton, ListItemText, ListItemAvatar, Avatar, IconButton, Checkbox,
   useMediaQuery, Theme
@@ -10,6 +9,7 @@ import { useRouter } from 'next/router'
 import Folder from '@mui/icons-material/Folder'
 import MoreVert from '@mui/icons-material/MoreVert'
 import InsertDriveFile from '@mui/icons-material/InsertDriveFile'
+import UnstyledLink from '../../helpers/unstyledLink'
 import { joinPath } from './fileUtils'
 
 const rtd = (num: number) => Math.round(num * 100) / 100
@@ -40,11 +40,7 @@ const FileListItem = ({ file, style, disabled, filesSelected, onItemClick, onChe
   onItemClick: React.MouseEventHandler<HTMLDivElement>
   openMenu: (fileName: string, anchorEl: HTMLButtonElement) => void
 }) => (
-  <Link
-    href={url}
-    onClick={e => e.preventDefault()}
-    style={{ textDecoration: 'none', color: 'inherit', ...style }}
-  >
+  <UnstyledLink href={url} style={style} onClick={e => e.preventDefault()}>
     <ListItem
       key={file.name}
       title={file.name}
@@ -77,7 +73,7 @@ const FileListItem = ({ file, style, disabled, filesSelected, onItemClick, onChe
         />
       </ListItemButton>
     </ListItem>
-  </Link>
+  </UnstyledLink>
 )
 const FileListItemRenderer = ({ index, data, style }: ListChildComponentProps) => {
   const { files, path, disabled, filesSelected, setFilesSelected, openMenu, onClick } = data as FileItemData
