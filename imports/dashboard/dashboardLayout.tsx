@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import {
   Typography, Button, IconButton, Drawer,
-  List, ListItem, ListItemIcon, ListItemText,
+  List, ListItemButton, ListItemIcon, ListItemText,
   Divider, useMediaQuery, useTheme, Toolbar
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
@@ -20,10 +20,10 @@ const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: str
   const nodeUri = typeof node === 'string' ? `?node=${encodeURIComponent(node)}` : ''
   return (
     <AnchorLink href={`/dashboard/${server}/${props.subUrl}${nodeUri}`}>
-      <ListItem style={{ width: 200 }} button>
+      <ListItemButton style={{ width: 200 }}>
         <ListItemIcon>{props.icon}</ListItemIcon>
         <ListItemText primary={props.name} />
-      </ListItem>
+      </ListItemButton>
       <Divider />
     </AnchorLink>
   )

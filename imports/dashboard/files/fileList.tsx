@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 import {
   ListItem, ListItemButton, ListItemText, ListItemAvatar, Avatar, IconButton, Checkbox,
   useMediaQuery, Theme
@@ -39,9 +40,16 @@ const FileListItem = ({ file, style, disabled, filesSelected, onItemClick, onChe
   onItemClick: React.MouseEventHandler<HTMLDivElement>
   openMenu: (fileName: string, anchorEl: HTMLButtonElement) => void
 }) => (
-  <a href={url} onClick={e => e.preventDefault()} style={{ textDecoration: 'none', color: 'inherit', ...style }}>
+  <Link
+    href={url}
+    onClick={e => e.preventDefault()}
+    style={{ textDecoration: 'none', color: 'inherit', ...style }}
+  >
     <ListItem
-      key={file.name} title={file.name} disablePadding secondaryAction={
+      key={file.name}
+      title={file.name}
+      disablePadding
+      secondaryAction={
         <div>
           <IconButton
             disabled={disabled} onClick={e => openMenu(file.name, e.currentTarget)} size='large'
@@ -55,7 +63,7 @@ const FileListItem = ({ file, style, disabled, filesSelected, onItemClick, onChe
             onClick={onCheck}
           />
         </div>
-    }
+      }
     >
       <ListItemButton dense style={{/* paddingRight: 96 */}} disabled={disabled} onClick={onItemClick}>
         <ListItemAvatar>
@@ -69,7 +77,7 @@ const FileListItem = ({ file, style, disabled, filesSelected, onItemClick, onChe
         />
       </ListItemButton>
     </ListItem>
-  </a>
+  </Link>
 )
 const FileListItemRenderer = ({ index, data, style }: ListChildComponentProps) => {
   const { files, path, disabled, filesSelected, setFilesSelected, openMenu, onClick } = data as FileItemData
