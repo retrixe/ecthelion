@@ -5,6 +5,7 @@ import config from '../config'
 const nodes: { [node: string]: string } = config.nodes ?? {}
 
 const defaultKy = ky.create({
+  throwHttpErrors: false,
   prefixUrl: config.ip,
   hooks: {
     beforeRequest: [
