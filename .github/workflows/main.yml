@@ -19,6 +19,14 @@ jobs:
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
+        with:
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Create mock config.json
+        run: echo '{"ip":"http://localhost:42069"}' > config.json
 
       - name: Run linter
         run: yarn lint
