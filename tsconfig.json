@@ -28,6 +28,7 @@
   "include": [
     "pages/**/*",
     "imports/**/*",
+    "__tests__/**/*",
     "index.d.ts",
     "next-env.d.ts"
   ],
