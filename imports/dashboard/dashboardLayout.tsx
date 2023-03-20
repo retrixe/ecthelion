@@ -6,7 +6,6 @@ import {
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import TrendingUp from '@mui/icons-material/TrendingUp'
-import Settings from '@mui/icons-material/Settings'
 import CallToAction from '@mui/icons-material/CallToAction'
 import Storage from '@mui/icons-material/Storage'
 
@@ -77,7 +76,6 @@ const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) 
             <List>
               <DrawerItem name='Statistics' subUrl='' icon={<TrendingUp />} />
               <DrawerItem name='Console' subUrl='console' icon={<CallToAction />} />
-              <DrawerItem name='Properties' subUrl='properties' icon={<Settings />} />
               <DrawerItem name='Files' subUrl='files' icon={<Storage />} />
             </List>
           </Drawer>
