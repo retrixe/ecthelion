@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, startTransition } from 'react'
+import React, { useState, useEffect, useRef, startTransition, useCallback } from 'react'
 import { Paper, Typography, TextField, Fab, useTheme } from '@mui/material'
 import Check from '@mui/icons-material/Check'
 
@@ -103,48 +103,64 @@ const Console = ({ setAuthenticated }: {
     })
   }, 50)
 
-  // Check if the user is authenticated.
-  const connectedOnce = useRef(false)
-  useEffect(() => {
+  const connectedOnce = useRef(false) // Prevents firstMessage from being added again and again.
+  const connectToServer = useCallback(async (reconnect: boolean, ignore: { current?: boolean }) => {
     if (!server) return
-    let ws: WebSocket
-    (async () => {
-      try {
-        // Connect to console.
-        // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
-        const ticket = await ky.get('ott')
-        setListening(true)
-        if (ticket.status === 401) {
-          setAuthenticated(false)
-          return
-        }
-        const ott = encodeURIComponent((await ticket.json<{ ticket: string }>()).ticket)
-        const wsIp = ip.replace('http', 'ws').replace('https', 'wss')
-        let firstMessage = true
-        ws = new WebSocket(`${wsIp}/server/${server}/console?ticket=${ott}`)
-        ws.onmessage = (event) => { // This listener needs to be loaded ASAP.
-          if (firstMessage) {
-            firstMessage = false
-            if (connectedOnce.current) return // If we already connected once, drop this message.
-          }
-          if (!connectedOnce.current) connectedOnce.current = true
-          buffer.current.push(...event.data.split('\n').map((text: string) => ({ id: ++id.current, text })))
-        }
-        // TODO: Support reconnect now that we plumbed support for reconnecting in onmessage.
-        ws.onerror = () => buffer.current.push({ id: ++id.current, text: 'An unknown error occurred.' })
-        ws.onclose = () => { // takes argument event
-          buffer.current.push({ id: ++id.current, text: 'The connection to the server was abruptly closed.' })
-        }
-        setWs(ws)
-      } catch (e) {
-        setListening(false)
-        console.error(`Looks like an error occurred while connecting to console.\n${e}`)
+    try {
+      // Connect to console.
+      // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
+      const ticket = await ky.get('ott')
+      if (ignore.current) return // If useEffect was called again by React, drop this.
+      setListening(true)
+      if (ticket.status === 401) {
+        setAuthenticated(false)
+        return
       }
-    })()
-    return () => {
-      if (ws) ws.close()
+      const ott = encodeURIComponent((await ticket.json<{ ticket: string }>()).ticket)
+      const wsIp = ip.replace('http', 'ws').replace('https', 'wss')
+      let firstMessage = true
+      const newWS = new WebSocket(`${wsIp}/server/${server}/console?ticket=${ott}`)
+      newWS.onmessage = (event) => {
+        if (firstMessage) {
+          firstMessage = false
+          if (reconnect || connectedOnce.current) {
+            buffer.current.push({ id: ++id.current, text: '[Ecthelion] Reconnected successfully!' })
+            return
+          }
+          connectedOnce.current = true
+        }
+        buffer.current.push(...event.data.split('\n').map((text: string) => ({ id: ++id.current, text })))
+      }
+      newWS.onerror = () => buffer.current.push({
+        id: ++id.current,
+        text: '[Ecthelion] An unknown error occurred!'
+      })
+      newWS.onclose = event => {
+        if (event.code === 4999) return
+        buffer.current.push({
+          id: ++id.current,
+          text: '[Ecthelion] The server connection was closed! Reconnecting in 3s...'
+        })
+        setTimeout(() => { connectToServer(true, {}) }, 3000)
+      }
+      setWs(newWS)
+    } catch (e) {
+      setListening(false)
+      console.error(`An error occurred while connecting to console.\n${e}`)
     }
   }, [ip, ky, server, setAuthenticated])
+  useEffect(() => {
+    if (!ws) {
+      const ignore = { current: false } // Required to handle React.StrictMode correctly.
+      connectToServer(false, ignore)
+      return () => { ignore.current = true }
+    } else {
+      return () => {
+        setWs(null) // Remove WebSocket after hot reload to prompt reconnect.
+        ws.close(4999, 'manual close')
+      }
+    }
+  }, [connectToServer, ws])
 
   const stopStartServer = async (operation: 'START' | 'STOP') => {
     try {
