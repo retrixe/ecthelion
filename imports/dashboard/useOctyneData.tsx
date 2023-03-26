@@ -16,8 +16,6 @@ export const useOctyneAuth = () => {
     (async () => {
       try {
         if (!server || !nodeExists) return
-        const authorization = localStorage.getItem('token')
-        if (!authorization) return setAuth(false)
         const servers = await ky.get('servers')
         const resp = await servers.json<{ [server: string]: number }>()
         if (servers.ok) setServerExists(!!resp[server])

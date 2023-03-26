@@ -94,8 +94,6 @@ const Statistics = () => {
     const interval = setInterval(async () => {
       try {
         // Fetch server stats.
-        const authorization = localStorage.getItem('token')
-        if (!authorization) return setAuthenticated(false)
         const res = await ky.get(`server/${server}`)
         if (res.ok) {
           setListening(true)

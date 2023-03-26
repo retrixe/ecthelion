@@ -42,8 +42,6 @@ const MassActionDialog = ({
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
       // setOverlay(file)
-      const token = localStorage.getItem('token')
-      if (!token) return
       const slash = newPath.endsWith('/') ? '' : '/'
       const body = `${operation === 'move' ? 'mv' : 'cp'}\n${path}${file}\n${newPath}${slash}${file}`
       operations.push(ky.patch(`${endpoint}?path=${encodeURIComponent(path + file)}`, { body })

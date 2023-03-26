@@ -164,8 +164,7 @@ const Console = ({ setAuthenticated }: {
 
   const stopStartServer = async (operation: 'START' | 'STOP') => {
     try {
-      const token = localStorage.getItem('token')
-      if (!token || !server) return
+      if (!server) return
       // Send the request to stop or start the server.
       const res = await ky.post('server/' + server, { body: operation.toUpperCase() })
       if (res.status === 400) throw new Error(res.statusText)
