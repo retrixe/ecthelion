@@ -30,7 +30,7 @@ export const ServerListItem = ({ server, node, status, openDialog, stopStartServ
             <Tooltip title={status !== 1 ? 'Start' : 'Stop'}>
               <IconButton
                 aria-label={status !== 1 ? 'start' : 'stop'}
-                onClick={() => (stopStartServer(status !== 1 ? 'start' : 'stop', server))}
+                onClick={() => (stopStartServer(status !== 1 ? 'START' : 'TERM', server))}
                 color='default'
               >
                 {status !== 1 ? <PlayArrow /> : <Stop />}
@@ -40,7 +40,7 @@ export const ServerListItem = ({ server, node, status, openDialog, stopStartServ
               <Tooltip title='Kill'>
                 <IconButton
                   aria-label='kill'
-                  onClick={() => (stopStartServer('kill', server))}
+                  onClick={() => (stopStartServer('KILL', server))}
                   color='primary'
                 >
                   <Close />

@@ -4,9 +4,8 @@ import Stop from '@mui/icons-material/Stop'
 import Close from '@mui/icons-material/Close'
 import PlayArrow from '@mui/icons-material/PlayArrow'
 
-const ConsoleButtons = ({ stopStartServer, ws }: {
-  ws: WebSocket | null
-  stopStartServer: (operation: 'START' | 'STOP') => Promise<void>
+const ConsoleButtons = ({ stopStartServer }: {
+  stopStartServer: (operation: 'START' | 'TERM' | 'KILL') => Promise<void>
 }) => {
   const smallScreen = useMediaQuery(useTheme().breakpoints.only('xs'))
   const [confirmingKill, setConfirmingKill] = useState(false)
@@ -18,7 +17,7 @@ const ConsoleButtons = ({ stopStartServer, ws }: {
       onClick={() => {
         if (confirmingKill) {
           setConfirmingKill(false)
-          stopStartServer('STOP')
+          stopStartServer('KILL')
         } else setConfirmingKill(true)
       }}
       fullWidth={smallScreen}
@@ -45,12 +44,7 @@ const ConsoleButtons = ({ stopStartServer, ws }: {
           color='primary'
           fullWidth={smallScreen}
           startIcon={<Stop />}
-          onClick={() => {
-            if (!ws) return
-            ws.send('save-all')
-            setTimeout(() => ws.send('end'), 1000)
-            setTimeout(() => ws.send('stop'), 5000)
-          }}
+          onClick={async () => await stopStartServer('TERM')}
         >
           Stop
         </Button>

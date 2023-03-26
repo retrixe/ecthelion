@@ -162,14 +162,22 @@ const Console = ({ setAuthenticated }: {
     }
   }, [connectToServer, ws])
 
-  const stopStartServer = async (operation: 'START' | 'STOP') => {
+  const stopStartServer = async (operation: 'START' | 'TERM' | 'KILL') => {
     try {
       if (!server) return
       // Send the request to stop or start the server.
-      const res = await ky.post('server/' + server, { body: operation.toUpperCase() })
-      if (res.status === 400) throw new Error(res.statusText)
+      const res = await ky.post('server/' + server, {
+        body: operation === 'KILL' ? 'STOP' : operation // Octyne 1.0 compatibility.
+      })
+      if (res.status === 400) {
+        const json = await res.json<{ error: string }>()
+        const text = json.error === 'Invalid operation requested!' && operation === 'TERM'
+          ? '[Ecthelion] Gracefully stopping apps requires Octyne 1.1 or newer!'
+          : `[Ecthelion] Encountered error performing operation ${operation}: ${json.error}`
+        buffer.current.push({ id: ++id.current, text })
+      }
       setListening(true)
-    } catch (e) {}
+    } catch (e) { console.error(e) }
   }
 
   return !listening // TODO: Get rid of height 60vh like Files did.
@@ -181,7 +189,7 @@ const Console = ({ setAuthenticated }: {
           <ConsoleView console={consoleText} />
         </Paper>
         <CommandTextField ws={ws} buffer={buffer} id={id} />
-        <ConsoleButtons ws={ws} stopStartServer={stopStartServer} />
+        <ConsoleButtons stopStartServer={stopStartServer} />
       </Paper>
       )
 }

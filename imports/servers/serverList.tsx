@@ -54,27 +54,17 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
   }
 
   const stopStartServer = async (operation: string, server: string) => {
-    if (operation === 'stop') {
-      // Send commands.
-      const ott = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
-      // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
-      const ws = new WebSocket(`${ip.split('http').join('ws')}/server/${server}/console?ticket=${ott}`)
-      ws.onopen = () => {
-        ws.send('save-all')
-        setTimeout(() => ws.send('end'), 1000)
-        setTimeout(() => { ws.send('stop'); ws.close() }, 5000)
-        setTimeout(() => { refetch() }, 10000)
-      }
-      ws.onerror = () => setMessage('Failed to send commands!')
-      return
-    }
     try {
       // Send the request to stop or start the server.
       const res = await ky.post('server/' + server, {
-        body: operation === 'kill' ? 'STOP' : operation.toUpperCase()
+        body: operation === 'KILL' ? 'STOP' : operation // Octyne 1.0 compatibility.
       })
-      if (res.status === 400) throw new Error()
-      else refetch()
+      if (res.status === 400) {
+        const json = await res.json<{ error: string }>()
+        setMessage(json.error === 'Invalid operation requested!' && operation === 'TERM'
+          ? 'Gracefully stopping apps requires Octyne 1.1 or newer!'
+          : json.error)
+      } else refetch()
     } catch (e: any) { setMessage(e) }
   }
 
