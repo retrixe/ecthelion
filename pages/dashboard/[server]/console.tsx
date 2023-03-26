@@ -38,7 +38,8 @@ const CommandTextField = ({ ws, id, buffer }: {
     try {
       if (!command || !ws) return
       buffer.current.push({ id: ++id.current, text: '>' + command })
-      ws.send(command)
+      const v2 = ws.protocol === 'console-v2'
+      ws.send(v2 ? JSON.stringify({ type: 'input', data: command }) : command)
       setLastCmd(command)
       setCommand('')
       return true
@@ -82,7 +83,7 @@ const Console = ({ setAuthenticated }: {
   const id = useRef(0)
   const [ws, setWs] = useState<WebSocket | null>(null)
   const [listening, setListening] = useState<boolean | null>(null)
-  const [consoleText, setConsole] = useState([{ id: id.current, text: 'Loading...' }])
+  const [consoleText, setConsole] = useState([{ id: id.current, text: '[Ecthelion] Loading...' }])
 
   const buffer = useRef<Array<{ id: number, text: string }>>([])
   useInterval(() => {
@@ -104,6 +105,7 @@ const Console = ({ setAuthenticated }: {
   }, 50)
 
   const connectedOnce = useRef(false) // Prevents firstMessage from being added again and again.
+  const versionFallback = useRef(false) // If server doesn't support v2, fallback to v1.
   const connectToServer = useCallback(async (ignore: { current?: boolean }) => {
     if (!server) return
     try {
@@ -119,24 +121,48 @@ const Console = ({ setAuthenticated }: {
       const ott = encodeURIComponent((await ticket.json<{ ticket: string }>()).ticket)
       const wsIp = ip.replace('http', 'ws').replace('https', 'wss')
       let firstMessage = true
-      const newWS = new WebSocket(`${wsIp}/server/${server}/console?ticket=${ott}`)
-      newWS.onmessage = (event) => {
+      const protocol = versionFallback.current ? undefined : 'console-v2'
+      const newWS = new WebSocket(`${wsIp}/server/${server}/console?ticket=${ott}`, protocol)
+      const handleOutputData = (data: string) => {
         if (firstMessage) {
           firstMessage = false
+          data = data.trimStart()
           if (connectedOnce.current) {
             buffer.current.push({ id: ++id.current, text: '[Ecthelion] Reconnected successfully!' })
             return
           }
           connectedOnce.current = true
         }
-        buffer.current.push(...event.data.split('\n').map((text: string) => ({ id: ++id.current, text })))
+        buffer.current.push(...data.split('\n').map((text: string) => ({ id: ++id.current, text })))
       }
-      newWS.onerror = () => buffer.current.push({
-        id: ++id.current,
-        text: '[Ecthelion] An unknown error occurred!'
-      })
+      newWS.onmessage = (event) => {
+        if (newWS.protocol === 'console-v2') {
+          const data = JSON.parse(event.data) // For now, ignore settings and pong.
+          if (data.type === 'output') {
+            handleOutputData(data.data)
+          } else if (data.type === 'error') {
+            buffer.current.push({ id: ++id.current, text: `[Ecthelion] Error: ${data.message}` })
+          } else if (data.type === 'pong') console.log('Pong!')
+        } else handleOutputData(event.data)
+      }
+      let versionFallbackInEffect = false
+      newWS.onerror = () => {
+        const fallback = !newWS.protocol && !versionFallback.current
+        if (fallback) {
+          versionFallback.current = true
+          versionFallbackInEffect = true
+        }
+        buffer.current.push({
+          id: ++id.current,
+          text: fallback
+            ? '[Ecthelion] Console v2 API unsupported! Falling back to v1 (your connection may ' +
+              'close randomly and some features may be missing). Upgrade to Octyne v1.1 or newer.'
+            : '[Ecthelion] An unknown error occurred!'
+        })
+      }
       newWS.onclose = event => {
         if (event.code === 4999) return
+        if (versionFallbackInEffect) return setWs(null)
         buffer.current.push({
           id: ++id.current,
           text: '[Ecthelion] The server connection was closed! Reconnecting in 3s...'
@@ -161,6 +187,11 @@ const Console = ({ setAuthenticated }: {
       }
     }
   }, [connectToServer, ws])
+  useInterval(useCallback(() => {
+    if (ws && ws.readyState === WebSocket.OPEN && ws.protocol === 'console-v2') {
+      ws.send(JSON.stringify({ type: 'ping', id: Math.random().toString() }))
+    }
+  }, [ws]), 15000)
 
   const stopStartServer = async (operation: 'START' | 'TERM' | 'KILL') => {
     try {
