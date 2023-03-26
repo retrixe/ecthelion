@@ -29,8 +29,6 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
 
   const refetch = useCallback(async () => {
     try {
-      const token = localStorage.getItem('token')
-      if (!token) return
       const servers = await ky.get('servers')
       if (servers.ok) {
         setServers((await servers.json<{ servers: { [name: string]: number } }>()).servers)
@@ -71,8 +69,6 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
       return
     }
     try {
-      const token = localStorage.getItem('token')
-      if (token === null) return
       // Send the request to stop or start the server.
       const res = await ky.post('server/' + server, {
         body: operation === 'kill' ? 'STOP' : operation.toUpperCase()

@@ -104,7 +104,7 @@ const Console = ({ setAuthenticated }: {
   }, 50)
 
   const connectedOnce = useRef(false) // Prevents firstMessage from being added again and again.
-  const connectToServer = useCallback(async (reconnect: boolean, ignore: { current?: boolean }) => {
+  const connectToServer = useCallback(async (ignore: { current?: boolean }) => {
     if (!server) return
     try {
       // Connect to console.
@@ -123,7 +123,7 @@ const Console = ({ setAuthenticated }: {
       newWS.onmessage = (event) => {
         if (firstMessage) {
           firstMessage = false
-          if (reconnect || connectedOnce.current) {
+          if (connectedOnce.current) {
             buffer.current.push({ id: ++id.current, text: '[Ecthelion] Reconnected successfully!' })
             return
           }
@@ -141,7 +141,7 @@ const Console = ({ setAuthenticated }: {
           id: ++id.current,
           text: '[Ecthelion] The server connection was closed! Reconnecting in 3s...'
         })
-        setTimeout(() => { connectToServer(true, {}) }, 3000)
+        setTimeout(() => { setWs(null) }, 3000)
       }
       setWs(newWS)
     } catch (e) {
@@ -152,7 +152,7 @@ const Console = ({ setAuthenticated }: {
   useEffect(() => {
     if (!ws) {
       const ignore = { current: false } // Required to handle React.StrictMode correctly.
-      connectToServer(false, ignore)
+      connectToServer(ignore)
       return () => { ignore.current = true }
     } else {
       return () => {
