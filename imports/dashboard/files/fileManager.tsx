@@ -206,7 +206,7 @@ const FileManager = (props: {
       // Save the file.
       const formData = new FormData()
       formData.append('upload', file, file.name)
-      const r = await ky.post(`server/${server}/file?path=${euc(path)}`, { body: formData })
+      const r = await ky.post(`server/${server}/file?path=${euc(path)}`, { body: formData, timeout: false })
       if (r.status !== 200) {
         setMessage(`Error uploading ${file.name}\n${(await r.json<{ error: string }>()).error}`)
       }

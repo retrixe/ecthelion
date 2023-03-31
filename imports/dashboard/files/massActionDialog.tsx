@@ -66,7 +66,7 @@ const MassActionDialog = ({
     <>
       {/* Folder creation dialog. */}
       <Dialog open onClose={handleClose}>
-        <DialogTitle>{move} Files (WIP)</DialogTitle>
+        <DialogTitle>{move} Files</DialogTitle>
         <DialogContent>
           <DialogContentText>{prompt}</DialogContentText>
           <TextField
