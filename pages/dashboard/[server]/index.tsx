@@ -33,7 +33,7 @@ const parseDuration = (durationNano: number): string => {
   return res.trimRight()
 }
 
-interface ServerStatus {
+interface Statistics {
   status: 0 | 1 | 2
   uptime: number
   cpuUsage: number
@@ -41,9 +41,9 @@ interface ServerStatus {
   totalMemory: number
 }
 
-const StatisticsDisplay = ({ statistics }: { statistics: ServerStatus }) => (
+const StatisticsDisplay = ({ server, statistics }: { server: string, statistics: Statistics }) => (
   <Paper style={{ padding: 20 }}>
-    <Typography variant='h4' gutterBottom>Process Statistics</Typography>
+    <Typography variant='h5' gutterBottom>Process Statistics - {server}</Typography>
     <Divider />
     <div style={{ paddingBottom: 10 }} />
     <Typography variant='h6'>Status</Typography>
@@ -78,12 +78,12 @@ const StatisticsDisplay = ({ statistics }: { statistics: ServerStatus }) => (
 )
 const StatisticsDisplayMemo = React.memo(StatisticsDisplay)
 
-const Statistics = () => {
+const StatisticsPage = () => {
   const { node, server, nodeExists } = useOctyneData()
   const ky = useKy(node)
 
   const [listening, setListening] = useState<boolean | null>(null)
-  const [statistics, setStatistics] = useState<ServerStatus | null>(null)
+  const [statistics, setStatistics] = useState<Statistics | null>(null)
   const [serverExists, setServerExists] = useState(true)
   const [authenticated, setAuthenticated] = useState(true)
 
@@ -120,7 +120,7 @@ const Statistics = () => {
         {!nodeExists || !serverExists ? <NotExistsError node={!nodeExists} />
           : !authenticated ? <AuthFailure /> : (
             (!listening || !statistics) ? <ConnectionFailure loading={listening === null} /> : (
-              <StatisticsDisplayMemo statistics={statistics} />
+              <StatisticsDisplayMemo server={server ?? ''} statistics={statistics} />
             )
           )}
       </DashboardLayout>
@@ -128,4 +128,4 @@ const Statistics = () => {
   )
 }
 
-export default Statistics
+export default StatisticsPage
