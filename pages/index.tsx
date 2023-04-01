@@ -82,7 +82,7 @@ const Index = () => {
         appBar={
           <>
             <Typography variant='h6' color='inherit' style={{ flex: 1 }}>Octyne</Typography>
-            <UnstyledLink prefetch={false} href='/about'>
+            <UnstyledLink prefetch={false} href='/settings/about'>
               <Button color='inherit'>About</Button>
             </UnstyledLink>
           </>

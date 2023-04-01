@@ -5,21 +5,15 @@ import {
   Divider, useMediaQuery, useTheme, Toolbar
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
-import TrendingUp from '@mui/icons-material/TrendingUp'
-import CallToAction from '@mui/icons-material/CallToAction'
-import Settings from '@mui/icons-material/Settings'
-import Storage from '@mui/icons-material/Storage'
+import Info from '@mui/icons-material/Info'
 
-import { useRouter } from 'next/router'
 import Layout from '../layout'
 import config from '../config'
 import UnstyledLink from '../helpers/unstyledLink'
 
 const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: string }) => {
-  const { server, node } = useRouter().query
-  const nodeUri = typeof node === 'string' ? `?node=${encodeURIComponent(node)}` : ''
   return (
-    <UnstyledLink href={`/dashboard/${server}/${props.subUrl}${nodeUri}`}>
+    <UnstyledLink href={`/settings/${props.subUrl}`}>
       <ListItemButton style={{ width: 200 }}>
         <ListItemIcon>{props.icon}</ListItemIcon>
         <ListItemText primary={props.name} />
@@ -29,7 +23,7 @@ const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: str
   )
 }
 
-const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) => {
+const SettingsLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) => {
   const [openDrawer, setOpenDrawer] = useState(false)
   const drawerVariant = useMediaQuery(useTheme().breakpoints.only('xs')) ? 'temporary' : 'permanent'
   const onLogout = () => {
@@ -58,13 +52,11 @@ const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) 
       <UnstyledLink href='/'>
         <Button color='inherit' onClick={onLogout}>{props.loggedIn ? 'Logout' : 'Login'}</Button>
       </UnstyledLink>
-      {/* These are displayed unconditionally in case of individual node authentication failure. */}
-      <UnstyledLink href='/servers'>
-        <Button color='inherit'>Servers</Button>
-      </UnstyledLink>
-      <UnstyledLink href='/settings/about'>
-        <IconButton color='inherit'><Settings /></IconButton>
-      </UnstyledLink>
+      {props.loggedIn && (
+        <UnstyledLink href='/servers'>
+          <Button color='inherit'>Servers</Button>
+        </UnstyledLink>
+      )}
     </>
   )
   return (
@@ -79,9 +71,9 @@ const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) 
           >
             {drawerVariant === 'permanent' && <Toolbar />}
             <List>
-              <DrawerItem name='Statistics' subUrl='' icon={<TrendingUp />} />
-              <DrawerItem name='Console' subUrl='console' icon={<CallToAction />} />
-              <DrawerItem name='Files' subUrl='files' icon={<Storage />} />
+              <DrawerItem name='About' subUrl='about' icon={<Info />} />
+              {/* <DrawerItem name='Accounts' subUrl='accounts' icon={<ManageAccounts />} /> */}
+              {/* <DrawerItem name='Configuration' subUrl='config' icon={<Settings />} /> */}
             </List>
           </Drawer>
         )}
@@ -100,5 +92,5 @@ const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) 
   )
 }
 
-const DashboardLayoutMemo = React.memo(DashboardLayout)
-export default DashboardLayoutMemo
+const SettingsLayoutMemo = React.memo(SettingsLayout)
+export default SettingsLayoutMemo

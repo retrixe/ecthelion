@@ -36,12 +36,12 @@ const Servers = () => {
                     localStorage.removeItem('token')
                   }
                 }}
-              >Logout
+              >{failure === 'logged out' ? 'Login' : 'Logout'}
               </Button>
             </UnstyledLink>
             <div style={{ marginRight: 5 }} />
-            <UnstyledLink prefetch={false} href='/about'>
-              <Button color='inherit'>About</Button>
+            <UnstyledLink prefetch={false} href='/settings/about'>
+              <Button color='inherit'>{failure === 'logged out' ? 'About' : 'Settings'}</Button>
             </UnstyledLink>
           </>
         }
