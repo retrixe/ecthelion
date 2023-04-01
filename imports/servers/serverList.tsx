@@ -53,7 +53,7 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
     ws.onerror = () => setMessage('Failed to send command!')
   }
 
-  const stopStartServer = async (operation: string, server: string) => {
+  const stopStartServer = async (operation: 'START' | 'KILL' | 'TERM', server: string) => {
     try {
       // Send the request to stop or start the server.
       const res = await ky.post('server/' + server, {
@@ -64,7 +64,10 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
         setMessage(json.error === 'Invalid operation requested!' && operation === 'TERM'
           ? 'Gracefully stopping apps requires Octyne 1.1 or newer!'
           : json.error)
-      } else refetch()
+      } else if (operation === 'TERM') {
+        setTimeout(() => { refetch().catch(console.error) }, 1000) // For apps that stop quickly...
+        setTimeout(() => { refetch().catch(console.error) }, 5000) // ...and the rest.
+      }
     } catch (e: any) { setMessage(e) }
   }
 

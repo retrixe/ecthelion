@@ -16,7 +16,7 @@ export const ServerListItem = ({ server, node, status, openDialog, stopStartServ
   server: string
   status: number
   openDialog: () => void
-  stopStartServer: (operation: string, server: string) => void
+  stopStartServer: (operation: 'START' | 'TERM' | 'KILL', server: string) => void
 }) => {
   const router = useRouter()
   const href = { pathname: '/dashboard/[server]/console', query: node ? { server, node } : { server } }
