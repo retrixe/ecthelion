@@ -22,7 +22,7 @@ const KyContext = React.createContext({
   }, {})
 })
 
-export default function useKy (node: string | undefined) {
+export default function useKy (node?: string) {
   const kyContext = React.useContext(KyContext)
   return node ? kyContext.nodes[node] : kyContext.default
 }
