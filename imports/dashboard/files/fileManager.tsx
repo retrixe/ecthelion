@@ -249,6 +249,14 @@ const FileManager = (props: {
     const ticket = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
     window.location.href = download.replace('?path', `?ticket=${ticket}&path`)
   }
+  const handleSaveFile = async (name: string, content: string) => {
+    const formData = new FormData()
+    formData.append('upload', new Blob([content]), name)
+    const encodedPath = encodeURIComponent(path)
+    const r = await ky.post(`server/${server}/file?path=${encodedPath}`, { body: formData })
+    if (r.status !== 200) setMessage((await r.json<{ error: string }>()).error)
+    else setMessage('Saved successfully!')
+  }
 
   const selectedFile = menuOpen && files && files.find(e => e.name === menuOpen)
   const titleName = file?.name ? file.name + ' - ' : (path ? path + ' - ' : '')
@@ -265,12 +273,12 @@ const FileManager = (props: {
             <Editor
               {...file}
               siblingFiles={files.map(e => e.name)}
-              handleClose={() => { setFile(null); fetchFiles() }}
-              server={server}
-              path={path}
-              ky={ky}
-              ip={ip}
-              setMessage={setMessage}
+              onSave={handleSaveFile}
+              onClose={() => { setFile(null); fetchFiles() }}
+              onDownload={async () => {
+                const ott = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
+                window.location.href = `${ip}/server/${server}/file?path=${path}${file.name}&ticket=${ott}`
+              }}
             />
           </Paper>
         ) : (

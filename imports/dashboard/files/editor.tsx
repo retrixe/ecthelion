@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { KyInstance } from 'ky/distribution/types/ky'
 import { Typography, Button, TextField, LinearProgress, IconButton, Tooltip } from '@mui/material'
 import GetApp from '@mui/icons-material/GetApp'
 
@@ -8,12 +7,9 @@ const Editor = (props: {
   name: string
   content: string
   siblingFiles: string[]
-  handleClose: (setContent: React.Dispatch<React.SetStateAction<string>>) => void
-  server: string
-  path: string
-  ip: string
-  ky: KyInstance
-  setMessage: (message: string) => void
+  onSave: (name: string, content: string) => void
+  onDownload: () => void
+  onClose: (setContent: React.Dispatch<React.SetStateAction<string>>) => void
   closeText?: string
 }) => {
   const [content, setContent] = useState(props.content)
@@ -23,13 +19,7 @@ const Editor = (props: {
 
   const saveFile = async () => {
     setSaving(true)
-    // Save the file.
-    const formData = new FormData()
-    formData.append('upload', new Blob([content]), name)
-    const path = encodeURIComponent(props.path)
-    const r = await props.ky.post(`server/${props.server}/file?path=${path}`, { body: formData })
-    if (r.status !== 200) props.setMessage((await r.json<{ error: string }>()).error)
-    else props.setMessage('Saved successfully!')
+    await props.onSave(name, content)
     setSaving(false)
   }
 
@@ -54,12 +44,7 @@ const Editor = (props: {
         <div style={{ flex: 1 }} />
         {props.name && (
           <Tooltip title='Download'>
-            <IconButton
-              onClick={async () => {
-                const ott = encodeURIComponent((await props.ky.get('ott').json<{ ticket: string }>()).ticket)
-                window.location.href = `${props.ip}/server/${props.server}/file?path=${props.path}${name}&ticket=${ott}`
-              }}
-            >
+            <IconButton onClick={props.onDownload}>
               <GetApp />
             </IconButton>
           </Tooltip>
@@ -77,7 +62,7 @@ const Editor = (props: {
       />
       <br />
       <div style={{ display: 'flex', marginTop: 10 }}>
-        <Button variant='outlined' onClick={() => props.handleClose(setContent)}>
+        <Button variant='outlined' onClick={() => props.onClose(setContent)}>
           {props.closeText || 'Close'}
         </Button>
         <div style={{ flex: 1 }} />
