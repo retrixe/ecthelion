@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, startTransition, useCallback } from
 import { Paper, Typography, TextField, Fab, useTheme } from '@mui/material'
 import Check from '@mui/icons-material/Check'
 
+import useInterval from '../../../imports/helpers/useInterval'
 import useKy from '../../../imports/helpers/useKy'
 import Title from '../../../imports/helpers/title'
 import AuthFailure from '../../../imports/errors/authFailure'
@@ -11,21 +12,6 @@ import DashboardLayout from '../../../imports/dashboard/dashboardLayout'
 import ConsoleView from '../../../imports/dashboard/console/consoleView'
 import ConsoleButtons from '../../../imports/dashboard/console/consoleButtons'
 import ConnectionFailure from '../../../imports/errors/connectionFailure'
-
-// https://overreacted.io/making-setinterval-declarative-with-react-hooks/
-const useInterval = (callback: (...args: any[]) => void, delay: number) => {
-  const savedCallback = useRef<() => void>()
-  // Remember the latest callback.
-  useEffect(() => { savedCallback.current = callback }, [callback])
-  // Set up the interval.
-  useEffect(() => {
-    const tick = () => savedCallback.current && savedCallback.current()
-    if (delay !== null) {
-      const id = setInterval(tick, delay)
-      return () => clearInterval(id)
-    }
-  }, [delay])
-}
 
 const CommandTextField = ({ ws, id, buffer }: {
   ws: WebSocket | null

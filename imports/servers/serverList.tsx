@@ -4,6 +4,7 @@ import Replay from '@mui/icons-material/Replay'
 import ConnectionFailure from '../errors/connectionFailure'
 import ServerListItem from './serverListItem'
 import CommandDialog from './commandDialog'
+import useInterval from '../helpers/useInterval'
 import useKy from '../helpers/useKy'
 
 const ServerList = ({ ip, node, setMessage, setFailure }: {
@@ -39,6 +40,7 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
   }, [ky, setLoggedIn, setServers])
 
   useEffect(() => { refetch() }, [refetch])
+  useInterval(refetch, 1000)
 
   const handleClose = () => setServer('')
   const runCommand = async (command: string) => {
@@ -64,9 +66,6 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
         setMessage(json.error === 'Invalid operation requested!' && operation === 'TERM'
           ? 'Gracefully stopping apps requires Octyne 1.1 or newer!'
           : json.error)
-      } else if (operation === 'TERM') {
-        setTimeout(() => { refetch().catch(console.error) }, 1000) // For apps that stop quickly...
-        setTimeout(() => { refetch().catch(console.error) }, 5000) // ...and the rest.
       }
     } catch (e: any) { setMessage(e) }
   }

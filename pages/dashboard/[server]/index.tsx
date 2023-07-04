@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useCallback } from 'react'
 
 import { Paper, Typography, Divider, LinearProgress } from '@mui/material'
 
+import useInterval from '../../../imports/helpers/useInterval'
 import useKy from '../../../imports/helpers/useKy'
 import Title from '../../../imports/helpers/title'
 import AuthFailure from '../../../imports/errors/authFailure'
@@ -88,26 +89,23 @@ const StatisticsPage = () => {
   const [authenticated, setAuthenticated] = useState(true)
 
   // Check if the user is authenticated.
-  useEffect(() => {
+  const loadStatistics = useCallback(() => {
     if (!server || !nodeExists) return
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    const interval = setInterval(async () => {
-      try {
-        // Fetch server stats.
-        const res = await ky.get(`server/${server}`)
-        if (res.ok) {
-          setListening(true)
-          setServerExists(true)
-          setAuthenticated(true)
-          setStatistics(await res.json())
-          return
-        } else if (res.status === 401) setAuthenticated(false)
-        else if (res.status === 404) setServerExists(false)
-        setListening(false)
-      } catch (e) { setListening(false) }
-    }, 1000)
-    return () => clearInterval(interval)
+    (async () => {
+      // Fetch server stats.
+      const res = await ky.get(`server/${server}`)
+      if (res.ok) {
+        setListening(true)
+        setServerExists(true)
+        setAuthenticated(true)
+        setStatistics(await res.json())
+        return
+      } else if (res.status === 401) setAuthenticated(false)
+      else if (res.status === 404) setServerExists(false)
+      setListening(false)
+    })().catch(() => setListening(false))
   }, [ky, server, nodeExists])
+  useInterval(loadStatistics, 1000)
 
   return (
     <React.StrictMode>
