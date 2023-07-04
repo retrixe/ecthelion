@@ -30,6 +30,7 @@ import FolderCreationDialog from './folderCreationDialog'
 
 let euc: (uriComponent: string | number | boolean) => string
 try { euc = encodeURIComponent } catch (e) { euc = e => e.toString() }
+const editorExts = ['properties', 'json', 'yaml', 'yml', 'xml', 'js', 'log', 'sh', 'txt']
 
 const FileManager = (props: {
   setServerExists: React.Dispatch<React.SetStateAction<boolean>>
@@ -137,17 +138,6 @@ const FileManager = (props: {
       .then(() => setSearchApplies(false)) // Apply search only when search has been focused once.
   }, [router, server])
 
-  // TODO: What if someone navigates to a file that can't be edited?
-  // Move this logic after fetchFiles somehow, and handle setDownload through ?filename= too.
-  const extensions = ['properties', 'json', 'yaml', 'yml', 'xml', 'js', 'log', 'sh', 'txt']
-  const openFile = async (name: string, size: number, mimeType: string) => {
-    if (
-      size < 2 * 1024 * 1024 &&
-      (extensions.includes(name.split('.').pop() || '') || mimeType.startsWith('text/'))
-    ) updatePath(path, name)
-    else setDownload(`${ip}/server/${server}/file?path=${euc(joinPath(path, name))}`)
-  }
-
   const loadFileInEditor = useCallback(async (filename: string) => {
     setFetching(true)
     const req = await ky.get(`server/${server}/file?path=${euc(joinPath(path, filename))}`)
@@ -167,11 +157,25 @@ const FileManager = (props: {
     // We don't setFile(null) in case New File interferes, we set it in file close instead.
     // Changing the path in the URL will reload the page, so fresh state anyways like that.
     if (!filename) return
-    loadFileInEditor(filename).catch(err => {
-      console.error(err)
-      setMessage('An error occurred while loading file!')
-    })
-  }, [filename, loadFileInEditor])
+    // We need info about the current files, else we can't load the file.
+    // This won't overwrite the editor because `files` never changes outside actions.
+    // When an editor is open, no actions can be performed, so this is not a problem.
+    if (!files) return
+    // Check if the file exists, and depending on its metadata, act accordingly.
+    const file = files.find(file => file.name === filename)
+    if (!file) {
+      updatePath(path) // Remove file from path.
+      return setMessage('The requested file does not exist!')
+    } else if (
+      file.size < 2 * 1024 * 1024 &&
+      (editorExts.includes(filename.split('.').pop() || '') || file.mimeType.startsWith('text/'))
+    ) {
+      loadFileInEditor(filename).catch(err => {
+        console.error(err)
+        setMessage('An error occurred while loading file!')
+      })
+    } else setDownload(filename)
+  }, [filename, files, path, updatePath, loadFileInEditor])
 
   // Multiple file logic requests.
   const handleCreateFolder = async (name: string) => {
@@ -277,11 +281,13 @@ const FileManager = (props: {
     setMenuOpen('')
     fetchFiles()
   }
+  const handleCloseDownload = () => { setDownload(''); updatePath(path) }
   const handleDownloadButton = async () => {
-    setDownload('')
+    handleCloseDownload()
     // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
     const ticket = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
-    window.location.href = download.replace('?path', `?ticket=${ticket}&path`)
+    const loc = `${ip}/server/${server}/file?ticket=${ticket}&path=${euc(joinPath(path, download))}`
+    window.location.href = loc
   }
   const handleSaveFile = async (name: string, content: string) => {
     const formData = new FormData()
@@ -437,7 +443,7 @@ const FileManager = (props: {
               setFilesSelected={setFilesSelected}
               onClick={(file) => {
                 if (file.folder) updatePath(joinPath(path, file.name))
-                else openFile(file.name, file.size, file.mimeType)
+                else updatePath(path, file.name)
               }}
               openMenu={(fn, anchor) => {
                 setMenuOpen(fn)
@@ -452,13 +458,13 @@ const FileManager = (props: {
           open
           autoHideDuration={10000}
           TransitionComponent={(props) => <Slide direction='up' {...props} />}
-          onClose={() => setDownload('')}
-          message={`Do you want to download '${download.replace(/%2F/g, '/').split('/').filter(e => e).pop()}'?`}
+          onClose={handleCloseDownload}
+          message={`Do you want to download '${download}'?`}
           action={[
             <Button key='download' size='small' color='primary' onClick={handleDownloadButton}>
               Download
             </Button>,
-            <Button key='close' size='small' aria-label='close' color='inherit' onClick={() => setDownload('')}>
+            <Button key='close' size='small' aria-label='close' color='inherit' onClick={handleCloseDownload}>
               Close
             </Button>
           ]}
