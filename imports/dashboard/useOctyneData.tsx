@@ -34,7 +34,7 @@ const useOctyneData = () => {
   const server = router.query.server && router.query.server.toString()
   const node = router.query.node && router.query.node.toString()
   const ip = node ? nodes[node] : config.ip
-  const nodeExists = !node || !!(server && node && nodes[node])
+  const nodeExists = !node || !!(node && nodes[node])
 
   return { server, node, ip, nodeExists }
 }

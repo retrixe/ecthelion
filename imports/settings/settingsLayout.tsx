@@ -7,6 +7,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu'
 import Info from '@mui/icons-material/Info'
 import ManageAccounts from '@mui/icons-material/ManageAccounts'
+import Settings from '@mui/icons-material/Settings'
 
 import Layout from '../layout'
 import config from '../config'
@@ -74,7 +75,7 @@ const SettingsLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) =
             <List>
               <DrawerItem name='About' subUrl='about' icon={<Info />} />
               <DrawerItem name='Accounts' subUrl='accounts' icon={<ManageAccounts />} />
-              {/* <DrawerItem name='Configuration' subUrl='config' icon={<Settings />} /> */}
+              <DrawerItem name='Configuration' subUrl='config' icon={<Settings />} />
             </List>
           </Drawer>
         )}
