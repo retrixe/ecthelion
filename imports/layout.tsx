@@ -37,5 +37,4 @@ const Layout = (props: React.PropsWithChildren<{
   </div>
 )
 
-const LayoutMemo = React.memo(Layout)
-export default LayoutMemo
+export default Layout

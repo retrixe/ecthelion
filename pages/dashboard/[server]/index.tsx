@@ -77,7 +77,6 @@ const StatisticsDisplay = ({ server, statistics }: { server: string, statistics:
     />
   </Paper>
 )
-const StatisticsDisplayMemo = React.memo(StatisticsDisplay)
 
 const StatisticsPage = () => {
   const { node, server, nodeExists } = useOctyneData()
@@ -118,7 +117,7 @@ const StatisticsPage = () => {
         {!nodeExists || !serverExists ? <NotExistsError node={!nodeExists} />
           : !authenticated ? <AuthFailure /> : (
             (!listening || !statistics) ? <ConnectionFailure loading={listening === null} /> : (
-              <StatisticsDisplayMemo server={server ?? ''} statistics={statistics} />
+              <StatisticsDisplay server={server ?? ''} statistics={statistics} />
             )
           )}
       </DashboardLayout>

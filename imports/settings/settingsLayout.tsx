@@ -28,17 +28,17 @@ const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: str
   )
 }
 
+const onLogout = () => {
+  const token = localStorage.getItem('token')
+  if (token) {
+    fetch(`${config.ip}/logout`, { headers: { Authorization: token } }).catch(console.error)
+    localStorage.removeItem('token')
+  }
+}
+
 const SettingsLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) => {
   const [openDrawer, setOpenDrawer] = useState(false)
   const drawerVariant = useMediaQuery(useTheme().breakpoints.only('xs')) ? 'temporary' : 'permanent'
-  const onLogout = () => {
-    const token = localStorage.getItem('token')
-    if (token) {
-      fetch(`${config.ip}/logout`, { headers: { Authorization: token } }).catch(console.error)
-      localStorage.removeItem('token')
-    }
-  }
-
   const appBarContent = (
     <>
       {(props.loggedIn && drawerVariant === 'temporary') && (
@@ -103,5 +103,4 @@ const SettingsLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) =
   )
 }
 
-const SettingsLayoutMemo = React.memo(SettingsLayout)
-export default SettingsLayoutMemo
+export default SettingsLayout
