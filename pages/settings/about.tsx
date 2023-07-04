@@ -58,7 +58,7 @@ const About = () => {
           <Typography variant='h6'>Some quick tips:</Typography>
           <Typography component='ul' style={{ paddingInlineStart: 20 }}>
             <li>You can drag and drop files from your system onto the file explorer&apos;s file list!</li>
-            <li>You can Ctrl+Click files to select them (Shift+Click coming soon)!</li>
+            <li>You can Ctrl+Click files to select them, and Shift+Click to select multiple files at once!</li>
             <li>You can upload multiple files at once!</li>
             <li>Text files can be created and opened inside Ecthelion!
               Don&apos;t worry, you can still download them from the file menu or the editor.

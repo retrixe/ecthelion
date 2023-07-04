@@ -79,6 +79,21 @@ const FileListItemRenderer = ({ index, data, style }: ListChildComponentProps) =
   const { files, path, disabled, filesSelected, setFilesSelected, openMenu, onClick } = data as FileItemData
   const router = useRouter()
   const file = files[index]
+  const selectItem = () => {
+    if (!filesSelected.includes(file.name)) setFilesSelected([...filesSelected, file.name])
+    else setFilesSelected(filesSelected.filter(e => e !== file.name))
+  }
+  const shiftClickItem = () => {
+    // Look for the last selected item. If none found, look for closest item to the start.
+    let lastSelectedFileIdx = files.findLastIndex(e => filesSelected.includes(e.name))
+    if (lastSelectedFileIdx === -1) lastSelectedFileIdx = 0 // If none found, select first item.
+    // Select all items between the current item and found item. If they're already selected, skip.
+    const filesToSelect =
+      files.slice(Math.min(lastSelectedFileIdx, index), Math.max(lastSelectedFileIdx, index) + 1)
+        .map(e => e.name)
+        .filter(e => !filesSelected.includes(e))
+    setFilesSelected([...filesSelected, ...filesToSelect])
+  }
   return (
     <FileListItem
       style={style}
@@ -88,15 +103,9 @@ const FileListItemRenderer = ({ index, data, style }: ListChildComponentProps) =
       openMenu={openMenu}
       filesSelected={filesSelected}
       onItemClick={(e) => e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey
-        ? setFilesSelected(!filesSelected.includes(file.name)
-          ? [...filesSelected, file.name]
-          : filesSelected.filter(e => e !== file.name))
-        : onClick(file)}
-      onCheck={() => {
-      // TODO: Support shift+click.
-        if (!filesSelected.includes(file.name)) setFilesSelected([...filesSelected, file.name])
-        else setFilesSelected(filesSelected.filter(e => e !== file.name))
-      }}
+        ? selectItem()
+        : !e.ctrlKey && e.shiftKey && !e.metaKey && !e.altKey ? shiftClickItem() : onClick(file)}
+      onCheck={(e) => e.shiftKey ? shiftClickItem() : selectItem()}
       url={`/dashboard/${router.query.server}/files${file.folder ? joinPath(path, file.name) : path
       }${typeof router.query.node === 'string' ? '?node=' + router.query.node : ''}`}
     />
