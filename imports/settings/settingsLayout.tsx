@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import {
-  Typography, Button, IconButton, Drawer,
+  Typography, IconButton, Drawer,
   List, ListItemButton, ListItemIcon, ListItemText,
   Divider, useMediaQuery, useTheme, Toolbar, Tooltip
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
+import Apps from '@mui/icons-material/Apps'
 import Info from '@mui/icons-material/Info'
 import Login from '@mui/icons-material/Login'
 import Logout from '@mui/icons-material/Logout'
@@ -55,7 +56,9 @@ const SettingsLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) =
       <Typography variant='h6' color='inherit' style={{ flex: 1 }}>Octyne</Typography>
       {props.loggedIn && (
         <UnstyledLink href='/servers'>
-          <Button color='inherit'>Servers</Button>
+          <Tooltip title='Servers'>
+            <IconButton size='large' color='inherit'><Apps /></IconButton>
+          </Tooltip>
         </UnstyledLink>
       )}
       <UnstyledLink href='/'>

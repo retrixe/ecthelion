@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import {
-  Typography, Button, IconButton, Drawer,
+  Typography, IconButton, Drawer,
   List, ListItemButton, ListItemIcon, ListItemText,
   Divider, useMediaQuery, useTheme, Toolbar, Tooltip
 } from '@mui/material'
+import Apps from '@mui/icons-material/Apps'
 import Login from '@mui/icons-material/Login'
 import Logout from '@mui/icons-material/Logout'
 import MenuIcon from '@mui/icons-material/Menu'
@@ -59,7 +60,9 @@ const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) 
       <Typography variant='h6' color='inherit' style={{ flex: 1 }}>Octyne</Typography>
       {/* These are displayed unconditionally in case of individual node authentication failure. */}
       <UnstyledLink href='/servers'>
-        <Button color='inherit'>Servers</Button>
+        <Tooltip title='Servers'>
+          <IconButton size='large' color='inherit'><Apps /></IconButton>
+        </Tooltip>
       </UnstyledLink>
       <UnstyledLink href='/settings/about'>
         <Tooltip title='Settings'>
