@@ -66,6 +66,30 @@ const FileManager = (props: {
 
   const searchRef = useRef<HTMLInputElement>()
 
+  // Update path when URL changes. Requires normalised path.
+  const updatePath = useCallback((newPath: string, file?: string, replace?: boolean) => {
+    const route = {
+      pathname: '/dashboard/[server]/files/[[...path]]',
+      query: { ...router.query }
+    }
+    const as = {
+      pathname: `/dashboard/${server}/files${newPath}`,
+      query: { ...router.query }
+    }
+    delete route.query.server
+    delete route.query.path
+    delete route.query.file
+    delete as.query.server
+    delete as.query.path
+    delete as.query.file
+    if (file) {
+      route.query.file = file
+      as.query.file = file
+    }
+    (replace ? router.replace : router.push)(route, as, { shallow: true })
+      .then(() => setSearchApplies(false)) // Apply search only when search has been focused once.
+  }, [router, server])
+
   // Used to fetch files.
   const { setAuthenticated, setServerExists } = props
   const fetchFiles = useCallback(async () => {
@@ -81,13 +105,14 @@ const FileManager = (props: {
     else if (files.error === 'You are not authenticated to access this resource!') setAuthenticated(false)
     else if (files.error === 'The folder requested is outside the server!') setError('outsideServerDir')
     else if (files.error === 'This folder does not exist!') setError('folderNotExist')
-    else if (files.error === 'This is not a folder!') setError('pathNotFolder')
-    else if (files) {
+    else if (files.error === 'This is not a folder!') {
+      return updatePath(parentPath(path), path.substring(0, path.length - 1).split('/').pop(), true)
+    } else if (files) {
       setFiles(files.contents)
       setFilesSelected([])
     }
     setFetching(false)
-  }, [path, ky, server, setAuthenticated, setServerExists])
+  }, [path, ky, server, updatePath, setAuthenticated, setServerExists])
 
   useEffect(() => { // Fetch files.
     if (server) {
@@ -113,30 +138,6 @@ const FileManager = (props: {
     window.addEventListener('keydown', eventListener)
     return () => window.removeEventListener('keydown', eventListener)
   }, [file])
-
-  // Update path when URL changes. Requires normalised path.
-  const updatePath = useCallback((newPath: string, file?: string) => {
-    const route = {
-      pathname: '/dashboard/[server]/files/[[...path]]',
-      query: { ...router.query }
-    }
-    const as = {
-      pathname: `/dashboard/${server}/files${newPath}`,
-      query: { ...router.query }
-    }
-    delete route.query.server
-    delete route.query.path
-    delete route.query.file
-    delete as.query.server
-    delete as.query.path
-    delete as.query.file
-    if (file) {
-      route.query.file = file
-      as.query.file = file
-    }
-    router.push(route, as, { shallow: true })
-      .then(() => setSearchApplies(false)) // Apply search only when search has been focused once.
-  }, [router, server])
 
   const loadFileInEditor = useCallback(async (filename: string) => {
     setFetching(true)
