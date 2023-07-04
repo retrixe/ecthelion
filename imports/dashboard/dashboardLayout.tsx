@@ -63,7 +63,7 @@ const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) 
         <Button color='inherit'>Servers</Button>
       </UnstyledLink>
       <UnstyledLink href='/settings/about'>
-        <IconButton color='inherit'><Settings /></IconButton>
+        <IconButton edge='end' color='inherit'><Settings /></IconButton>
       </UnstyledLink>
     </>
   )

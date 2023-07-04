@@ -156,7 +156,9 @@ const Console = ({ setAuthenticated }: {
           id: ++id.current,
           text: fallback
             ? '[Ecthelion] Console v2 API unsupported! Falling back to v1 (your connection may ' +
-              'close randomly and some features may be missing). Upgrade to Octyne v1.1 or newer.'
+              'close randomly and some features may be missing). Upgrade to Octyne v1.1 or newer!' +
+              ' Note: If you\'re running Octyne v1.1+ and you still see this message, Ecthelion' +
+              ' might be having trouble connecting to Octyne.'
             : '[Ecthelion] An unknown error occurred!'
         })
       }
