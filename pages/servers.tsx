@@ -14,6 +14,14 @@ import AuthFailure from '../imports/errors/authFailure'
 import ConnectionFailure from '../imports/errors/connectionFailure'
 const { ip, nodes } = config
 
+const logout = () => {
+  const token = localStorage.getItem('token')
+  if (token) {
+    fetch(`${ip}/logout`, { headers: { Authorization: token } }).catch(console.error)
+    localStorage.removeItem('token')
+  }
+}
+
 const Servers = () => {
   const [message, setMessage] = useState('')
   const [failure, setFailure] = useState<'logged out' | 'failed' | false>(false)
@@ -39,18 +47,8 @@ const Servers = () => {
             </UnstyledLink>
             <UnstyledLink href='/'>
               <Tooltip title={failure === 'logged out' ? 'Login' : 'Logout'}>
-                <IconButton
-                  edge='end'
-                  size='large'
-                  color='inherit'
-                  onClick={() => {
-                    const token = localStorage.getItem('token')
-                    if (token) {
-                      fetch(`${ip}/logout`, { headers: { Authorization: token } })
-                      localStorage.removeItem('token')
-                    }
-                  }}
-                >{failure === 'logged out' ? <Login /> : <Logout />}
+                <IconButton edge='end' size='large' color='inherit' onClick={logout}>
+                  {failure === 'logged out' ? <Login /> : <Logout />}
                 </IconButton>
               </Tooltip>
             </UnstyledLink>

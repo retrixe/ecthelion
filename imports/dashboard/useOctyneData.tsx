@@ -14,15 +14,13 @@ export const useOctyneAuth = () => {
 
   useEffect(() => {
     (async () => {
-      try {
-        if (!server || !nodeExists) return
-        const servers = await ky.get('servers')
-        const resp = await servers.json<Record<string, number>>()
-        if (servers.ok) setServerExists(!!resp[server])
-        if (servers.ok || servers.status === 401 || servers.status === 403) setAuth(servers.ok)
-        else setConnectionFailure(true)
-      } catch (e) {}
-    })()
+      if (!server || !nodeExists) return
+      const servers = await ky.get('servers')
+      const resp = await servers.json<Record<string, number>>()
+      if (servers.ok) setServerExists(!!resp[server])
+      if (servers.ok || servers.status === 401 || servers.status === 403) setAuth(servers.ok)
+      else setConnectionFailure(true)
+    })().catch(err => { console.error(err); setConnectionFailure(true) })
   }, [ky, nodeExists, server])
 
   return Object.assign(octyneData, { auth, serverExists, connectionFailure })
@@ -31,8 +29,8 @@ export const useOctyneAuth = () => {
 const useOctyneData = () => {
   const nodes = config.nodes ?? {}
   const router = useRouter()
-  const server = router.query.server && router.query.server.toString()
-  const node = router.query.node && router.query.node.toString()
+  const server = router.query.server?.toString()
+  const node = router.query.node?.toString()
   const ip = node ? nodes[node] : config.ip
   const nodeExists = !node || !!(node && nodes[node])
 

@@ -29,15 +29,13 @@ const Index = () => {
   useEffect(() => {
     // Check the access token in localStorage if we are on the client.
     // We'll add sessionStorage support later for Remember Me stuff.
-    try {
-      if (localStorage && localStorage.getItem('token')) {
-        // Then we redirect to the new page.
-        router.push(route)
-      } else {
-        // Prefetch the servers page for performance.
-        router.prefetch(route)
-      }
-    } catch (e) {}
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('token')) {
+      // Then we redirect to the new page.
+      router.push(route)
+    } else {
+      // Prefetch the servers page for performance.
+      router.prefetch(route)
+    }
   }, [router, route])
 
   const handleLogin = async () => {

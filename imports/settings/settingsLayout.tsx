@@ -34,7 +34,7 @@ const SettingsLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) =
   const onLogout = () => {
     const token = localStorage.getItem('token')
     if (token) {
-      fetch(`${config.ip}/logout`, { headers: { Authorization: token } })
+      fetch(`${config.ip}/logout`, { headers: { Authorization: token } }).catch(console.error)
       localStorage.removeItem('token')
     }
   }

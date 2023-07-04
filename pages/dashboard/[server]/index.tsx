@@ -55,7 +55,7 @@ const StatisticsDisplay = ({ server, statistics }: { server: string, statistics:
     </Typography>
     <Typography variant='h6'>Uptime</Typography>
     <Typography variant='subtitle1' gutterBottom>
-      {statistics && statistics.uptime ? parseDuration(statistics.uptime) : 'N/A'}
+      {statistics?.uptime ? parseDuration(statistics.uptime) : 'N/A'}
     </Typography>
     <Divider />
     <div style={{ paddingBottom: 10 }} />

@@ -139,19 +139,19 @@ const ConfigPage = () => {
                       siblingFiles={[]}
                       onSave={(name, content) => setConfirmDialog(content)}
                       onClose={(setContent) => setContent(fileContent)}
-                      onDownload={async () => {
-                        try {
-                          const element = document.createElement('a')
-                          const config = encodeURIComponent(await ky.get('config', {
-                            throwHttpErrors: true
-                          }).text())
+                      onDownload={() => {
+                        const element = document.createElement('a')
+                        ky.get('config', { throwHttpErrors: true }).text().then(text => {
+                          const config = encodeURIComponent(text)
                           element.setAttribute('href', 'data:text/plain;charset=utf-8,' + config)
                           element.setAttribute('download', 'config.json')
                           element.style.display = 'none'
                           document.body.appendChild(element)
                           element.click()
                           document.body.removeChild(element)
-                        } catch (e) { setMessage('Failed to download config!'); console.error(e) }
+                        }).catch(e => {
+                          setMessage('Failed to download config!'); console.error(e)
+                        })
                       }}
                       closeText='Undo Changes'
                     />
@@ -166,7 +166,7 @@ const ConfigPage = () => {
         open={confirmDialog === true}
         title='Reload config from disk?'
         prompt={confirmDialogWarning}
-        onConfirm={async () => await reloadFromDisk().then(() => setConfirmDialog(false))}
+        onConfirm={() => { reloadFromDisk().then(() => setConfirmDialog(false)) }}
         onCancel={() => setConfirmDialog(false)}
       />
       <ConfirmDialog

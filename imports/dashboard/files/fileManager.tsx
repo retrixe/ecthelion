@@ -42,7 +42,7 @@ const FileManager = (props: {
 
   const filename = router.query.file?.toString()
   const queryPath = router.query.path
-  const path = normalisePath((Array.isArray(queryPath) ? queryPath.join('/') : queryPath) || '/')
+  const path = normalisePath((Array.isArray(queryPath) ? queryPath.join('/') : queryPath) ?? '/')
 
   const [menuOpen, setMenuOpen] = useState('')
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
@@ -169,7 +169,7 @@ const FileManager = (props: {
       return setMessage('The requested file does not exist!')
     } else if (
       file.size < 2 * 1024 * 1024 &&
-      (editorExts.includes(filename.split('.').pop() || '') || file.mimeType.startsWith('text/'))
+      (editorExts.includes(filename.split('.').pop() ?? '') || file.mimeType.startsWith('text/'))
     ) {
       loadFileInEditor(filename).catch(err => {
         console.error(err)
@@ -291,12 +291,14 @@ const FileManager = (props: {
     window.location.href = loc
   }
   const handleSaveFile = async (name: string, content: string) => {
-    const formData = new FormData()
-    formData.append('upload', new Blob([content]), name)
-    const encodedPath = encodeURIComponent(path)
-    const r = await ky.post(`server/${server}/file?path=${encodedPath}`, { body: formData })
-    if (r.status !== 200) setMessage((await r.json<{ error: string }>()).error)
-    else setMessage('Saved successfully!')
+    try {
+      const formData = new FormData()
+      formData.append('upload', new Blob([content]), name)
+      const encodedPath = encodeURIComponent(path)
+      const r = await ky.post(`server/${server}/file?path=${encodedPath}`, { body: formData })
+      if (r.status !== 200) setMessage((await r.json<{ error: string }>()).error)
+      else setMessage('Saved successfully!')
+    } catch (e: any) { setMessage(`Error saving file! ${e}`); console.error(e) }
   }
 
   const selectedFile = menuOpen && files && files.find(e => e.name === menuOpen)

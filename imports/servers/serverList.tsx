@@ -28,18 +28,18 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
     setLoggedInDirect(newLoggedIn)
   }, [setLoggedInDirect, setFailure])
 
-  const refetch = useCallback(async () => {
-    try {
+  const refetch = useCallback(() => {
+    (async () => {
       const servers = await ky.get('servers')
       if (servers.ok) {
         setServers((await servers.json<{ servers: Record<string, number> }>()).servers)
         setLoggedIn(true)
       } else if (servers.status === 401) setLoggedIn(false)
       else setLoggedIn('failed')
-    } catch (e) { setLoggedIn('failed') }
+    })().catch(e => { console.error(e); setLoggedIn('failed') })
   }, [ky, setLoggedIn, setServers])
 
-  useEffect(() => { refetch() }, [refetch])
+  useEffect(refetch, [refetch])
   useInterval(refetch, 1000)
 
   const handleClose = () => setServer('')
@@ -95,7 +95,7 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
           <div style={{ flex: 1 }} />
           <Tooltip title='Reload'>
             <span style={{ marginBottom: '0.35em' }}>
-              <IconButton onClick={async () => await refetch()}>
+              <IconButton onClick={refetch}>
                 <Replay />
               </IconButton>
             </span>

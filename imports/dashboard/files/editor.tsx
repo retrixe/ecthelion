@@ -17,10 +17,9 @@ const Editor = (props: {
   const [name, setName] = useState(props.name)
   const error = props.name === '' && props.siblingFiles.includes(name)
 
-  const saveFile = async () => {
+  const saveFile = () => {
     setSaving(true)
-    await props.onSave(name, content)
-    setSaving(false)
+    Promise.resolve(props.onSave(name, content)).then(() => setSaving(false), console.error)
   }
 
   return (
@@ -63,7 +62,7 @@ const Editor = (props: {
       <br />
       <div style={{ display: 'flex', marginTop: 10 }}>
         <Button variant='outlined' onClick={() => props.onClose(setContent)}>
-          {props.closeText || 'Close'}
+          {props.closeText ?? 'Close'}
         </Button>
         <div style={{ flex: 1 }} />
         <Button variant='contained' disabled={saving || error} color='secondary' onClick={saveFile}>

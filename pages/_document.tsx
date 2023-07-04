@@ -5,7 +5,7 @@ import createCache from '@emotion/cache'
 import theme from '../imports/theme'
 import config from '../imports/config'
 
-const ico = `${config.basePath || ''}/favicon.png`
+const ico = `${config.basePath ?? ''}/favicon.png`
 
 class MyDocument extends Document {
   render () {

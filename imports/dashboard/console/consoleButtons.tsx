@@ -5,7 +5,7 @@ import Close from '@mui/icons-material/Close'
 import PlayArrow from '@mui/icons-material/PlayArrow'
 
 const ConsoleButtons = ({ stopStartServer }: {
-  stopStartServer: (operation: 'START' | 'TERM' | 'KILL') => Promise<void>
+  stopStartServer: (operation: 'START' | 'TERM' | 'KILL') => void
 }) => {
   const smallScreen = useMediaQuery(useTheme().breakpoints.only('xs'))
   const [confirmingKill, setConfirmingKill] = useState(false)
@@ -33,7 +33,7 @@ const ConsoleButtons = ({ stopStartServer }: {
           startIcon={<PlayArrow />}
           variant='contained'
           color='primary'
-          onClick={async () => await stopStartServer('START')}
+          onClick={() => stopStartServer('START')}
           fullWidth={smallScreen}
         >
           Start
@@ -44,7 +44,7 @@ const ConsoleButtons = ({ stopStartServer }: {
           color='primary'
           fullWidth={smallScreen}
           startIcon={<Stop />}
-          onClick={async () => await stopStartServer('TERM')}
+          onClick={() => stopStartServer('TERM')}
         >
           Stop
         </Button>
