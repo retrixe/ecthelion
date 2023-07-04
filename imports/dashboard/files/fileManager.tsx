@@ -39,6 +39,7 @@ const FileManager = (props: {
   const { server, node, ip } = useOctyneData() // nodeExists is handled above.
   const ky = useKy(node)
 
+  const filename = router.query.file?.toString()
   const queryPath = router.query.path
   const path = normalisePath((Array.isArray(queryPath) ? queryPath.join('/') : queryPath) || '/')
 
@@ -88,7 +89,12 @@ const FileManager = (props: {
   }, [path, ky, server, setAuthenticated, setServerExists])
 
   useEffect(() => { // Fetch files.
-    if (server) fetchFiles()
+    if (server) {
+      fetchFiles().catch(err => {
+        console.error(err)
+        setFetching(false)
+      })
+    }
   }, [fetchFiles, server])
 
   useEffect(() => {
@@ -108,7 +114,7 @@ const FileManager = (props: {
   }, [file])
 
   // Update path when URL changes. Requires normalised path.
-  const updatePath = (newPath: string) => {
+  const updatePath = useCallback((newPath: string, file?: string) => {
     const route = {
       pathname: '/dashboard/[server]/files/[[...path]]',
       query: { ...router.query }
@@ -119,31 +125,53 @@ const FileManager = (props: {
     }
     delete route.query.server
     delete route.query.path
+    delete route.query.file
     delete as.query.server
     delete as.query.path
+    delete as.query.file
+    if (file) {
+      route.query.file = file
+      as.query.file = file
+    }
     router.push(route, as, { shallow: true })
       .then(() => setSearchApplies(false)) // Apply search only when search has been focused once.
-  }
+  }, [router, server])
 
+  // TODO: What if someone navigates to a file that can't be edited?
+  // Move this logic after fetchFiles somehow, and handle setDownload through ?filename= too.
   const extensions = ['properties', 'json', 'yaml', 'yml', 'xml', 'js', 'log', 'sh', 'txt']
   const openFile = async (name: string, size: number, mimeType: string) => {
     if (
       size < 2 * 1024 * 1024 &&
       (extensions.includes(name.split('.').pop() || '') || mimeType.startsWith('text/'))
-    ) {
-      // Fetch the file.
-      setFetching(true)
-      const req = await ky.get(`server/${server}/file?path=${euc(joinPath(path, name))}`)
-      if (req.status !== 200) {
-        setMessage((await req.json<{ error: string }>()).error)
-        setFetching(false)
-        return
-      }
-      const content = await req.text()
-      setFile({ name, content })
-      setFetching(false)
-    } else setDownload(`${ip}/server/${server}/file?path=${euc(joinPath(path, name))}`)
+    ) updatePath(path, name)
+    else setDownload(`${ip}/server/${server}/file?path=${euc(joinPath(path, name))}`)
   }
+
+  const loadFileInEditor = useCallback(async (filename: string) => {
+    setFetching(true)
+    const req = await ky.get(`server/${server}/file?path=${euc(joinPath(path, filename))}`)
+    if (req.status !== 200) {
+      setMessage((await req.json<{ error: string }>()).error)
+      setFetching(false)
+      updatePath(path) // Remove file from path.
+      return
+    }
+    const content = await req.text()
+    setFile({ name: filename, content })
+    setFetching(false)
+  }, [ky, path, server, updatePath])
+
+  // Load any file in path.
+  useEffect(() => {
+    // We don't setFile(null) in case New File interferes, we set it in file close instead.
+    // Changing the path in the URL will reload the page, so fresh state anyways like that.
+    if (!filename) return
+    loadFileInEditor(filename).catch(err => {
+      console.error(err)
+      setMessage('An error occurred while loading file!')
+    })
+  }, [filename, loadFileInEditor])
 
   // Multiple file logic requests.
   const handleCreateFolder = async (name: string) => {
@@ -300,7 +328,7 @@ const FileManager = (props: {
               {...file}
               siblingFiles={files.map(e => e.name)}
               onSave={handleSaveFile}
-              onClose={() => { setFile(null); fetchFiles() }}
+              onClose={() => { setFile(null); updatePath(path); fetchFiles() }}
               onDownload={async () => {
                 const ott = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
                 window.location.href = `${ip}/server/${server}/file?path=${path}${file.name}&ticket=${ott}`
