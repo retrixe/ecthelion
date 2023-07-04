@@ -17,7 +17,7 @@ export const useOctyneAuth = () => {
       try {
         if (!server || !nodeExists) return
         const servers = await ky.get('servers')
-        const resp = await servers.json<{ [server: string]: number }>()
+        const resp = await servers.json<Record<string, number>>()
         if (servers.ok) setServerExists(!!resp[server])
         if (servers.ok || servers.status === 401 || servers.status === 403) setAuth(servers.ok)
         else setConnectionFailure(true)

@@ -24,8 +24,8 @@ const AccountsPage = () => {
   const [changePassword, setChangePassword] = useState('')
 
   const refetch = () => {
-    ky.get('accounts').then(res => {
-      if (res.ok) return res.json()
+    ky.get('accounts').then(async res => {
+      if (res.ok) return await res.json()
       else if (res.status === 401) setStatus('not logged in')
       else if (res.status === 404) setStatus('unsupported')
       else setStatus('failure')

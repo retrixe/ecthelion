@@ -1,10 +1,10 @@
 import React from 'react'
 import {
   ListItem, ListItemButton, ListItemText, ListItemAvatar, Avatar, IconButton, Checkbox,
-  useMediaQuery, Theme
+  useMediaQuery, type Theme
 } from '@mui/material'
 import AutoSizer from 'react-virtualized-auto-sizer'
-import { FixedSizeList, ListChildComponentProps } from 'react-window'
+import { FixedSizeList, type ListChildComponentProps } from 'react-window'
 import { useRouter } from 'next/router'
 import Folder from '@mui/icons-material/Folder'
 import MoreVert from '@mui/icons-material/MoreVert'

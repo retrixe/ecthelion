@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { KyInstance } from 'ky/distribution/types/ky'
+import { type KyInstance } from 'ky/distribution/types/ky'
 import {
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField
 } from '@mui/material'

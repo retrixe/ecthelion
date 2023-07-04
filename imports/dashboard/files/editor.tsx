@@ -7,7 +7,7 @@ const Editor = (props: {
   name: string
   content: string
   siblingFiles: string[]
-  onSave: (name: string, content: string) => void
+  onSave: (name: string, content: string) => Promise<void> | void
   onDownload: () => void
   onClose: (setContent: React.Dispatch<React.SetStateAction<string>>) => void
   closeText?: string

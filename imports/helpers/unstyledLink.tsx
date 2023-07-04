@@ -1,5 +1,5 @@
 import React from 'react'
-import Link, { LinkProps } from 'next/link'
+import Link, { type LinkProps } from 'next/link'
 
 const UnstyledLink = (props: Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, keyof LinkProps> & LinkProps & {
   children?: React.ReactNode

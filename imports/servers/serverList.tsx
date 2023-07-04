@@ -16,7 +16,7 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
   const ky = useKy(node)
 
   const [server, setServer] = useState('')
-  const [servers, setServers] = useState<{ [name: string]: number } | undefined>(undefined)
+  const [servers, setServers] = useState<Record<string, number> | undefined>(undefined)
   // true/false - logged in or logged out.
   // failed - failed to check.
   // null - not yet fetched.
@@ -32,7 +32,7 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
     try {
       const servers = await ky.get('servers')
       if (servers.ok) {
-        setServers((await servers.json<{ servers: { [name: string]: number } }>()).servers)
+        setServers((await servers.json<{ servers: Record<string, number> }>()).servers)
         setLoggedIn(true)
       } else if (servers.status === 401) setLoggedIn(false)
       else setLoggedIn('failed')

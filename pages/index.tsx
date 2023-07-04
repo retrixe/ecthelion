@@ -134,7 +134,7 @@ const Index = () => {
                 error={failedAuth || invalid}
                 type='password'
                 onSubmit={handleLogin}
-                onKeyDown={e => e.key === 'Enter' && handleLogin()}
+                onKeyDown={e => { e.key === 'Enter' && handleLogin() }}
               />
               <br />
               {(failedAuth || invalid) && (

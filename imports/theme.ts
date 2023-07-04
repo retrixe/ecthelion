@@ -1,4 +1,4 @@
-import { createTheme, ThemeOptions } from '@mui/material'
+import { createTheme, type ThemeOptions } from '@mui/material'
 
 // A theme with custom primary and secondary color.
 // It's optional.

@@ -2,7 +2,7 @@ import ky from 'ky'
 import React from 'react'
 import config from '../config'
 
-const nodes: { [node: string]: string } = config.nodes ?? {}
+const nodes: Record<string, string> = config.nodes ?? {}
 
 const defaultKy = ky.create({
   throwHttpErrors: false,
