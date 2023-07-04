@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { Button, Typography, TextField, Paper, NoSsr, styled } from '@mui/material'
+import { Button, IconButton, Typography, TextField, Paper, NoSsr, styled, Tooltip } from '@mui/material'
+import Info from '@mui/icons-material/Info'
 import config from '../imports/config'
 import Layout from '../imports/layout'
 import Title from '../imports/helpers/title'
@@ -83,7 +84,9 @@ const Index = () => {
           <>
             <Typography variant='h6' color='inherit' style={{ flex: 1 }}>Octyne</Typography>
             <UnstyledLink prefetch={false} href='/settings/about'>
-              <Button color='inherit'>About</Button>
+              <Tooltip title='About'>
+                <IconButton size='large' edge='end' color='inherit'><Info /></IconButton>
+              </Tooltip>
             </UnstyledLink>
           </>
         }

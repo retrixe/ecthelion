@@ -2,10 +2,12 @@ import React, { useState } from 'react'
 import {
   Typography, Button, IconButton, Drawer,
   List, ListItemButton, ListItemIcon, ListItemText,
-  Divider, useMediaQuery, useTheme, Toolbar
+  Divider, useMediaQuery, useTheme, Toolbar, Tooltip
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import Info from '@mui/icons-material/Info'
+import Login from '@mui/icons-material/Login'
+import Logout from '@mui/icons-material/Logout'
 import ManageAccounts from '@mui/icons-material/ManageAccounts'
 import Settings from '@mui/icons-material/Settings'
 
@@ -51,14 +53,18 @@ const SettingsLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) =
         </>
       )}
       <Typography variant='h6' color='inherit' style={{ flex: 1 }}>Octyne</Typography>
-      <UnstyledLink href='/'>
-        <Button color='inherit' onClick={onLogout}>{props.loggedIn ? 'Logout' : 'Login'}</Button>
-      </UnstyledLink>
       {props.loggedIn && (
         <UnstyledLink href='/servers'>
           <Button color='inherit'>Servers</Button>
         </UnstyledLink>
       )}
+      <UnstyledLink href='/'>
+        <Tooltip title={props.loggedIn ? 'Logout' : 'Login'}>
+          <IconButton size='large' edge='end' color='inherit' onClick={onLogout}>
+            {props.loggedIn ? <Logout /> : <Login />}
+          </IconButton>
+        </Tooltip>
+      </UnstyledLink>
     </>
   )
   return (

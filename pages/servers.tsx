@@ -1,5 +1,9 @@
 import React, { useState } from 'react'
-import { Button, Typography } from '@mui/material'
+import { IconButton, Tooltip, Typography } from '@mui/material'
+import Info from '@mui/icons-material/Info'
+import Login from '@mui/icons-material/Login'
+import Logout from '@mui/icons-material/Logout'
+import Settings from '@mui/icons-material/Settings'
 import config from '../imports/config'
 import Layout from '../imports/layout'
 import Title from '../imports/helpers/title'
@@ -26,22 +30,29 @@ const Servers = () => {
         appBar={
           <>
             <Typography variant='h6' color='inherit' style={{ flex: 1 }}>Octyne</Typography>
-            <UnstyledLink href='/'>
-              <Button
-                color='inherit'
-                onClick={() => {
-                  const token = localStorage.getItem('token')
-                  if (token) {
-                    fetch(`${ip}/logout`, { headers: { Authorization: token } })
-                    localStorage.removeItem('token')
-                  }
-                }}
-              >{failure === 'logged out' ? 'Login' : 'Logout'}
-              </Button>
-            </UnstyledLink>
-            <div style={{ marginRight: 5 }} />
             <UnstyledLink prefetch={false} href='/settings/about'>
-              <Button color='inherit'>{failure === 'logged out' ? 'About' : 'Settings'}</Button>
+              <Tooltip title={failure === 'logged out' ? 'About' : 'Settings'}>
+                <IconButton size='large' color='inherit'>
+                  {failure === 'logged out' ? <Info /> : <Settings />}
+                </IconButton>
+              </Tooltip>
+            </UnstyledLink>
+            <UnstyledLink href='/'>
+              <Tooltip title={failure === 'logged out' ? 'Login' : 'Logout'}>
+                <IconButton
+                  edge='end'
+                  size='large'
+                  color='inherit'
+                  onClick={() => {
+                    const token = localStorage.getItem('token')
+                    if (token) {
+                      fetch(`${ip}/logout`, { headers: { Authorization: token } })
+                      localStorage.removeItem('token')
+                    }
+                  }}
+                >{failure === 'logged out' ? <Login /> : <Logout />}
+                </IconButton>
+              </Tooltip>
             </UnstyledLink>
           </>
         }

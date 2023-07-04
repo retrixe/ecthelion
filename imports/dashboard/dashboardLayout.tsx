@@ -2,8 +2,10 @@ import React, { useState } from 'react'
 import {
   Typography, Button, IconButton, Drawer,
   List, ListItemButton, ListItemIcon, ListItemText,
-  Divider, useMediaQuery, useTheme, Toolbar
+  Divider, useMediaQuery, useTheme, Toolbar, Tooltip
 } from '@mui/material'
+import Login from '@mui/icons-material/Login'
+import Logout from '@mui/icons-material/Logout'
 import MenuIcon from '@mui/icons-material/Menu'
 import TrendingUp from '@mui/icons-material/TrendingUp'
 import CallToAction from '@mui/icons-material/CallToAction'
@@ -55,15 +57,21 @@ const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) 
         </>
       )}
       <Typography variant='h6' color='inherit' style={{ flex: 1 }}>Octyne</Typography>
-      <UnstyledLink href='/'>
-        <Button color='inherit' onClick={onLogout}>{props.loggedIn ? 'Logout' : 'Login'}</Button>
-      </UnstyledLink>
       {/* These are displayed unconditionally in case of individual node authentication failure. */}
       <UnstyledLink href='/servers'>
         <Button color='inherit'>Servers</Button>
       </UnstyledLink>
       <UnstyledLink href='/settings/about'>
-        <IconButton edge='end' color='inherit'><Settings /></IconButton>
+        <Tooltip title='Settings'>
+          <IconButton size='large' color='inherit'><Settings /></IconButton>
+        </Tooltip>
+      </UnstyledLink>
+      <UnstyledLink href='/'>
+        <Tooltip title={props.loggedIn ? 'Logout' : 'Login'}>
+          <IconButton size='large' edge='end' color='inherit' onClick={onLogout}>
+            {props.loggedIn ? <Logout /> : <Login />}
+          </IconButton>
+        </Tooltip>
       </UnstyledLink>
     </>
   )
