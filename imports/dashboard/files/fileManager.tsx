@@ -50,6 +50,7 @@ const FileManager = (props: {
   const [overlay, setOverlay] = useState('')
   const [message, setMessage] = useState('')
   const [fetching, setFetching] = useState(true)
+  const [error, setError] = useState<null | 'folderNotExist' | 'pathNotFolder' | 'outsideServerDir'>(null)
 
   const [files, setFiles] = useState<File[] | null>(null)
   const [filesSelected, setFilesSelected] = useState<string[]>([])
@@ -67,6 +68,7 @@ const FileManager = (props: {
   const { setAuthenticated, setServerExists } = props
   const fetchFiles = useCallback(async () => {
     setFetching(true) // TODO: Make it show up after 1.0 seconds.
+    setError(null) // TODO: This isn't as clean as we would like..
     let files: any = {}
     try {
       files = await ky.get(`server/${server}/files?path=${euc(path)}`).json()
@@ -75,6 +77,9 @@ const FileManager = (props: {
     }
     if (files.error === 'This server does not exist!') setServerExists(false)
     else if (files.error === 'You are not authenticated to access this resource!') setAuthenticated(false)
+    else if (files.error === 'The folder requested is outside the server!') setError('outsideServerDir')
+    else if (files.error === 'This folder does not exist!') setError('folderNotExist')
+    else if (files.error === 'This is not a folder!') setError('pathNotFolder')
     else if (files) {
       setFiles(files.contents)
       setFilesSelected([])
@@ -116,7 +121,8 @@ const FileManager = (props: {
     delete route.query.path
     delete as.query.server
     delete as.query.path
-    router.push(route, as, { shallow: true }).then(() => setSearchApplies(false))
+    router.push(route, as, { shallow: true })
+      .then(() => setSearchApplies(false)) // Apply search only when search has been focused once.
   }
 
   const extensions = ['properties', 'json', 'yaml', 'yml', 'xml', 'js', 'log', 'sh', 'txt']
@@ -260,6 +266,26 @@ const FileManager = (props: {
 
   const selectedFile = menuOpen && files && files.find(e => e.name === menuOpen)
   const titleName = file?.name ? file.name + ' - ' : (path ? path + ' - ' : '')
+  const alternativeDisplay = !error ? (
+    !files || !server ? <ConnectionFailure loading={fetching} /> : null
+  ) : (
+    <Paper style={{ padding: 10, marginBottom: '2em' }}>
+      <Typography>{error === 'folderNotExist'
+        ? `The folder you are trying to access (${path}) does not exist.`
+        : error === 'outsideServerDir'
+          ? `The path you are trying to access (${path}) is outside the server folder!`
+          : `The path you are trying to access (${path}) is a file!`}
+      </Typography>
+      {path !== '/' && (
+        <Typography
+          style={{ textDecoration: 'underline', cursor: fetching ? 'wait' : 'pointer' }}
+          onClick={() => !fetching && updatePath(error === 'outsideServerDir' ? '/' : parentPath(path))}
+        >
+          {error === 'outsideServerDir' ? 'Go to root folder?' : 'Try going up one path?'}
+        </Typography>
+      )}
+    </Paper>
+  )
   return (
     <>
       <Title
@@ -267,7 +293,7 @@ const FileManager = (props: {
         description='The files of a process running on Octyne.'
         url={`/dashboard/${server}/files`}
       />
-      {!files || !server ? <ConnectionFailure loading={fetching} /> : (
+      {!files || alternativeDisplay ? alternativeDisplay : (
         file !== null ? (
           <Paper style={{ padding: 20 }}>
             <Editor
