@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Typography, Paper, Divider, Switch, FormGroup, FormControlLabel } from '@mui/material'
 
+import config from '../../imports/config'
 import Title from '../../imports/helpers/title'
+import useKy from '../../imports/helpers/useKy'
 import SettingsLayout from '../../imports/settings/settingsLayout'
 import { UpdateThemeContext } from '../_app'
 import packageJson from '../../package.json'
@@ -41,6 +43,15 @@ const About = () => {
     updateTheme()
   }
 
+  const [octyneVersion, setOctyneVersion] = useState('')
+  const ky = useKy()
+  useEffect(() => {
+    ky('').json<{ version: string }>()
+      .then(({ version }) => setOctyneVersion(version))
+      .catch(e => console.error('Failed to retrieve Octyne version for main node! Perhaps Octyne is outdated or not running?', e))
+  })
+  const nodeLength = Object.keys(config.nodes ?? {}).length
+
   return (
     <React.StrictMode>
       <Title
@@ -53,7 +64,11 @@ const About = () => {
         <Paper style={{ padding: 20 }}>
           <Typography gutterBottom variant='h5'>About Ecthelion</Typography>
           <Divider style={{ marginBottom: '0.70em' }} />
-          <Typography gutterBottom>This instance is running Ecthelion {version}.</Typography>
+          <Typography gutterBottom>
+            This instance is running Ecthelion {version}
+            {octyneVersion ? ` and Octyne ${octyneVersion}` : ' (Octyne version unknown)'}
+            {octyneVersion && nodeLength ? ' (on primary node)' : ''}.
+          </Typography>
           <div style={{ marginBottom: '0.35em' }} />
           <Typography variant='h6'>Some quick tips:</Typography>
           <Typography component='ul' style={{ paddingInlineStart: 20 }}>
