@@ -43,20 +43,22 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
   useInterval(refetch, 1000)
 
   const handleClose = () => setServer('')
-  const runCommand = async (command: string) => {
-    const ott = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
-    // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
-    const ws = new WebSocket(`${ip.split('http').join('ws')}/server/${server}/console?ticket=${ott}`)
-    ws.onopen = () => {
-      ws.send(command)
-      ws.close()
-      handleClose()
-    }
-    ws.onerror = () => setMessage('Failed to send command!')
+  const runCommand = (command: string) => {
+    ;(async () => {
+      const ott = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
+      // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
+      const ws = new WebSocket(`${ip.split('http').join('ws')}/server/${server}/console?ticket=${ott}`)
+      ws.onopen = () => {
+        ws.send(command)
+        ws.close()
+        handleClose()
+      }
+      ws.onerror = () => setMessage('Failed to send command!')
+    })().catch((e: any) => { console.error(e); setMessage('Failed to send command!') })
   }
 
-  const stopStartServer = async (operation: 'START' | 'KILL' | 'TERM', server: string) => {
-    try {
+  const stopStartServer = (operation: 'START' | 'KILL' | 'TERM', server: string) => {
+    ;(async () => {
       // Send the request to stop or start the server.
       const res = await ky.post('server/' + server, {
         body: operation === 'KILL' ? 'STOP' : operation // Octyne 1.0 compatibility.
@@ -67,7 +69,7 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
           ? 'Gracefully stopping apps requires Octyne 1.1 or newer!'
           : json.error)
       }
-    } catch (e: any) { setMessage(e) }
+    })().catch((e: any) => { console.error(e); setMessage(e) })
   }
 
   if (loggedIn === null || loggedIn === 'failed') {

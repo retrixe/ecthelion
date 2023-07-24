@@ -166,7 +166,7 @@ const Console = ({ setAuthenticated }: {
   useEffect(() => {
     if (!ws) {
       const ignore = { current: false } // Required to handle React.StrictMode correctly.
-      connectToServer(ignore)
+      connectToServer(ignore).catch(() => {})
       return () => { ignore.current = true }
     } else {
       return () => {

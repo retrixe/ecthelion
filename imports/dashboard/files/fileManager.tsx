@@ -88,38 +88,33 @@ const FileManager = (props: {
     }
     (replace ? router.replace : router.push)(route, as, { shallow: true })
       .then(() => setSearchApplies(false)) // Apply search only when search has been focused once.
+      .catch(console.error)
   }, [router, server])
 
   // Used to fetch files.
   const { setAuthenticated, setServerExists } = props
-  const fetchFiles = useCallback(async () => {
-    setFetching(true) // TODO: Make it show up after 1.0 seconds.
-    setError(null) // TODO: This isn't as clean as we would like..
-    let files: any = {}
-    try {
-      files = await ky.get(`server/${server}/files?path=${euc(path)}`).json()
-    } catch (e: any) {
-      setMessage(e.message)
-    }
-    if (files.error === 'This server does not exist!') setServerExists(false)
-    else if (files.error === 'You are not authenticated to access this resource!') setAuthenticated(false)
-    else if (files.error === 'The folder requested is outside the server!') setError('outsideServerDir')
-    else if (files.error === 'This folder does not exist!') setError('folderNotExist')
-    else if (files.error === 'This is not a folder!') {
-      return updatePath(parentPath(path), path.substring(0, path.length - 1).split('/').pop(), true)
-    } else if (files) {
-      setFiles(files.contents)
-      setFilesSelected([])
-    }
-    setFetching(false)
+  const fetchFiles = useCallback(() => {
+    ;(async () => {
+      setFetching(true) // TODO: Make it show up after 1.0 seconds.
+      setError(null) // TODO: This isn't as clean as we would like..
+      const files: any = await ky.get(`server/${server}/files?path=${euc(path)}`).json()
+      if (files.error === 'This server does not exist!') setServerExists(false)
+      else if (files.error === 'You are not authenticated to access this resource!') setAuthenticated(false)
+      else if (files.error === 'The folder requested is outside the server!') setError('outsideServerDir')
+      else if (files.error === 'This folder does not exist!') setError('folderNotExist')
+      else if (files.error === 'This is not a folder!') {
+        return updatePath(parentPath(path), path.substring(0, path.length - 1).split('/').pop(), true)
+      } else if (files) {
+        setFiles(files.contents)
+        setFilesSelected([])
+      }
+      setFetching(false)
+    })().catch(e => { console.error(e); setMessage(`Failed to fetch files: ${e.message}`); setFetching(false) })
   }, [path, ky, server, updatePath, setAuthenticated, setServerExists])
 
   useEffect(() => { // Fetch files.
     if (server) {
-      fetchFiles().catch(err => {
-        console.error(err)
-        setFetching(false)
-      })
+      fetchFiles()
     }
   }, [fetchFiles, server])
 
@@ -216,7 +211,7 @@ const FileManager = (props: {
       setFetching(false)
     }
   }
-  const handleFilesDelete = async () => {
+  const handleFilesDelete = () => {
     setMassActionMenuOpen(null)
     let total = filesSelected.length
     setOverlay(`Deleting ${total} out of ${filesSelected.length} files.`)
@@ -225,70 +220,80 @@ const FileManager = (props: {
       const file = filesSelected[i]
       // setOverlay('Deleting ' + file)
       // Save the file.
-      ops.push(await ky.delete(`server/${server}/file?path=${euc(path + file)}`).then(async r => {
+      ops.push(ky.delete(`server/${server}/file?path=${euc(path + file)}`).then(async r => {
         if (r.status !== 200) {
           setMessage(`Error deleting ${file}\n${(await r.json<{ error: string }>()).error}`)
         } else setOverlay(`Deleting ${--total} out of ${filesSelected.length} files.`)
         if (localStorage.getItem('logAsyncMassActions')) console.log('Deleted ' + file)
-      }))
+      }).catch(e => setMessage(`Error deleting ${file}\n${e}`)))
     }
     Promise.allSettled(ops).then(() => {
       setMessage('Deleted all files successfully!')
       setOverlay('')
       fetchFiles()
-    })
+    }).catch(console.error) // Should not be called, ideally.
   }
-  const handleFilesUpload = async (files: FileList) => {
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i]
-      setOverlay(file.name)
-      // Save the file.
-      const formData = new FormData()
-      formData.append('upload', file, file.name)
-      const r = await ky.post(`server/${server}/file?path=${euc(path)}`, { body: formData, timeout: false })
-      if (r.status !== 200) {
-        setMessage(`Error uploading ${file.name}\n${(await r.json<{ error: string }>()).error}`)
+  const handleFilesUpload = (files: FileList) => {
+    ;(async () => {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        setOverlay(file.name)
+        // Save the file.
+        const formData = new FormData()
+        formData.append('upload', file, file.name)
+        const r = await ky.post(`server/${server}/file?path=${euc(path)}`, { body: formData, timeout: false })
+        if (r.status !== 200) {
+          setMessage(`Error uploading ${file.name}\n${(await r.json<{ error: string }>()).error}`)
+        }
+        setOverlay('')
       }
-      setOverlay('')
-    }
-    setMessage('Uploaded all files successfully!')
-    fetchFiles()
+      setMessage('Uploaded all files successfully!')
+      fetchFiles()
+    })().catch(e => { console.error(e); setMessage(`Failed to upload files: ${e.message}`) })
   }
   // Single file logic.
-  const handleDeleteMenuButton = async () => {
-    setMenuOpen('')
-    setFetching(true)
-    const a = await ky.delete(`server/${server}/file?path=${euc(path + menuOpen)}`)
-      .json<{ error: string }>()
-    if (a.error) setMessage(a.error)
-    setFetching(false)
-    setMenuOpen('')
-    fetchFiles()
+  const handleDeleteMenuButton = () => {
+    ;(async () => {
+      setMenuOpen('')
+      setFetching(true)
+      const a = await ky.delete(`server/${server}/file?path=${euc(path + menuOpen)}`)
+        .json<{ error: string }>()
+      if (a.error) setMessage(a.error)
+      setFetching(false)
+      setMenuOpen('')
+      fetchFiles()
+    })().catch(e => { console.error(e); setMessage(`Failed to delete file: ${e.message}`) })
   }
-  const handleDownloadMenuButton = async () => {
-    setMenuOpen('')
-    const ticket = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
-    window.location.href = `${ip}/server/${server}/file?ticket=${ticket}&path=${path}${menuOpen}`
+  const handleDownloadMenuButton = () => {
+    ;(async () => {
+      setMenuOpen('')
+      const ticket = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
+      window.location.href = `${ip}/server/${server}/file?ticket=${ticket}&path=${path}${menuOpen}`
+    })().catch(e => { console.error(e); setMessage(`Failed to download file: ${e.message}`) })
   }
-  const handleDecompressMenuButton = async () => {
-    setMenuOpen('')
-    setFetching(true)
-    const a = await ky.post(`server/${server}/decompress?path=${euc(path + menuOpen)}`, {
-      body: path + menuOpen.split('.').slice(0, -1).join('.')
-    })
-      .json<{ error: string }>()
-    if (a.error) setMessage(a.error)
-    setFetching(false)
-    setMenuOpen('')
-    fetchFiles()
+  const handleDecompressMenuButton = () => {
+    ;(async () => {
+      setMenuOpen('')
+      setFetching(true)
+      const a = await ky.post(`server/${server}/decompress?path=${euc(path + menuOpen)}`, {
+        body: path + menuOpen.split('.').slice(0, -1).join('.')
+      })
+        .json<{ error: string }>()
+      if (a.error) setMessage(a.error)
+      setFetching(false)
+      setMenuOpen('')
+      fetchFiles()
+    })().catch(e => { console.error(e); setMessage(`Failed to decompress file: ${e.message}`) })
   }
   const handleCloseDownload = () => { setDownload(''); updatePath(path) }
-  const handleDownloadButton = async () => {
-    handleCloseDownload()
-    // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
-    const ticket = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
-    const loc = `${ip}/server/${server}/file?ticket=${ticket}&path=${euc(joinPath(path, download))}`
-    window.location.href = loc
+  const handleDownloadButton = () => {
+    ;(async () => {
+      handleCloseDownload()
+      // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
+      const ticket = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
+      const loc = `${ip}/server/${server}/file?ticket=${ticket}&path=${euc(joinPath(path, download))}`
+      window.location.href = loc
+    })().catch((e: any) => { console.error(e); setMessage(`Failed to download file: ${e.message}`) })
   }
   const handleSaveFile = async (name: string, content: string) => {
     try {
@@ -338,9 +343,11 @@ const FileManager = (props: {
               siblingFiles={files.map(e => e.name)}
               onSave={handleSaveFile}
               onClose={() => { setFile(null); updatePath(path); fetchFiles() }}
-              onDownload={async () => {
-                const ott = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
-                window.location.href = `${ip}/server/${server}/file?path=${path}${file.name}&ticket=${ott}`
+              onDownload={() => {
+                ;(async () => {
+                  const ott = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
+                  window.location.href = `${ip}/server/${server}/file?path=${path}${file.name}&ticket=${ott}`
+                })().catch(e => { console.error(e); setMessage(`Failed to download file: ${e.message}`) })
               }}
             />
           </Paper>
@@ -507,7 +514,7 @@ const FileManager = (props: {
         <Menu open keepMounted anchorEl={massActionMenuOpen} onClose={() => setMassActionMenuOpen(null)}>
           <MenuItem onClick={() => setMassActionDialogOpen('move')}>Move</MenuItem>
           <MenuItem onClick={() => setMassActionDialogOpen('copy')}>Copy</MenuItem>
-          <MenuItem onClick={async () => await handleFilesDelete()}>Delete</MenuItem>
+          <MenuItem onClick={() => handleFilesDelete()}>Delete</MenuItem>
           <MenuItem onClick={() => setMassActionDialogOpen('compress')}>Compress</MenuItem>
         </Menu>
       )}

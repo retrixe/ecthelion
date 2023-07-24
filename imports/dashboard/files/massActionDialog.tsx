@@ -51,13 +51,14 @@ const MassActionDialog = ({
           }
           setOverlay(`${moving} ${--left} out of ${files.length} files.`)
           if (localStorage.getItem('logAsyncMassActions')) console.log(moved + ' ' + file)
-        }))
+        })
+        .catch(e => setMessage(`Error ${movingl} ${file}\n${e}`)))
     }
     Promise.allSettled(operations).then(() => {
       reload()
       setOverlay('')
       setMessage(moved + ' all files successfully!')
-    })
+    }).catch(console.error) // Should not be called, ideally.
   }
   const prompt = operation === 'compress'
     ? 'Enter path to ZIP file to create:'

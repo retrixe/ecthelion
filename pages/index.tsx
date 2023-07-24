@@ -31,14 +31,14 @@ const Index = () => {
     // We'll add sessionStorage support later for Remember Me stuff.
     if (typeof localStorage !== 'undefined' && localStorage.getItem('token')) {
       // Then we redirect to the new page.
-      router.push(route)
+      router.push(route).catch(console.error)
     } else {
       // Prefetch the servers page for performance.
-      router.prefetch(route)
+      router.prefetch(route).catch(console.error)
     }
   }, [router, route])
 
-  const handleLogin = async () => {
+  const login = async () => {
     try {
       const request = await fetch(config.ip + '/login', {
         headers: { Username: username, Password: password }
@@ -64,10 +64,12 @@ const Index = () => {
         setFailedAuth(false)
         setInvalid(false)
         // Then we redirect to the new page.
-        router.push(route)
+        router.push(route).catch(console.error)
       }
     } catch (e) { setFailedAuth(true) }
   }
+
+  const handleLogin = () => { login().catch(() => {}) }
 
   return (
     <React.StrictMode>

@@ -46,13 +46,18 @@ const ConfigPage = () => {
   }, [ky, nodeExists])
 
   useEffect(() => {
-    loadConfig()
+    loadConfig().catch(() => {})
   }, [loadConfig])
 
   const saveConfig = async (content: string) => {
-    const r = await ky.patch('config', { body: content })
-    if (r.status !== 200) setMessage((await r.json<{ error: string }>()).error)
-    else setMessage('Saved successfully!')
+    try {
+      const r = await ky.patch('config', { body: content })
+      if (r.status !== 200) setMessage((await r.json<{ error: string }>()).error)
+      else setMessage('Saved successfully!')
+    } catch (e) {
+      setMessage('Failed to save config!')
+      console.error(e)
+    }
   }
 
   const reloadFromDisk = async () => {
@@ -92,10 +97,12 @@ const ConfigPage = () => {
                       label='Octyne Node'
                       color='secondary'
                       defaultValue=''
-                      onChange={async node => await router.replace(
-                        { query: node.target.value ? { node: node.target.value } : {} },
-                        '/settings/config'
-                      )}
+                      onChange={node => {
+                        router.replace(
+                          { query: node.target.value ? { node: node.target.value } : {} },
+                          '/settings/config'
+                        ).catch(console.error)
+                      }}
                     >
                       <MenuItem value=''>Primary Octyne server</MenuItem>
                       {Object.keys(config.nodes ?? {}).map(node => (
@@ -166,7 +173,7 @@ const ConfigPage = () => {
         open={confirmDialog === true}
         title='Reload config from disk?'
         prompt={confirmDialogWarning}
-        onConfirm={() => { reloadFromDisk().then(() => setConfirmDialog(false)) }}
+        onConfirm={() => { reloadFromDisk().then(() => setConfirmDialog(false), () => {}) }}
         onCancel={() => setConfirmDialog(false)}
       />
       <ConfirmDialog
@@ -174,7 +181,7 @@ const ConfigPage = () => {
         title='Save config?'
         prompt={confirmDialogWarning}
         onConfirm={() => {
-          saveConfig(confirmDialog as string).then(() => setConfirmDialog(false))
+          saveConfig(confirmDialog as string).then(() => setConfirmDialog(false), () => {})
         }}
         onCancel={() => setConfirmDialog(false)}
       />

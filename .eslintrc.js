@@ -18,10 +18,8 @@ module.exports = {
     // Make TypeScript ESLint less strict.
     '@typescript-eslint/explicit-function-return-type': 'off', // Opt into this later?
     '@typescript-eslint/strict-boolean-expressions': 'off',
-    '@typescript-eslint/no-floating-promises': 'off', // Remove me!
     '@typescript-eslint/triple-slash-reference': 'off',
     '@typescript-eslint/restrict-template-expressions': 'off',
-    '@typescript-eslint/no-misused-promises': 'off', // Remove me!
     '@typescript-eslint/no-confusing-void-expression': 'off',
     'multiline-ternary': 'off', // Temporary.
     // Allow no-multi-str.

@@ -57,7 +57,7 @@ export const ServerListItem = ({ server, node, status, openDialog, stopStartServ
           </>
         }
       >
-        <ListItemButton dense onClick={() => { router.push(href) }}>
+        <ListItemButton dense onClick={() => { router.push(href).catch(console.error) }}>
           <ListItemAvatar>
             <Avatar>
               <Storage />
