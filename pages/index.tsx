@@ -29,7 +29,7 @@ const Index = (): JSX.Element => {
   useEffect(() => {
     // Check the access token in localStorage if we are on the client.
     // We'll add sessionStorage support later for Remember Me stuff.
-    if (typeof localStorage !== 'undefined' && localStorage.getItem('token')) {
+    if (typeof localStorage === 'object' && localStorage.getItem('token')) {
       // Then we redirect to the new page.
       router.push(route).catch(console.error)
     } else {

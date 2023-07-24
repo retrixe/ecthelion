@@ -306,7 +306,7 @@ const FileManager = (props: {
     } catch (e: any) { setMessage(`Error saving file! ${e}`); console.error(e) }
   }
 
-  const selectedFile = menuOpen && files && files.find(e => e.name === menuOpen)
+  const selectedFile = menuOpen && files?.find(e => e.name === menuOpen)
   const titleName = file?.name ? file.name + ' - ' : (path ? path + ' - ' : '')
   const alternativeDisplay = !error ? (
     !files || !server ? <ConnectionFailure loading={fetching} /> : null
