@@ -1,21 +1,22 @@
 import React from 'react'
 import { AppBar, Toolbar } from '@mui/material'
+import styled from '@emotion/styled'
+
+const LayoutContainer = styled.div({
+  // background: 'linear-gradient(to top, #fc00ff, #00dbde)',
+  minHeight: '100vh',
+  width: '100vw',
+  maxWidth: '100%',
+  display: 'flex',
+  flexDirection: 'column'
+  // minWidth: '100%'
+})
 
 const Layout = (props: React.PropsWithChildren<{
   appBar?: React.ReactNode
   removeToolbar?: boolean
 }>): JSX.Element => (
-  <div
-    style={{
-      // background: 'linear-gradient(to top, #fc00ff, #00dbde)',
-      minHeight: '100vh',
-      width: '100vw',
-      maxWidth: '100%',
-      display: 'flex',
-      flexDirection: 'column'
-      // minWidth: '100%'
-    }}
-  >
+  <LayoutContainer>
     {/* <style jsx global>
       {`
       body {
@@ -34,7 +35,7 @@ const Layout = (props: React.PropsWithChildren<{
     </AppBar>
     {props.removeToolbar ? '' : <Toolbar />}
     {props.children}
-  </div>
+  </LayoutContainer>
 )
 
 export default Layout

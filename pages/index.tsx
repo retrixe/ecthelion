@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import emotionStyled from '@emotion/styled'
 import { Button, IconButton, Typography, TextField, Paper, NoSsr, styled, Tooltip } from '@mui/material'
 import Info from '@mui/icons-material/Info'
 import config from '../imports/config'
@@ -14,6 +15,14 @@ const ButtonContainer = styled('div')(({ theme }) => ({
     justifyContent: 'flex-end'
   }
 }))
+
+const IndexContainer = emotionStyled.div({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  height: '100vh',
+  overflow: 'auto'
+})
 
 const Index = (): JSX.Element => {
   const [failedAuth, setFailedAuth] = useState(false) // Unable to authorize with the server.
@@ -92,14 +101,7 @@ const Index = (): JSX.Element => {
         }
         removeToolbar
       >
-        <div style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-          overflow: 'auto'
-        }}
-        >
+        <IndexContainer>
           <NoSsr>
             <Paper
               elevation={24} sx={{
@@ -160,7 +162,7 @@ const Index = (): JSX.Element => {
               </ButtonContainer>
             </Paper>
           </NoSsr>
-        </div>
+        </IndexContainer>
       </Layout>
     </React.StrictMode>
   )

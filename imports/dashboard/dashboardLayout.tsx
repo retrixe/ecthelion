@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import styled from '@emotion/styled'
 import {
   Typography, IconButton, Drawer,
   List, ListItemButton, ListItemIcon, ListItemText,
@@ -17,6 +18,13 @@ import { useRouter } from 'next/router'
 import Layout from '../layout'
 import config from '../config'
 import UnstyledLink from '../helpers/unstyledLink'
+
+const DashboardContainer = styled.div({
+  padding: 20,
+  flexDirection: 'column',
+  display: 'flex',
+  flex: 1
+})
 
 const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: string }): JSX.Element => {
   const { server, node } = useRouter().query
@@ -96,16 +104,11 @@ const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>):
             </List>
           </Drawer>
         )}
-        <div style={{
-          padding: 20,
-          marginLeft: drawerVariant === 'permanent' && props.loggedIn ? '200px' : undefined,
-          flexDirection: 'column',
-          display: 'flex',
-          flex: 1
-        }}
+        <DashboardContainer
+          style={{ marginLeft: drawerVariant === 'permanent' && props.loggedIn ? '200px' : 0 }}
         >
           {props.children}
-        </div>
+        </DashboardContainer>
       </Layout>
     </>
   )

@@ -1,5 +1,6 @@
 import React, { useRef, useLayoutEffect } from 'react'
 import Typography from '@mui/material/Typography'
+import styled from '@emotion/styled'
 
 let chrome = false
 try {
@@ -10,26 +11,24 @@ try {
   ) chrome = true
 } catch (e) {}
 
-const ChromeConsoleView = (props: { console: Array<{ id: number, text: string }> }): JSX.Element => {
-  return (
-    <div
-      style={{
-        height: '100%',
-        width: '100%',
-        overflow: 'auto',
-        display: 'flex',
-        flexDirection: 'column-reverse'
-      }}
-    >
-      <div style={{ minHeight: '5px' }} />
-      <Typography variant='body2' style={{ lineHeight: 1.5, wordWrap: 'break-word' }} component='div'>
-        {props.console.map((i) => (
-          <span key={i.id}>{i.text}<br /></span>
-        )) /* Truncate to 650 lines due to performance issues afterwards. */}
-      </Typography>
-    </div>
-  )
-}
+const ChromeConsoleViewContainer = styled.div({
+  height: '100%',
+  width: '100%',
+  overflow: 'auto',
+  display: 'flex',
+  flexDirection: 'column-reverse'
+})
+
+const ChromeConsoleView = (props: { console: Array<{ id: number, text: string }> }): JSX.Element => (
+  <ChromeConsoleViewContainer>
+    <div style={{ minHeight: '5px' }} />
+    <Typography variant='body2' style={{ lineHeight: 1.5, wordWrap: 'break-word' }} component='div'>
+      {props.console.map((i) => (
+        <span key={i.id}>{i.text}<br /></span>
+      )) /* Truncate to 650 lines due to performance issues afterwards. */}
+    </Typography>
+  </ChromeConsoleViewContainer>
+)
 
 const ConsoleView = (props: { console: Array<{ id: number, text: string }> }): JSX.Element => {
   const ref = useRef<HTMLDivElement>(null)
