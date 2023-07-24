@@ -12,6 +12,7 @@ class MyDocument extends Document {
     return (
       <Html lang='en' dir='ltr'>
         <Head>
+          <link rel='manifest' href={`${config.basePath ?? ''}/manifest.json`} />
           <link rel='icon' href={ico} />
           <meta charSet='utf-8' />
           {/* PWA primary color */}
