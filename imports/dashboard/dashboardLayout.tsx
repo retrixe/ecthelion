@@ -18,7 +18,7 @@ import Layout from '../layout'
 import config from '../config'
 import UnstyledLink from '../helpers/unstyledLink'
 
-const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: string }) => {
+const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: string }): JSX.Element => {
   const { server, node } = useRouter().query
   const nodeUri = typeof node === 'string' ? `?node=${encodeURIComponent(node)}` : ''
   return (
@@ -32,7 +32,7 @@ const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: str
   )
 }
 
-const onLogout = () => {
+const onLogout = (): void => {
   const token = localStorage.getItem('token')
   if (token) {
     fetch(`${config.ip}/logout`, { headers: { Authorization: token } }).catch(console.error)
@@ -40,7 +40,7 @@ const onLogout = () => {
   }
 }
 
-const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) => {
+const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>): JSX.Element => {
   const [openDrawer, setOpenDrawer] = useState(false)
   const drawerVariant = useMediaQuery(useTheme().breakpoints.only('xs')) ? 'temporary' : 'permanent'
   const appBarContent = (

@@ -42,7 +42,10 @@ interface Statistics {
   totalMemory: number
 }
 
-const StatisticsDisplay = ({ server, statistics }: { server: string, statistics: Statistics }) => (
+const StatisticsDisplay = ({ server, statistics }: {
+  server: string
+  statistics: Statistics
+}): JSX.Element => (
   <Paper style={{ padding: 20 }}>
     <Typography variant='h5' gutterBottom>Process Statistics - {server}</Typography>
     <Divider />
@@ -78,7 +81,7 @@ const StatisticsDisplay = ({ server, statistics }: { server: string, statistics:
   </Paper>
 )
 
-const StatisticsPage = () => {
+const StatisticsPage = (): JSX.Element => {
   const { node, server, nodeExists } = useOctyneData()
   const ky = useKy(node)
 

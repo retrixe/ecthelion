@@ -16,7 +16,7 @@ import Layout from '../layout'
 import config from '../config'
 import UnstyledLink from '../helpers/unstyledLink'
 
-const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: string }) => {
+const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: string }): JSX.Element => {
   return (
     <UnstyledLink href={`/settings/${props.subUrl}`}>
       <ListItemButton style={{ width: 200 }}>
@@ -28,7 +28,7 @@ const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: str
   )
 }
 
-const onLogout = () => {
+const onLogout = (): void => {
   const token = localStorage.getItem('token')
   if (token) {
     fetch(`${config.ip}/logout`, { headers: { Authorization: token } }).catch(console.error)
@@ -36,7 +36,7 @@ const onLogout = () => {
   }
 }
 
-const SettingsLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>) => {
+const SettingsLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>): JSX.Element => {
   const [openDrawer, setOpenDrawer] = useState(false)
   const drawerVariant = useMediaQuery(useTheme().breakpoints.only('xs')) ? 'temporary' : 'permanent'
   const appBarContent = (

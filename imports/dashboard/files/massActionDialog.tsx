@@ -16,13 +16,13 @@ const MassActionDialog = ({
   files: string[]
   path: string
   ky: KyInstance
-}) => {
+}): JSX.Element => {
   const [newPath, setNewPath] = useState('')
   const move = operation === 'move' ? 'Move' : operation === 'compress' ? 'Compress' : 'Copy'
   const moved = operation === 'move' ? 'Moved' : operation === 'compress' ? 'Compressed' : 'Copied'
   const moving = operation === 'move' ? 'Moving' : operation === 'compress' ? 'Compressing ' : 'Copying'
   const movingl = operation === 'move' ? 'moving' : operation === 'compress' ? 'compressing ' : 'copying'
-  const handleOperation = () => {
+  const handleOperation = (): void => {
     handleClose()
     if (operation === 'compress') {
       setOverlay(`Compressing ${files.length} files on the server.`)

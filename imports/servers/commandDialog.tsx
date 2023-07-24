@@ -7,7 +7,7 @@ const CommandDialog = ({ server, handleClose, runCommand }: {
   server: string
   handleClose: () => void
   runCommand: (command: string) => void
-}) => {
+}): JSX.Element => {
   const [command, setCommand] = useState('')
   return (
     <Dialog open fullWidth onClose={handleClose}>

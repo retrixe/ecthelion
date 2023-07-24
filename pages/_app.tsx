@@ -12,12 +12,12 @@ const clientSideEmotionCache = createCache({ key: 'css' })
 
 export const UpdateThemeContext = React.createContext(() => {})
 
-export default function MyApp (props: AppProps & { emotionCache?: EmotionCache }) {
+export default function MyApp (props: AppProps & { emotionCache?: EmotionCache }): JSX.Element {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
 
   // Customisable theming options.
   const [currentTheme, setCurrentTheme] = React.useState(defaultTheme)
-  const updateTheme = () => {
+  const updateTheme = (): void => {
     if (typeof localStorage !== 'object') return
     const squareCorners = localStorage.getItem('square-corners') === 'true'
     const lightMode = localStorage.getItem('light-mode') === 'true'

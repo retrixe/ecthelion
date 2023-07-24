@@ -6,7 +6,7 @@ const Title = ({ title, description, url, index }: {
   description: string
   url: string
   index?: boolean
-}) => (
+}): JSX.Element => (
   <Head>
     <title>{title}</title>
     <meta property='og:title' content={title} />

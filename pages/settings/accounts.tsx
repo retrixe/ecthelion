@@ -13,7 +13,7 @@ import Title from '../../imports/helpers/title'
 import Message from '../../imports/helpers/message'
 import AccountDialog from '../../imports/settings/accountDialog'
 
-const AccountsPage = () => {
+const AccountsPage = (): JSX.Element => {
   const ky = useKy()
   const [status, setStatus] = useState<'failure' | 'unsupported' | 'not logged in' | null>(null)
   const [accounts, setAccounts] = useState<string[] | null>(null)
@@ -23,7 +23,7 @@ const AccountsPage = () => {
   const [deleteAccount, setDeleteAccount] = useState('')
   const [changePassword, setChangePassword] = useState('')
 
-  const refetch = () => {
+  const refetch = (): void => {
     ky.get('accounts').then(async res => {
       if (res.ok) return await res.json()
       else if (res.status === 401) setStatus('not logged in')
@@ -36,7 +36,7 @@ const AccountsPage = () => {
 
   useEffect(refetch, [ky])
 
-  const handleCreateAccount = (username: string, password: string) => {
+  const handleCreateAccount = (username: string, password: string): void => {
     ky.post('accounts', { json: { username, password } }).then(res => {
       if (res.ok) {
         refetch()
@@ -46,7 +46,7 @@ const AccountsPage = () => {
     }).catch(() => setMessage('Failed to create account!'))
   }
 
-  const handleChangePassword = (username: string, password: string) => {
+  const handleChangePassword = (username: string, password: string): void => {
     ky.patch('accounts', { json: { username, password } }).then(res => {
       if (res.ok) {
         refetch()
@@ -56,7 +56,7 @@ const AccountsPage = () => {
     }).catch(() => setMessage('Failed to change password!'))
   }
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = (): void => {
     ky.delete('accounts?username=' + encodeURIComponent(deleteAccount)).then(res => {
       if (res.ok) {
         refetch()

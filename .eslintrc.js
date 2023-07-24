@@ -16,7 +16,6 @@ module.exports = {
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
     // Make TypeScript ESLint less strict.
-    '@typescript-eslint/explicit-function-return-type': 'off', // Opt into this later?
     '@typescript-eslint/strict-boolean-expressions': 'off',
     '@typescript-eslint/triple-slash-reference': 'off',
     '@typescript-eslint/restrict-template-expressions': 'off',

@@ -14,7 +14,7 @@ import AuthFailure from '../imports/errors/authFailure'
 import ConnectionFailure from '../imports/errors/connectionFailure'
 const { ip, nodes } = config
 
-const logout = () => {
+const logout = (): void => {
   const token = localStorage.getItem('token')
   if (token) {
     fetch(`${ip}/logout`, { headers: { Authorization: token } }).catch(console.error)
@@ -22,7 +22,7 @@ const logout = () => {
   }
 }
 
-const Servers = () => {
+const Servers = (): JSX.Element => {
   const [message, setMessage] = useState('')
   const [failure, setFailure] = useState<'logged out' | 'failed' | false>(false)
 

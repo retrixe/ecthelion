@@ -9,7 +9,7 @@ const AccountDialog = (props: {
   onClose: () => void
   username?: string
   open: boolean
-}) => {
+}): JSX.Element => {
   const changePassword = typeof props.username === 'string'
   const [error, setError] = useState('')
   const [username, setUsername] = useState('')
@@ -19,7 +19,7 @@ const AccountDialog = (props: {
   const passwordRef = React.useRef<HTMLInputElement>(null)
   const confirmRef = React.useRef<HTMLInputElement>(null)
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     setError('')
     setUsername('')
     setPassword('')
@@ -27,7 +27,7 @@ const AccountDialog = (props: {
     props.onClose()
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = (): void => {
     if (!username && !changePassword) setError('Username is required!')
     else if (!password) setError('Password is required!')
     else if (password !== confirmPassword) setError('Passwords do not match!')

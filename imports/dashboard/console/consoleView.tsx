@@ -10,7 +10,7 @@ try {
   ) chrome = true
 } catch (e) {}
 
-const ChromeConsoleView = (props: { console: Array<{ id: number, text: string }> }) => {
+const ChromeConsoleView = (props: { console: Array<{ id: number, text: string }> }): JSX.Element => {
   return (
     <div
       style={{
@@ -31,7 +31,7 @@ const ChromeConsoleView = (props: { console: Array<{ id: number, text: string }>
   )
 }
 
-const ConsoleView = (props: { console: Array<{ id: number, text: string }> }) => {
+const ConsoleView = (props: { console: Array<{ id: number, text: string }> }): JSX.Element => {
   const ref = useRef<HTMLDivElement>(null)
   const isScrolledToBottom = ref.current !== null
     ? ref.current.scrollHeight - ref.current.clientHeight <= ref.current.scrollTop + 1

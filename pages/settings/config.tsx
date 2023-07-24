@@ -18,7 +18,7 @@ import { useRouter } from 'next/router'
 const confirmDialogWarning = 'Are you sure you want to do this? Make sure the config is correct, \
 or you may be logged out and be unable to log back in, accidentally terminate an app or worse!'
 
-const ConfigPage = () => {
+const ConfigPage = (): JSX.Element => {
   const { node, nodeExists } = useOctyneData()
   const ky = useKy(node)
   const router = useRouter()
@@ -49,7 +49,7 @@ const ConfigPage = () => {
     loadConfig().catch(() => {})
   }, [loadConfig])
 
-  const saveConfig = async (content: string) => {
+  const saveConfig = async (content: string): Promise<void> => {
     try {
       const r = await ky.patch('config', { body: content })
       if (r.status !== 200) setMessage((await r.json<{ error: string }>()).error)
@@ -60,7 +60,7 @@ const ConfigPage = () => {
     }
   }
 
-  const reloadFromDisk = async () => {
+  const reloadFromDisk = async (): Promise<void> => {
     return await ky.get('config/reload', { throwHttpErrors: true })
       .then(async () => await loadConfig())
       .then(() => setMessage('Successfully reloaded config!'))

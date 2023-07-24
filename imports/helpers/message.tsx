@@ -2,7 +2,10 @@ import React from 'react'
 import { Snackbar, Button, IconButton } from '@mui/material'
 import Close from '@mui/icons-material/Close'
 
-const Message = ({ message, setMessage }: { message: string, setMessage: (a: string) => void }) => (
+const Message = ({ message, setMessage }: {
+  message: string
+  setMessage: (a: string) => void
+}): JSX.Element => (
   <Snackbar
     anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
     open={!!message}

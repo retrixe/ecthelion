@@ -7,7 +7,7 @@ import {
 const FolderCreationDialog = ({ handleCreateFolder, handleClose }: {
   handleCreateFolder: (name: string) => any
   handleClose: () => void
-}) => {
+}): JSX.Element => {
   const [name, setName] = useState('')
   return (
     <>

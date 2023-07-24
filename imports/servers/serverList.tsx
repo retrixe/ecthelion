@@ -12,7 +12,7 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
   node?: string
   setMessage: React.Dispatch<React.SetStateAction<string>>
   setFailure?: React.Dispatch<React.SetStateAction<false | 'logged out' | 'failed'>>
-}) => {
+}): JSX.Element => {
   const ky = useKy(node)
 
   const [server, setServer] = useState('')
@@ -42,8 +42,8 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
   useEffect(refetch, [refetch])
   useInterval(refetch, 1000)
 
-  const handleClose = () => setServer('')
-  const runCommand = (command: string) => {
+  const handleClose = (): void => setServer('')
+  const runCommand = (command: string): void => {
     ;(async () => {
       const ott = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
       // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
@@ -57,7 +57,7 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
     })().catch((e: any) => { console.error(e); setMessage('Failed to send command!') })
   }
 
-  const stopStartServer = (operation: 'START' | 'KILL' | 'TERM', server: string) => {
+  const stopStartServer = (operation: 'START' | 'KILL' | 'TERM', server: string): void => {
     ;(async () => {
       // Send the request to stop or start the server.
       const res = await ky.post('server/' + server, {

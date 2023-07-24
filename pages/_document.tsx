@@ -8,7 +8,7 @@ import config from '../imports/config'
 const ico = `${config.basePath ?? ''}/favicon.png`
 
 class MyDocument extends Document {
-  render () {
+  render (): JSX.Element {
     return (
       <Html lang='en' dir='ltr'>
         <Head>
@@ -66,7 +66,7 @@ MyDocument.getInitialProps = async ctx => {
   ctx.renderPage = async () =>
     await originalRenderPage({
       enhanceApp: (App: any) => {
-        const EnhancedApp = (props: any) => <App emotionCache={cache} {...props} />
+        const EnhancedApp = (props: any): JSX.Element => <App emotionCache={cache} {...props} />
         return EnhancedApp
       }
     })

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Paper, Typography, LinearProgress } from '@mui/material'
 
-const Overlay = ({ message }: { message: string }) => (
+const Overlay = ({ message }: { message: string }): JSX.Element => (
   <div
     style={{
       display: 'flex',

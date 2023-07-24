@@ -12,15 +12,15 @@ import InsertDriveFile from '@mui/icons-material/InsertDriveFile'
 import UnstyledLink from '../../helpers/unstyledLink'
 import { joinPath } from './fileUtils'
 
-const rtd = (num: number) => Math.round(num * 100) / 100
-const bytesToGb = (bytes: number) => {
+const rtd = (num: number): number => Math.round(num * 100) / 100
+const bytesToGb = (bytes: number): string => {
   if (bytes < 1024) return `${bytes} bytes`
   else if (bytes < (1024 * 1024)) return `${rtd(bytes / 1024)} KB`
   else if (bytes < (1024 * 1024 * 1024)) return `${rtd(bytes / (1024 * 1024))} MB`
   else if (bytes < (1024 * 1024 * 1024 * 1024)) return `${rtd(bytes / (1024 * 1024 * 1024))} GB`
   else return `${rtd(bytes / (1024 * 1024 * 1024 * 1024))} TB`
 }
-const tsts = (ts: number) => new Date(ts * 1000).toISOString().substr(0, 19).replace('T', ' ')
+const tsts = (ts: number): string => new Date(ts * 1000).toISOString().substr(0, 19).replace('T', ' ')
 
 export interface File {
   name: string
@@ -39,7 +39,7 @@ const FileListItem = ({ file, style, disabled, filesSelected, onItemClick, onChe
   onCheck: React.MouseEventHandler<HTMLButtonElement>
   onItemClick: React.MouseEventHandler<HTMLDivElement>
   openMenu: (fileName: string, anchorEl: HTMLButtonElement) => void
-}) => (
+}): JSX.Element => (
   <UnstyledLink href={url} style={style} onClick={e => e.preventDefault()}>
     <ListItem
       key={file.name}
@@ -75,15 +75,15 @@ const FileListItem = ({ file, style, disabled, filesSelected, onItemClick, onChe
     </ListItem>
   </UnstyledLink>
 )
-const FileListItemRenderer = ({ index, data, style }: ListChildComponentProps) => {
+const FileListItemRenderer = ({ index, data, style }: ListChildComponentProps): JSX.Element => {
   const { files, path, disabled, filesSelected, setFilesSelected, openMenu, onClick } = data as FileItemData
   const router = useRouter()
   const file = files[index]
-  const selectItem = () => {
+  const selectItem = (): void => {
     if (!filesSelected.includes(file.name)) setFilesSelected([...filesSelected, file.name])
     else setFilesSelected(filesSelected.filter(e => e !== file.name))
   }
-  const shiftClickItem = () => {
+  const shiftClickItem = (): void => {
     // Look for the last selected item. If none found, look for closest item to the start.
     let lastSelectedFileIdx = files.findLastIndex(e => filesSelected.includes(e.name))
     if (lastSelectedFileIdx === -1) lastSelectedFileIdx = 0 // If none found, select first item.
@@ -122,7 +122,7 @@ interface FileItemData { /* eslint-disable react/no-unused-prop-types */
   onClick: (name: File) => void
 } /* eslint-enable react/no-unused-prop-types */
 
-const FileList = (props: FileItemData) => {
+const FileList = (props: FileItemData): JSX.Element => {
   const px60 = useMediaQuery('(min-width:713px)')
   const smDisplay = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm')) // 600px
   const px60sm = useMediaQuery('(min-width:513px)')

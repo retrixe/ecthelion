@@ -15,7 +15,7 @@ const ButtonContainer = styled('div')(({ theme }) => ({
   }
 }))
 
-const Index = () => {
+const Index = (): JSX.Element => {
   const [failedAuth, setFailedAuth] = useState(false) // Unable to authorize with the server.
   const [invalid, setInvalid] = useState(false) // Invalid credentials.
   const [username, setUsername] = useState('')
@@ -38,7 +38,7 @@ const Index = () => {
     }
   }, [router, route])
 
-  const login = async () => {
+  const login = async (): Promise<void> => {
     try {
       const request = await fetch(config.ip + '/login', {
         headers: { Username: username, Password: password }
@@ -69,7 +69,7 @@ const Index = () => {
     } catch (e) { setFailedAuth(true) }
   }
 
-  const handleLogin = () => { login().catch(() => {}) }
+  const handleLogin = (): void => { login().catch(() => {}) }
 
   return (
     <React.StrictMode>

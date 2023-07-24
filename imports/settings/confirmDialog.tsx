@@ -9,7 +9,7 @@ const ConfirmDialog = (props: {
   open: boolean
   title: string
   prompt: string
-}) => {
+}): JSX.Element => {
   return (
     <>
       <Dialog open={props.open} onClose={() => props.onCancel()}>

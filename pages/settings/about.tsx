@@ -10,7 +10,7 @@ import packageJson from '../../package.json'
 
 const { version } = packageJson
 
-const About = () => {
+const About = (): JSX.Element => {
   const [loggedIn, setLoggedIn] = useState(true)
   const [lightMode, setLightMode] = useState(false)
   const [terminalUi, setTerminalUi] = useState(false)
@@ -24,19 +24,19 @@ const About = () => {
     setTerminalUi(localStorage.getItem('terminal-ui') === 'true')
     setSquareCorners(localStorage.getItem('square-corners') === 'true')
   }, [])
-  const handleSquareCornersToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSquareCornersToggle = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setSquareCorners(e.target.checked)
     if (e.target.checked) localStorage.setItem('square-corners', 'true')
     else localStorage.removeItem('square-corners')
     updateTheme()
   }
-  const handleTerminalUiToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTerminalUiToggle = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setTerminalUi(e.target.checked)
     if (e.target.checked) localStorage.setItem('terminal-ui', 'true')
     else localStorage.removeItem('terminal-ui')
     updateTheme()
   }
-  const handleLightModeToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLightModeToggle = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setLightMode(e.target.checked)
     if (e.target.checked) localStorage.setItem('light-mode', 'true')
     else localStorage.removeItem('light-mode')

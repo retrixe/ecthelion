@@ -11,13 +11,13 @@ const Editor = (props: {
   onDownload: () => void
   onClose: (setContent: React.Dispatch<React.SetStateAction<string>>) => void
   closeText?: string
-}) => {
+}): JSX.Element => {
   const [content, setContent] = useState(props.content)
   const [saving, setSaving] = useState(false)
   const [name, setName] = useState(props.name)
   const error = props.name === '' && props.siblingFiles.includes(name)
 
-  const saveFile = () => {
+  const saveFile = (): void => {
     setSaving(true)
     Promise.resolve(props.onSave(name, content)).then(() => setSaving(false), console.error)
   }

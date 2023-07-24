@@ -35,7 +35,7 @@ const editorExts = ['properties', 'json', 'yaml', 'yml', 'xml', 'js', 'log', 'sh
 const FileManager = (props: {
   setServerExists: React.Dispatch<React.SetStateAction<boolean>>
   setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
-}) => {
+}): JSX.Element => {
   const router = useRouter()
   const { server, node, ip } = useOctyneData() // nodeExists is handled above.
   const ky = useKy(node)
@@ -120,7 +120,7 @@ const FileManager = (props: {
 
   useEffect(() => {
     if (typeof window === 'undefined' || file) return
-    const eventListener = (e: KeyboardEvent) => {
+    const eventListener = (e: KeyboardEvent): void => {
       if (e.code === 'F3' || (e.ctrlKey && e.code === 'KeyF')) {
         e.preventDefault()
         searchRef.current?.focus()
@@ -174,7 +174,7 @@ const FileManager = (props: {
   }, [filename, files, path, updatePath, loadFileInEditor])
 
   // Multiple file logic requests.
-  const handleCreateFolder = async (name: string) => {
+  const handleCreateFolder = async (name: string): Promise<void> => {
     setFolderPromptOpen(false)
     setFetching(true)
     try {
@@ -188,17 +188,17 @@ const FileManager = (props: {
       setFetching(false)
     }
   }
-  const handleModifyFile = async (pathToMove: string, action: 'move' | 'copy' | 'rename') => {
+  const handleModifyFile = async (path: string, action: 'move' | 'copy' | 'rename'): Promise<void> => {
     setModifyFileDialogOpen('')
     setMenuOpen('')
     setAnchorEl(null)
     setFetching(true)
-    if (action === 'rename' && pathToMove.includes('/')) {
+    if (action === 'rename' && path.includes('/')) {
       setMessage('Renamed file cannot have / in it!')
       setFetching(false)
       return
     }
-    const target = action === 'rename' ? path + pathToMove : pathToMove
+    const target = action === 'rename' ? path + path : path
     try {
       const editFile = await ky.patch(`server/${server}/file`, {
         body: `${action === 'copy' ? 'cp' : 'mv'}\n${path}${menuOpen}\n${target}`
@@ -211,7 +211,7 @@ const FileManager = (props: {
       setFetching(false)
     }
   }
-  const handleFilesDelete = () => {
+  const handleFilesDelete = (): void => {
     setMassActionMenuOpen(null)
     let total = filesSelected.length
     setOverlay(`Deleting ${total} out of ${filesSelected.length} files.`)
@@ -233,7 +233,7 @@ const FileManager = (props: {
       fetchFiles()
     }).catch(console.error) // Should not be called, ideally.
   }
-  const handleFilesUpload = (files: FileList) => {
+  const handleFilesUpload = (files: FileList): void => {
     ;(async () => {
       for (let i = 0; i < files.length; i++) {
         const file = files[i]
@@ -252,7 +252,7 @@ const FileManager = (props: {
     })().catch(e => { console.error(e); setMessage(`Failed to upload files: ${e.message}`) })
   }
   // Single file logic.
-  const handleDeleteMenuButton = () => {
+  const handleDeleteMenuButton = (): void => {
     ;(async () => {
       setMenuOpen('')
       setFetching(true)
@@ -264,14 +264,14 @@ const FileManager = (props: {
       fetchFiles()
     })().catch(e => { console.error(e); setMessage(`Failed to delete file: ${e.message}`) })
   }
-  const handleDownloadMenuButton = () => {
+  const handleDownloadMenuButton = (): void => {
     ;(async () => {
       setMenuOpen('')
       const ticket = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
       window.location.href = `${ip}/server/${server}/file?ticket=${ticket}&path=${path}${menuOpen}`
     })().catch(e => { console.error(e); setMessage(`Failed to download file: ${e.message}`) })
   }
-  const handleDecompressMenuButton = () => {
+  const handleDecompressMenuButton = (): void => {
     ;(async () => {
       setMenuOpen('')
       setFetching(true)
@@ -285,8 +285,8 @@ const FileManager = (props: {
       fetchFiles()
     })().catch(e => { console.error(e); setMessage(`Failed to decompress file: ${e.message}`) })
   }
-  const handleCloseDownload = () => { setDownload(''); updatePath(path) }
-  const handleDownloadButton = () => {
+  const handleCloseDownload = (): void => { setDownload(''); updatePath(path) }
+  const handleDownloadButton = (): void => {
     ;(async () => {
       handleCloseDownload()
       // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
@@ -295,7 +295,7 @@ const FileManager = (props: {
       window.location.href = loc
     })().catch((e: any) => { console.error(e); setMessage(`Failed to download file: ${e.message}`) })
   }
-  const handleSaveFile = async (name: string, content: string) => {
+  const handleSaveFile = async (name: string, content: string): Promise<void> => {
     try {
       const formData = new FormData()
       formData.append('upload', new Blob([content]), name)

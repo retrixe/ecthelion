@@ -3,7 +3,20 @@ import { useEffect, useState } from 'react'
 import config from '../config'
 import useKy from '../helpers/useKy'
 
-export const useOctyneAuth = () => {
+interface OctyneData {
+  server: string | undefined
+  node: string | undefined
+  ip: string
+  nodeExists: boolean
+}
+
+interface OctyneDataWithAuth extends OctyneData {
+  auth: boolean | null
+  serverExists: boolean | null
+  connectionFailure: boolean
+}
+
+export const useOctyneAuth = (): OctyneDataWithAuth => {
   const octyneData = useOctyneData()
   const { node, server, nodeExists } = octyneData
   const ky = useKy(node)
@@ -26,7 +39,7 @@ export const useOctyneAuth = () => {
   return Object.assign(octyneData, { auth, serverExists, connectionFailure })
 }
 
-const useOctyneData = () => {
+const useOctyneData = (): OctyneData => {
   const nodes = config.nodes ?? {}
   const router = useRouter()
   const server = router.query.server?.toString()

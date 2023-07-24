@@ -17,10 +17,10 @@ const CommandTextField = ({ ws, id, buffer }: {
   ws: WebSocket | null
   id: React.MutableRefObject<number>
   buffer: React.MutableRefObject<Array<{ id: number, text: string }>>
-}) => {
+}): JSX.Element => {
   const [command, setCommand] = useState('')
   const [lastCmd, setLastCmd] = useState('')
-  const handleCommand = () => {
+  const handleCommand = (): void => {
     try {
       if (!command || !ws) return
       buffer.current.push({ id: ++id.current, text: '>' + command })
@@ -28,7 +28,6 @@ const CommandTextField = ({ ws, id, buffer }: {
       ws.send(v2 ? JSON.stringify({ type: 'input', data: command }) : command)
       setLastCmd(command)
       setCommand('')
-      return true
     } catch (e) { console.error(e) }
   }
   return (
@@ -61,7 +60,7 @@ const terminalUi = typeof localStorage === 'object' && localStorage.getItem('ter
 const Console = ({ setAuthenticated }: {
   // setServerExists: React.Dispatch<React.SetStateAction<boolean>>,
   setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
-}) => {
+}): JSX.Element => {
   const color = useTheme().palette.mode === 'dark' ? '#d9d9d9' : undefined
   const { ip, node, server } = useOctyneData()
   const ky = useKy(node)
@@ -109,7 +108,7 @@ const Console = ({ setAuthenticated }: {
       let firstMessage = true
       const protocol = versionFallback.current ? undefined : 'console-v2'
       const newWS = new WebSocket(`${wsIp}/server/${server}/console?ticket=${ott}`, protocol)
-      const handleOutputData = (data: string) => {
+      const handleOutputData = (data: string): void => {
         if (firstMessage) {
           firstMessage = false
           data = data.trimStart()
@@ -121,7 +120,7 @@ const Console = ({ setAuthenticated }: {
         }
         buffer.current.push(...data.split('\n').map((text: string) => ({ id: ++id.current, text })))
       }
-      newWS.onmessage = (event) => {
+      newWS.onmessage = (event): void => {
         if (newWS.protocol === 'console-v2') {
           const data = JSON.parse(event.data) // For now, ignore settings and pong.
           if (data.type === 'output') {
@@ -181,7 +180,7 @@ const Console = ({ setAuthenticated }: {
     }
   }, [ws]), 15000)
 
-  const stopStartServer = async (operation: 'START' | 'TERM' | 'KILL') => {
+  const stopStartServer = async (operation: 'START' | 'TERM' | 'KILL'): Promise<void> => {
     if (!server) return
     // Send the request to stop or start the server.
     const res = await ky.post('server/' + server, {
@@ -211,7 +210,7 @@ const Console = ({ setAuthenticated }: {
       )
 }
 
-const ConsolePage = () => {
+const ConsolePage = (): JSX.Element => {
   const { server, nodeExists } = useOctyneData()
   const [serverExists] = useState(true) // TODO: setServerExists
   const [authenticated, setAuthenticated] = useState(true)

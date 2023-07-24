@@ -9,7 +9,7 @@ const ModifyFileDialog = ({ handleEdit, handleClose, operation, filename }: {
   handleClose: () => void
   operation: 'move' | 'copy' | 'rename'
   filename: string
-}) => {
+}): JSX.Element => {
   const [path, setPath] = useState(operation === 'rename' ? filename : '')
   const title = operation === 'copy'
     ? 'Copy File/Folder'

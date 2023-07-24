@@ -4,7 +4,7 @@ import { AppBar, Toolbar } from '@mui/material'
 const Layout = (props: React.PropsWithChildren<{
   appBar?: React.ReactNode
   removeToolbar?: boolean
-}>) => (
+}>): JSX.Element => (
   <div
     style={{
       // background: 'linear-gradient(to top, #fc00ff, #00dbde)',
