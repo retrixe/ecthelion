@@ -10,16 +10,23 @@ import Close from '@mui/icons-material/Close'
 import PlayArrow from '@mui/icons-material/PlayArrow'
 import Comment from '@mui/icons-material/Comment'
 import UnstyledLink from '../helpers/unstyledLink'
+import { type ExtraServerInfo } from './serverList'
 
-export const ServerListItem = ({ server, node, status, openDialog, stopStartServer }: {
+export const ServerListItem = ({ server, node, serverInfo, openDialog, stopStartServer }: {
   node?: string
   server: string
-  status: number
+  serverInfo: number | ExtraServerInfo
   openDialog: () => void
   stopStartServer: (operation: 'START' | 'TERM' | 'KILL', server: string) => void
 }): JSX.Element => {
   const router = useRouter()
   const href = { pathname: '/dashboard/[server]/console', query: node ? { server, node } : { server } }
+
+  const status = typeof serverInfo === 'number' ? serverInfo : serverInfo.status
+  const toDelete = typeof serverInfo === 'number' ? false : serverInfo.toDelete
+
+  let statusText = status === 0 ? 'Offline' : (status === 1 ? 'Online' : 'Crashed')
+  if (toDelete) statusText += ' (marked for deletion)'
   return (
     <UnstyledLink href={href} onClick={e => e.preventDefault()}>
       <ListItem
@@ -65,7 +72,7 @@ export const ServerListItem = ({ server, node, status, openDialog, stopStartServ
           </ListItemAvatar>
           <ListItemText
             primary={server}
-            secondary={status === 0 ? 'Offline' : (status === 1 ? 'Online' : 'Crashed')}
+            secondary={statusText}
           />
         </ListItemButton>
       </ListItem>

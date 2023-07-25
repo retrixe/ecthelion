@@ -7,6 +7,11 @@ import CommandDialog from './commandDialog'
 import useInterval from '../helpers/useInterval'
 import useKy from '../helpers/useKy'
 
+export interface ExtraServerInfo {
+  status: 0 | 1 | 2
+  toDelete: boolean
+}
+
 const ServerList = ({ ip, node, setMessage, setFailure }: {
   ip: string
   node?: string
@@ -16,7 +21,7 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
   const ky = useKy(node)
 
   const [server, setServer] = useState('')
-  const [servers, setServers] = useState<Record<string, number> | undefined>(undefined)
+  const [servers, setServers] = useState<Record<string, number | ExtraServerInfo> | null>(null)
   // true/false - logged in or logged out.
   // failed - failed to check.
   // null - not yet fetched.
@@ -30,11 +35,11 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
 
   const refetch = useCallback(() => {
     (async () => {
-      const servers = await ky.get('servers')
-      if (servers.ok) {
-        setServers((await servers.json<{ servers: Record<string, number> }>()).servers)
+      const req = await ky.get('servers?extrainfo=true')
+      if (req.ok) {
+        setServers((await req.json<{ servers: typeof servers }>()).servers)
         setLoggedIn(true)
-      } else if (servers.status === 401) setLoggedIn(false)
+      } else if (req.status === 401) setLoggedIn(false)
       else setLoggedIn('failed')
     })().catch(e => { console.error(e); setLoggedIn('failed') })
   }, [ky, setLoggedIn, setServers])
@@ -110,7 +115,7 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
               <ServerListItem
                 node={node}
                 server={server}
-                status={servers[server]}
+                serverInfo={servers[server]}
                 openDialog={() => setServer(server)}
                 stopStartServer={stopStartServer}
               />

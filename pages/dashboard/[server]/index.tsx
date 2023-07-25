@@ -40,6 +40,7 @@ interface Statistics {
   cpuUsage: number
   memoryUsage: number
   totalMemory: number
+  toDelete?: boolean
 }
 
 const StatisticsDisplay = ({ server, statistics }: {
@@ -55,6 +56,7 @@ const StatisticsDisplay = ({ server, statistics }: {
       {statistics && statistics.status === 0
         ? 'Offline'
         : (statistics && statistics.status === 1 ? 'Online' : 'Crashed')}
+      {statistics?.toDelete ? ' (marked for deletion)' : ''}
     </Typography>
     <Typography variant='h6'>Uptime</Typography>
     <Typography variant='subtitle1' gutterBottom>
