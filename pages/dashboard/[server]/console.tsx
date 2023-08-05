@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, startTransition, useCallback } from 'react'
 import { Paper, Typography, TextField, Fab, useTheme } from '@mui/material'
 import Check from '@mui/icons-material/Check'
+import stripAnsi from 'strip-ansi'
 
 import useInterval from '../../../imports/helpers/useInterval'
 import useKy from '../../../imports/helpers/useKy'
@@ -118,7 +119,8 @@ const Console = ({ setAuthenticated }: {
           }
           connectedOnce.current = true
         }
-        buffer.current.push(...data.split('\n').map((text: string) => ({ id: ++id.current, text })))
+        buffer.current.push(...data.split('\n')
+          .map(text => ({ id: ++id.current, text: stripAnsi(text) })))
       }
       newWS.onmessage = (event): void => {
         if (newWS.protocol === 'console-v2') {
