@@ -113,11 +113,13 @@ const FileManager = (props: {
     })().catch(e => { console.error(e); setMessage(`Failed to fetch files: ${e.message}`); setFetching(false) })
   }, [path, ky, server, updatePath, setAuthenticated, setServerExists])
 
+  const prevPath = useRef(path)
   useEffect(() => { // Fetch files.
-    if (server) {
+    if (server && (path !== prevPath.current || files === null)) {
       fetchFiles()
     }
-  }, [fetchFiles, server])
+    prevPath.current = path
+  }, [fetchFiles, path, files, server])
 
   useEffect(() => {
     if (typeof window === 'undefined' || file) return
