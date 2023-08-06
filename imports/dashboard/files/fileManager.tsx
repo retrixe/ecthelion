@@ -190,17 +190,17 @@ const FileManager = (props: {
       setFetching(false)
     }
   }
-  const handleModifyFile = async (path: string, action: 'move' | 'copy' | 'rename'): Promise<void> => {
+  const handleModifyFile = async (newPath: string, action: 'move' | 'copy' | 'rename'): Promise<void> => {
     setModifyFileDialogOpen('')
     setMenuOpen('')
     setAnchorEl(null)
     setFetching(true)
-    if (action === 'rename' && path.includes('/')) {
+    if (action === 'rename' && newPath.includes('/')) {
       setMessage('Renamed file cannot have / in it!')
       setFetching(false)
       return
     }
-    const target = action === 'rename' ? path + path : path
+    const target = action === 'rename' ? path + newPath : newPath
     try {
       const editFile = await ky.patch(`server/${server}/file`, {
         body: `${action === 'copy' ? 'cp' : 'mv'}\n${path}${menuOpen}\n${target}`
