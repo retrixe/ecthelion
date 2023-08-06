@@ -37,33 +37,58 @@ const AccountsPage = (): JSX.Element => {
   useEffect(refetch, [ky])
 
   const handleCreateAccount = (username: string, password: string): void => {
-    ky.post('accounts', { json: { username, password } }).then(res => {
+    (async () => {
+      const res = await ky.post('accounts', { json: { username, password } })
       if (res.ok) {
         refetch()
         setMessage('Account created successfully!')
-      } else setMessage('Failed to create account!')
+      } else {
+        const json = await res.json<{ error: string }>()
+        setMessage(typeof json.error === 'string' ? json.error : 'Failed to create account!')
+      }
       setCreateAccount(false)
-    }).catch(() => setMessage('Failed to create account!'))
+    })().catch(e => {
+      console.error(e)
+      setMessage('Failed to create account!')
+      setCreateAccount(false)
+    })
+  }
   }
 
   const handleChangePassword = (username: string, password: string): void => {
-    ky.patch('accounts', { json: { username, password } }).then(res => {
+    (async () => {
+      const res = await ky.patch('accounts', { json: { username, password } })
       if (res.ok) {
         refetch()
         setMessage('Password changed successfully!')
-      } else setMessage('Failed to change password!')
+      } else {
+        const json = await res.json<{ error: string }>()
+        setMessage(typeof json.error === 'string' ? json.error : 'Failed to change password!')
+      }
       setChangePassword('')
-    }).catch(() => setMessage('Failed to change password!'))
+    })().catch(e => {
+      console.error(e)
+      setMessage('Failed to change password!')
+      setChangePassword('')
+    })
   }
 
   const handleDeleteAccount = (): void => {
-    ky.delete('accounts?username=' + encodeURIComponent(deleteAccount)).then(res => {
+    (async () => {
+      const res = await ky.delete('accounts?username=' + encodeURIComponent(deleteAccount))
       if (res.ok) {
         refetch()
         setMessage('Account deleted successfully!')
-      } else setMessage('Failed to delete account!')
+      } else {
+        const json = await res.json<{ error: string }>()
+        setMessage(typeof json.error === 'string' ? json.error : 'Failed to delete account!')
+      }
       setDeleteAccount('')
-    }).catch(() => setMessage('Failed to delete account!'))
+    })().catch(e => {
+      console.error(e)
+      setMessage('Failed to delete account!')
+      setDeleteAccount('')
+    })
   }
 
   return (
