@@ -3,6 +3,7 @@ import { Button, IconButton, List, ListItem, ListItemIcon, ListItemText, Paper, 
 import AccountCircle from '@mui/icons-material/AccountCircle'
 import Add from '@mui/icons-material/Add'
 import DeleteForever from '@mui/icons-material/DeleteForever'
+import DriveFileRenameOutline from '@mui/icons-material/DriveFileRenameOutline'
 import LockReset from '@mui/icons-material/LockReset'
 
 import AuthFailure from '../../imports/errors/authFailure'
@@ -21,6 +22,7 @@ const AccountsPage = (): JSX.Element => {
   const [message, setMessage] = useState('')
   const [createAccount, setCreateAccount] = useState(false)
   const [deleteAccount, setDeleteAccount] = useState('')
+  const [renameAccount, setRenameAccount] = useState('')
   const [changePassword, setChangePassword] = useState('')
 
   const refetch = (): void => {
@@ -53,6 +55,27 @@ const AccountsPage = (): JSX.Element => {
       setCreateAccount(false)
     })
   }
+
+  const handleRenameAccount = (username: string, newName: string): void => {
+    (async () => {
+      const res = await ky.patch('accounts?username=' + encodeURIComponent(username), {
+        json: { username: newName }
+      })
+      if (res.ok) {
+        refetch()
+        setMessage('Account renamed successfully!')
+      } else {
+        const json = await res.json<{ error: string }>()
+        if (json.error === 'Username or password not provided!') {
+          setMessage('Update to Octyne v1.2+ to rename accounts!')
+        } else setMessage(typeof json.error === 'string' ? json.error : 'Failed to rename account!')
+      }
+      setRenameAccount('')
+    })().catch(e => {
+      console.error(e)
+      setMessage('Failed to rename account!')
+      setRenameAccount('')
+    })
   }
 
   const handleChangePassword = (username: string, password: string): void => {
@@ -130,6 +153,11 @@ const AccountsPage = (): JSX.Element => {
                   divider
                   secondaryAction={
                     <>
+                      <Tooltip title='Rename Account'>
+                        <IconButton onClick={() => setRenameAccount(account)}>
+                          <DriveFileRenameOutline />
+                        </IconButton>
+                      </Tooltip>
                       <Tooltip title='Change Password'>
                         <IconButton onClick={() => setChangePassword(account)}>
                           <LockReset />
@@ -178,6 +206,13 @@ const AccountsPage = (): JSX.Element => {
           onClose={() => setChangePassword('')}
           onSubmit={handleChangePassword}
           username={changePassword}
+        />
+        <AccountDialog
+          open={!!renameAccount}
+          onClose={() => setRenameAccount('')}
+          onSubmit={handleRenameAccount}
+          username={renameAccount}
+          rename
         />
       </SettingsLayout>
     </React.StrictMode>
