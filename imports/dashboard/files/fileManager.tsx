@@ -87,7 +87,8 @@ const FileManager = (props: {
       as.query.file = file
     }
     (replace ? router.replace : router.push)(route, as, { shallow: true })
-      .then(() => setSearchApplies(false)) // Apply search only when search has been focused once.
+      // Apply search only when search has been focused once or if you are just downloading files.
+      .then(() => setSearchApplies(file !== router.query.file))
       .catch(console.error)
   }, [router, server])
 
@@ -123,7 +124,8 @@ const FileManager = (props: {
     const eventListener = (e: KeyboardEvent): void => {
       if (e.code === 'F3' || (e.ctrlKey && e.code === 'KeyF')) {
         e.preventDefault()
-        searchRef.current?.focus()
+        if (searchRef.current !== document.activeElement) searchRef.current?.focus()
+        else searchRef.current?.setSelectionRange(0, searchRef.current.value.length)
         setSearch(search => typeof search === 'string' ? search : '')
       } else if (e.code === 'Escape') {
         e.preventDefault()
