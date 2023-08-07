@@ -24,10 +24,12 @@ Create a `config.json` in the top level of the project and then add the followin
     "<name of node>": "<absolute URL to Octyne node>"
   },
   "basePath": "<pass this if you want ecthelion on a sub-path like e.g. /ecthelion>",
-  "cookieAuth": false // `true` is more secure, works only with Octyne v1.1+ and Octyne/Ecthelion under 1 domain
+  "enableCookieAuth": false
 }
 ```
 
-The ip field is required, while nodes and basePath are optional.
+**⚠️ Important Notes:**
 
-Absolute URLs to Octyne should be accessible to users (make sure Octyne is port forwarded), and are in the format of `http[s]://<ip address or domain name>[:<port>][/<sub-URL if using nginx/apache to reverse proxy>]`, e.g. `http://43.12.45.32:42069` or `https://console.myserver.com/octyne`. Using `localhost` will only work on the same machine that Octyne runs on. The URL should also not end with `/`.
+- The `ip` field is required, while `nodes`, `basePath` and `enableCookieAuth` are optional.
+- Cookie authentication is more secure, but it requires Octyne v1.1+, and Ecthelion + all Octyne nodes must be under 1 domain or IP address! For this, you can use a reverse proxy like nginx or Apache, [the Octyne documentation has sample configs for both software](https://github.com/retrixe/octyne#security-practices-and-reverse-proxying) to achieve this.
+- Absolute URLs to Octyne should be accessible to users (make sure Octyne is port forwarded), and are in the format of `http[s]://<ip address or domain name>[:<port>][/<sub-URL if using nginx/apache to reverse proxy>]`, e.g. `http://43.12.45.32:42069` or `https://console.myserver.com/octyne`. The URL should also not end with `/`!

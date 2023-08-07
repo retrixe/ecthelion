@@ -45,7 +45,8 @@ const Index = (): JSX.Element => {
 
   const login = async (): Promise<void> => {
     try {
-      const request = await fetch(config.ip + '/login' + (config.cookieAuth ? '?cookie=true' : ''), {
+      const querystring = config.enableCookieAuth ? '?cookie=true' : ''
+      const request = await fetch(config.ip + '/login' + querystring, {
         headers: { Username: username, Password: password }
       })
       // If request failed..
