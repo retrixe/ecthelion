@@ -11,6 +11,7 @@ import packageJson from '../../package.json'
 const { version } = packageJson
 
 const About = (): JSX.Element => {
+  const ky = useKy()
   const [loggedIn, setLoggedIn] = useState(true)
   const [lightMode, setLightMode] = useState(false)
   const [terminalUi, setTerminalUi] = useState(false)
@@ -19,11 +20,11 @@ const About = (): JSX.Element => {
 
   useEffect(() => {
     if (typeof localStorage !== 'object') return
-    setLoggedIn(!!localStorage.getItem('token'))
+    ky.get('servers', { throwHttpErrors: true }).catch(() => setLoggedIn(false))
     setLightMode(localStorage.getItem('light-mode') === 'true')
     setTerminalUi(localStorage.getItem('terminal-ui') === 'true')
     setSquareCorners(localStorage.getItem('square-corners') === 'true')
-  }, [])
+  }, [ky])
   const handleSquareCornersToggle = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setSquareCorners(e.target.checked)
     if (e.target.checked) localStorage.setItem('square-corners', 'true')
@@ -44,7 +45,6 @@ const About = (): JSX.Element => {
   }
 
   const [octyneVersion, setOctyneVersion] = useState('')
-  const ky = useKy()
   useEffect(() => {
     ky('').json<{ version: string }>()
       .then(({ version }) => setOctyneVersion(version))

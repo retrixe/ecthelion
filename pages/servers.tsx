@@ -16,10 +16,8 @@ const { ip, nodes } = config
 
 const logout = (): void => {
   const token = localStorage.getItem('token')
-  if (token) {
-    fetch(`${ip}/logout`, { headers: { Authorization: token } }).catch(console.error)
-    localStorage.removeItem('token')
-  }
+  localStorage.removeItem('token')
+  fetch(`${config.ip}/logout`, { headers: { Authorization: token ?? '' } }).catch(console.error)
 }
 
 const Servers = (): JSX.Element => {

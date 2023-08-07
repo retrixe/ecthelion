@@ -23,7 +23,8 @@ Create a `config.json` in the top level of the project and then add the followin
   "nodes": {
     "<name of node>": "<absolute URL to Octyne node>"
   },
-  "basePath": "<pass this if you want ecthelion on a sub-path like e.g. /ecthelion>"
+  "basePath": "<pass this if you want ecthelion on a sub-path like e.g. /ecthelion>",
+  "cookieAuth": false // `true` is more secure, works only with Octyne v1.1+ and Octyne/Ecthelion under 1 domain
 }
 ```
 

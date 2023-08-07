@@ -6,6 +6,7 @@ import Info from '@mui/icons-material/Info'
 import config from '../imports/config'
 import Layout from '../imports/layout'
 import Title from '../imports/helpers/title'
+import useKy from '../imports/helpers/useKy'
 import UnstyledLink from '../imports/helpers/unstyledLink'
 
 const ButtonContainer = styled('div')(({ theme }) => ({
@@ -31,25 +32,20 @@ const Index = (): JSX.Element => {
   const [password, setPassword] = useState('')
   const [passRef, setPassRef] = useState<HTMLInputElement | null>(null)
 
+  const ky = useKy()
   const router = useRouter()
   const route = typeof router.query.redirect === 'string' ? router.query.redirect : '/servers'
 
   // Check if already logged in when the page loads.
   useEffect(() => {
-    // Check the access token in localStorage if we are on the client.
-    // We'll add sessionStorage support later for Remember Me stuff.
-    if (typeof localStorage === 'object' && localStorage.getItem('token')) {
-      // Then we redirect to the new page.
-      router.push(route).catch(console.error)
-    } else {
-      // Prefetch the servers page for performance.
-      router.prefetch(route).catch(console.error)
-    }
-  }, [router, route])
+    ky.get('servers', { throwHttpErrors: true })
+      .then(async () => await router.push(route).catch(console.error))
+      .catch(async () => await router.prefetch(route).catch(console.error))
+  }, [ky, router, route])
 
   const login = async (): Promise<void> => {
     try {
-      const request = await fetch(config.ip + '/login', {
+      const request = await fetch(config.ip + '/login' + (config.cookieAuth ? '?cookie=true' : ''), {
         headers: { Username: username, Password: password }
       })
       // If request failed..
@@ -64,11 +60,10 @@ const Index = (): JSX.Element => {
         }
         return
       }
-      // Save the access token in localStorage if we are on the client.
-      // We'll add sessionStorage support later for Remember Me stuff.
       const response = await request.json()
-      if (localStorage && response.token) {
-        localStorage.setItem('token', response.token)
+      if (response.token || response.success) {
+        // Save the access token in localStorage if received in JSON body.
+        if (response.token) localStorage.setItem('token', response.token)
         // Also, if authentication previously failed, let's just say it succeeded.
         setFailedAuth(false)
         setInvalid(false)

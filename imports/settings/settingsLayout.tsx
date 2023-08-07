@@ -38,10 +38,8 @@ const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: str
 
 const onLogout = (): void => {
   const token = localStorage.getItem('token')
-  if (token) {
-    fetch(`${config.ip}/logout`, { headers: { Authorization: token } }).catch(console.error)
-    localStorage.removeItem('token')
-  }
+  localStorage.removeItem('token')
+  fetch(`${config.ip}/logout`, { headers: { Authorization: token ?? '' } }).catch(console.error)
 }
 
 const SettingsLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>): JSX.Element => {
