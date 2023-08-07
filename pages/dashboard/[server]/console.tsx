@@ -96,7 +96,7 @@ const Console = ({ setAuthenticated }: {
     if (!server) return
     try {
       // Connect to console.
-      // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
+      // document.cookie = `X-Authentication=${localStorage.getItem('ecthelion:token')}`
       const ticket = await ky.get('ott')
       if (ignore.current) return // If useEffect was called again by React, drop this.
       setListening(true)

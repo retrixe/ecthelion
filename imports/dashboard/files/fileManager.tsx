@@ -293,7 +293,7 @@ const FileManager = (props: {
   const handleDownloadButton = (): void => {
     ;(async () => {
       handleCloseDownload()
-      // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
+      // document.cookie = `X-Authentication=${localStorage.getItem('ecthelion:token')}`
       const ticket = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
       const loc = `${ip}/server/${server}/file?ticket=${ticket}&path=${euc(joinPath(path, download))}`
       window.location.href = loc

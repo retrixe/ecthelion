@@ -51,7 +51,7 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
   const runCommand = (command: string): void => {
     ;(async () => {
       const ott = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
-      // document.cookie = `X-Authentication=${localStorage.getItem('token')}`
+      // document.cookie = `X-Authentication=${localStorage.getItem('ecthelion:token')}`
       const ws = new WebSocket(`${ip.split('http').join('ws')}/server/${server}/console?ticket=${ott}`)
       ws.onopen = () => {
         ws.send(command)

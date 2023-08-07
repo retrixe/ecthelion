@@ -10,7 +10,7 @@ export const AuthFailure = (): JSX.Element => (
       <Typography
         style={{ textDecoration: 'underline' }}
         onClick={() => {
-          try { localStorage.removeItem('token') } catch (e) { }
+          try { localStorage.removeItem('ecthelion:token') } catch (e) { }
         }}
       >Consider logging in?
       </Typography>

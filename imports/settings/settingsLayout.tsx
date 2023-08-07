@@ -37,8 +37,8 @@ const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: str
 }
 
 const onLogout = (): void => {
-  const token = localStorage.getItem('token')
-  localStorage.removeItem('token')
+  const token = localStorage.getItem('ecthelion:token')
+  localStorage.removeItem('ecthelion:token')
   fetch(`${config.ip}/logout`, { headers: { Authorization: token ?? '' } }).catch(console.error)
 }
 

@@ -15,8 +15,8 @@ import ConnectionFailure from '../imports/errors/connectionFailure'
 const { ip, nodes } = config
 
 const logout = (): void => {
-  const token = localStorage.getItem('token')
-  localStorage.removeItem('token')
+  const token = localStorage.getItem('ecthelion:token')
+  localStorage.removeItem('ecthelion:token')
   fetch(`${config.ip}/logout`, { headers: { Authorization: token ?? '' } }).catch(console.error)
 }
 

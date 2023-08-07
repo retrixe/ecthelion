@@ -63,7 +63,7 @@ const Index = (): JSX.Element => {
       const response = await request.json()
       if (response.token || response.success) {
         // Save the access token in localStorage if received in JSON body.
-        if (response.token) localStorage.setItem('token', response.token)
+        if (response.token) localStorage.setItem('ecthelion:token', response.token)
         // Also, if authentication previously failed, let's just say it succeeded.
         setFailedAuth(false)
         setInvalid(false)

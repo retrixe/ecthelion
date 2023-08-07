@@ -10,7 +10,7 @@ const defaultKy = ky.create({
   prefixUrl: config.ip,
   hooks: {
     beforeRequest: [
-      request => request.headers.set('Authorization', localStorage.getItem('token') ?? '')
+      request => request.headers.set('Authorization', localStorage.getItem('ecthelion:token') ?? '')
     ]
   }
 })
