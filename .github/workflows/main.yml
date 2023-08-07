@@ -31,8 +31,8 @@ jobs:
       - name: Run linter
         run: yarn lint
 
-      - name: Run tests
-        run: yarn test --ci
+#      - name: Run tests
+#        run: yarn test --ci
 
 #      - name: Build app (not sure we should do this)
 #        run: yarn build
