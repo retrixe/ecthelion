@@ -97,7 +97,7 @@ const FileManager = (props: {
   const fetchFiles = useCallback(() => {
     ;(async () => {
       setFetching(true) // TODO: Make it show up after 1.0 seconds.
-      setError(null) // TODO: This isn't as clean as we would like..
+      setError(null)
       const files: any = await ky.get(`server/${server}/files?path=${euc(path)}`).json()
       if (files.error === 'This server does not exist!') setServerExists(false)
       else if (files.error === 'You are not authenticated to access this resource!') setAuthenticated(false)
@@ -238,10 +238,11 @@ const FileManager = (props: {
     }).catch(console.error) // Should not be called, ideally.
   }
   const handleFilesUpload = (files: FileList): void => {
+    if (overlay) return // TODO: Allow multiple file uploads/mass actions simultaneously in future.
     ;(async () => {
       for (let i = 0; i < files.length; i++) {
         const file = files[i]
-        setOverlay(file.name)
+        setOverlay(`Uploading ${file.name} to ${path}`)
         // Save the file.
         const formData = new FormData()
         formData.append('upload', file, file.name)
@@ -252,7 +253,7 @@ const FileManager = (props: {
         setOverlay('')
       }
       setMessage('Uploaded all files successfully!')
-      fetchFiles()
+      if (path === prevPath.current) fetchFiles() // prevPath is current path after useEffect call.
     })().catch(e => { console.error(e); setMessage(`Failed to upload files: ${e.message}`) })
   }
   // Single file logic.
@@ -519,10 +520,10 @@ const FileManager = (props: {
       )}
       {massActionMenuOpen && (
         <Menu open keepMounted anchorEl={massActionMenuOpen} onClose={() => setMassActionMenuOpen(null)}>
-          <MenuItem onClick={() => setMassActionDialogOpen('move')}>Move</MenuItem>
-          <MenuItem onClick={() => setMassActionDialogOpen('copy')}>Copy</MenuItem>
-          <MenuItem onClick={() => handleFilesDelete()}>Delete</MenuItem>
-          <MenuItem onClick={() => setMassActionDialogOpen('compress')}>Compress</MenuItem>
+          <MenuItem onClick={() => setMassActionDialogOpen('move')} disabled={!!overlay}>Move</MenuItem>
+          <MenuItem onClick={() => setMassActionDialogOpen('copy')} disabled={!!overlay}>Copy</MenuItem>
+          <MenuItem onClick={() => handleFilesDelete()} disabled={!!overlay}>Delete</MenuItem>
+          <MenuItem onClick={() => setMassActionDialogOpen('compress')} disabled={!!overlay}>Compress</MenuItem>
         </Menu>
       )}
       {selectedFile && (

@@ -12,13 +12,14 @@ const OverlayContainer = styled.div({
   left: 0,
   right: 0,
   bottom: 0,
-  zIndex: 2000
+  zIndex: 2000,
+  pointerEvents: 'none'
 })
 
 const Overlay = ({ message }: { message: string }): JSX.Element => (
   <OverlayContainer>
     <div style={{ flex: 1 }} />
-    <Paper sx={{ height: '80px', m: '20px', p: '20px', ml: { xs: '20px', sm: '220px' } }}>
+    <Paper elevation={3} sx={{ height: '80px', m: '28px', p: '20px', ml: { xs: '28px', sm: '228px' } }}>
       <LinearProgress />
       <br />
       <Typography variant='body1'>{message}</Typography>
