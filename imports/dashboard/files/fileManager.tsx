@@ -325,7 +325,10 @@ const FileManager = (props: {
       {path !== '/' && (
         <Typography
           style={{ textDecoration: 'underline', cursor: fetching ? 'wait' : 'pointer' }}
-          onClick={() => !fetching && updatePath(error === 'outsideServerDir' ? '/' : parentPath(path))}
+          onClick={() => (
+            !fetching &&
+            updatePath(error === 'outsideServerDir' ? '/' : parentPath(path), undefined, true)
+          )}
         >
           {error === 'outsideServerDir' ? 'Go to root folder?' : 'Try going up one path?'}
         </Typography>
