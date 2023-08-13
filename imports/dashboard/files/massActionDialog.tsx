@@ -27,7 +27,7 @@ const MassActionDialog = ({
     if (operation === 'compress') {
       setOverlay(`Compressing ${files.length} files on the server.`)
       const json = files.map(f => path + f)
-      ky.post(`${endpoint}?path=${encodeURIComponent(path + newPath)}`, { json }).then(res => {
+      ky.post(`${endpoint}?path=${encodeURIComponent(path + newPath + '.zip')}`, { json }).then(res => {
         setOverlay('')
         if (res.ok) {
           reload()

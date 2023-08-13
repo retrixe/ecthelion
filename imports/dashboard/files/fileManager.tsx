@@ -21,7 +21,7 @@ import useKy from '../../helpers/useKy'
 
 import Editor from './editor'
 import Overlay from './overlay'
-import { joinPath, normalisePath, parentPath } from './fileUtils'
+import { joinPath, normalisePath, parentPath, uploadFormData } from './fileUtils'
 import UploadButton from './uploadButton'
 import FileList, { type File } from './fileList'
 import MassActionDialog from './massActionDialog'
@@ -49,7 +49,7 @@ const FileManager = (props: {
   const [search, setSearch] = useState<string | null>(null)
   const [searchApplies, setSearchApplies] = useState(true)
 
-  const [overlay, setOverlay] = useState('')
+  const [overlay, setOverlay] = useState<string | { text: string, progress: number }>('')
   const [message, setMessage] = useState('')
   const [fetching, setFetching] = useState(true)
   const [error, setError] = useState<null | 'folderNotExist' | 'pathNotFolder' | 'outsideServerDir'>(null)
@@ -242,19 +242,21 @@ const FileManager = (props: {
     ;(async () => {
       for (let i = 0; i < files.length; i++) {
         const file = files[i]
-        setOverlay(`Uploading ${file.name} to ${path}`)
+        setOverlay({ text: `Uploading ${file.name} to ${path}`, progress: 0 })
         // Save the file.
         const formData = new FormData()
         formData.append('upload', file, file.name)
-        const r = await ky.post(`server/${server}/file?path=${euc(path)}`, { body: formData, timeout: false })
+        const r = await uploadFormData(`${ip}/server/${server}/file?path=${euc(path)}`, formData, progress => {
+          setOverlay({ text: `Uploading ${file.name} to ${path}`, progress: progress * 100 })
+        })
         if (r.status !== 200) {
-          setMessage(`Error uploading ${file.name}\n${(await r.json<{ error: string }>()).error}`)
+          setMessage(`Error uploading ${file.name}\n${JSON.parse(r.body).error}`)
         }
         setOverlay('')
       }
       setMessage('Uploaded all files successfully!')
       if (path === prevPath.current) fetchFiles() // prevPath is current path after useEffect call.
-    })().catch(e => { console.error(e); setMessage(`Failed to upload files: ${e.message}`) })
+    })().catch(e => { console.error(e); setOverlay(''); setMessage(`Failed to upload files: ${e.message}`) })
   }
   // Single file logic.
   const handleDeleteMenuButton = (): void => {
@@ -539,7 +541,7 @@ const FileManager = (props: {
         </Menu>
       )}
       {message && <Message message={message} setMessage={setMessage} />}
-      {overlay && <Overlay message={overlay} />}
+      {overlay && <Overlay display={overlay} />}
     </>
   )
 }

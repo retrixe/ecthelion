@@ -1,5 +1,5 @@
 import React from 'react'
-import { Paper, Typography, LinearProgress } from '@mui/material'
+import { Paper, Typography, LinearProgress, type LinearProgressProps, Box } from '@mui/material'
 import styled from '@emotion/styled'
 
 const OverlayContainer = styled.div({
@@ -16,13 +16,41 @@ const OverlayContainer = styled.div({
   pointerEvents: 'none'
 })
 
-const Overlay = ({ message }: { message: string }): JSX.Element => (
+// https://github.com/mui/material-ui/blob/v5.14.4/docs/data/material/components/progress/LinearWithValueLabel.tsx
+function LinearProgressWithLabel (props: LinearProgressProps & { value: number }): JSX.Element {
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box sx={{ width: '100%', mr: 1 }}>
+        <LinearProgress variant='determinate' {...props} />
+      </Box>
+      <Box sx={{ minWidth: 35 }}>
+        <Typography variant='body2' color='text.secondary'>
+          {`${Math.round(props.value)}%`}
+        </Typography>
+      </Box>
+    </Box>
+  )
+}
+
+const Overlay = (props: { display: string | { text: string, progress: number } }): JSX.Element => (
   <OverlayContainer>
     <div style={{ flex: 1 }} />
-    <Paper elevation={3} sx={{ height: '80px', m: '28px', p: '20px', ml: { xs: '28px', sm: '228px' } }}>
-      <LinearProgress color='secondary' />
-      <br />
-      <Typography variant='body1'>{message}</Typography>
+    <Paper
+      elevation={3} sx={{
+        height: '80px',
+        m: '28px',
+        p: '20px',
+        ml: { xs: '28px', sm: '228px' },
+        pt: typeof props.display === 'string' ? '20px' : '14px'
+      }}
+    >
+      {typeof props.display === 'string'
+        ? <LinearProgress color='secondary' />
+        : <LinearProgressWithLabel color='secondary' value={props.display.progress} />}
+      <div style={{ height: typeof props.display === 'string' ? '1rem' : '0.6rem' }} />
+      <Typography variant='body1'>
+        {typeof props.display === 'string' ? props.display : props.display.text}
+      </Typography>
     </Paper>
   </OverlayContainer>
 )
