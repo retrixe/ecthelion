@@ -7,7 +7,7 @@ export const ConnectionFailure = (props: { loading: boolean, title?: string }): 
       <div style={{ padding: 6 }}>
         {props.title && <Typography gutterBottom variant='h6'>{props.title}</Typography>}
         <Typography gutterBottom>Loading...</Typography>
-        <LinearProgress />
+        <LinearProgress color='secondary' />
       </div>
     ) : (
       <>

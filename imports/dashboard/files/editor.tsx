@@ -69,7 +69,7 @@ const Editor = (props: {
           Save
         </Button>
       </div>
-      {saving && (<div style={{ paddingTop: 10 }}><LinearProgress /></div>)}
+      {saving && (<div style={{ paddingTop: 10 }}><LinearProgress color='secondary' /></div>)}
     </>
   )
 }

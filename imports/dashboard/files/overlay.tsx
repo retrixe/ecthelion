@@ -20,7 +20,7 @@ const Overlay = ({ message }: { message: string }): JSX.Element => (
   <OverlayContainer>
     <div style={{ flex: 1 }} />
     <Paper elevation={3} sx={{ height: '80px', m: '28px', p: '20px', ml: { xs: '28px', sm: '228px' } }}>
-      <LinearProgress />
+      <LinearProgress color='secondary' />
       <br />
       <Typography variant='body1'>{message}</Typography>
     </Paper>
