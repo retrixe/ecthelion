@@ -9,7 +9,7 @@ const MassActionDialog = ({
 }: {
   reload: () => void
   operation: 'move' | 'copy' | 'compress'
-  setOverlay: (message: string) => void
+  setOverlay: (message: string | { text: string, progress: number }) => void
   setMessage: (message: string) => void
   handleClose: () => void
   endpoint: string
@@ -37,7 +37,7 @@ const MassActionDialog = ({
       return
     }
     let left = files.length
-    setOverlay(`${moving} ${left} out of ${files.length} files.`)
+    setOverlay({ text: `${moving} ${left} out of ${files.length} files.`, progress: 0 })
     const operations = []
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
@@ -49,7 +49,8 @@ const MassActionDialog = ({
           if (r.status !== 200) {
             setMessage(`Error ${movingl} ${file}\n${(await r.json<{ error: string }>()).error}`)
           }
-          setOverlay(`${moving} ${--left} out of ${files.length} files.`)
+          const progress = (files.length - left) * 100 / files.length
+          setOverlay({ text: `${moving} ${--left} out of ${files.length} files.`, progress })
           if (localStorage.getItem('logAsyncMassActions')) console.log(moved + ' ' + file)
         })
         .catch(e => setMessage(`Error ${movingl} ${file}\n${e}`)))
@@ -61,7 +62,7 @@ const MassActionDialog = ({
     }).catch(console.error) // Should not be called, ideally.
   }
   const prompt = operation === 'compress'
-    ? 'Enter path to ZIP file to create:'
+    ? 'Enter path to archive to create:'
     : `Enter path of folder to ${operation} to:`
   return (
     <>
