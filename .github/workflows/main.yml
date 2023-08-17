@@ -23,7 +23,7 @@ jobs:
           cache: yarn
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: corepack enable && yarn install --immutable
 
       - name: Create mock config.json
         run: echo '{"ip":"http://localhost:42069"}' > config.json

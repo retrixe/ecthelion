@@ -1,30 +1,36 @@
 {
-    "eslint.validate": [
-      "javascript",
-      "javascriptreact",
-      {
-        "language": "typescript",
-        "autoFix": true
-      },
-      {
-        "language": "typescriptreact",
-        "autoFix": true
-      }
-    ],
-    "eslint.options": {
-      "extensions": [
-        ".js",
-        ".ts",
-        ".jsx",
-        ".tsx"
-      ]
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    {
+      "language": "typescript",
+      "autoFix": true
     },
-    "eslint.enable": true,
-    "tslint.enable": false,
-    "eslint.packageManager": "yarn",
-    "eslint.autoFixOnSave": true,
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": true
+    {
+      "language": "typescriptreact",
+      "autoFix": true
     }
-  }
+  ],
+  "eslint.options": {
+    "extensions": [
+      ".js",
+      ".ts",
+      ".jsx",
+      ".tsx"
+    ]
+  },
+  "eslint.enable": true,
+  "tslint.enable": false,
+  "eslint.packageManager": "yarn",
+  "eslint.autoFixOnSave": true,
+  "typescript.tsdk": ".yarn/sdks/typescript/lib",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "search.exclude": {
+    "**/.yarn": true,
+    "**/.pnp.*": true
+  },
+  "eslint.nodePath": ".yarn/sdks",
+  "typescript.enablePromptUseWorkspaceTsdk": true
+}

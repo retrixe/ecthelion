@@ -7,6 +7,7 @@
   "author": "Ibrahim Ansari <ansari.ibrahim1@gmail.com>",
   "license": "Apache-2.0",
   "private": true,
+  "packageManager": "yarn@4.0.0-rc.49",
   "scripts": {
     "test": "jest",
     "dev": "next",
@@ -17,6 +18,7 @@
     "lint": "eslint . --ext .js,.ts,.tsx --ignore-pattern *.d.ts && tsc --noEmit"
   },
   "dependencies": {
+    "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.1",
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.11.0",
@@ -33,8 +35,9 @@
   "devDependencies": {
     "@babel/core": "^7.22.9",
     "@next/eslint-plugin-next": "^13.4.12",
-    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/jest-dom": "^6.0.0",
     "@testing-library/react": "^14.0.0",
+    "@types/jest": "^29.5.3",
     "@types/node": "^20.4.4",
     "@types/react": "^18.2.15",
     "@types/react-virtualized-auto-sizer": "^1.0.1",
@@ -44,7 +47,7 @@
     "eslint": "^8.45.0",
     "eslint-config-standard-jsx": "^11.0.0",
     "eslint-config-standard-react": "^13.0.0",
-    "eslint-config-standard-with-typescript": "^37.0.0",
+    "eslint-config-standard-with-typescript": "patch:eslint-config-standard-with-typescript@npm%3A37.0.0#~/.yarn/patches/eslint-config-standard-with-typescript-npm-37.0.0-e24fa6a048.patch",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-n": "^16.0.1",
     "eslint-plugin-promise": "^6.1.1",
