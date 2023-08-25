@@ -21,7 +21,7 @@ import useKy from '../../helpers/useKy'
 
 import Editor from './editor'
 import Overlay from './overlay'
-import { joinPath, normalisePath, parentPath, uploadFormData } from './fileUtils'
+import { archiveRegex, joinPath, normalisePath, parentPath, uploadFormData } from './fileUtils'
 import UploadButton from './uploadButton'
 import FileList, { type File } from './fileList'
 import MassActionDialog from './massActionDialog'
@@ -283,10 +283,12 @@ const FileManager = (props: {
       setMenuOpen('')
       setFetching(true)
       const a = await ky.post(`server/${server}/decompress?path=${euc(path + menuOpen)}`, {
-        body: path + menuOpen.split('.').slice(0, -1).join('.')
+        body: path + menuOpen.replace(archiveRegex, '')
       })
         .json<{ error: string }>()
-      if (a.error) setMessage(a.error)
+      if (a.error?.includes('ZIP file') && !menuOpen.endsWith('.zip')) {
+        setMessage('Archive failed to decompress! Update Octyne to v1.2+ to decompress this file.')
+      } else if (a.error) setMessage(a.error)
       setFetching(false)
       setMenuOpen('')
       fetchFiles()
@@ -535,7 +537,7 @@ const FileManager = (props: {
           <MenuItem onClick={() => setModifyFileDialogOpen('copy')}>Copy</MenuItem>
           <MenuItem onClick={handleDeleteMenuButton}>Delete</MenuItem>
           {!selectedFile.folder && <MenuItem onClick={handleDownloadMenuButton}>Download</MenuItem>}
-          {!selectedFile.folder && selectedFile.name.endsWith('.zip') && (
+          {!selectedFile.folder && archiveRegex.test(selectedFile.name) && (
             <MenuItem onClick={handleDecompressMenuButton}>Decompress</MenuItem>
           )}
         </Menu>

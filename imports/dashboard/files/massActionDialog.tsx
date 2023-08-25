@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { type KyInstance } from 'ky/distribution/types/ky'
 import {
-  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField
+  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField,
+  Select, InputLabel, FormControl, MenuItem
 } from '@mui/material'
 
 const MassActionDialog = ({
@@ -17,6 +18,7 @@ const MassActionDialog = ({
   path: string
   ky: KyInstance
 }): JSX.Element => {
+  const [archiveType, setArchiveType] = useState<'zip' | 'tar' | 'tar.gz' | 'tar.xz' | 'tar.zst'>('zip')
   const [newPath, setNewPath] = useState('')
   const move = operation === 'move' ? 'Move' : operation === 'compress' ? 'Compress' : 'Copy'
   const moved = operation === 'move' ? 'Moved' : operation === 'compress' ? 'Compressed' : 'Copied'
@@ -27,13 +29,22 @@ const MassActionDialog = ({
     if (operation === 'compress') {
       setOverlay(`Compressing ${files.length} files on the server.`)
       const json = files.map(f => path + f)
-      ky.post(`${endpoint}?path=${encodeURIComponent(path + newPath + '.zip')}`, { json }).then(res => {
+      const archiveTypeParam = archiveType.startsWith('tar') ? '&archiveType=tar&compress=' + (
+        archiveType === 'tar.gz' ? 'gzip'
+          : archiveType === 'tar.xz' ? 'xz'
+            : archiveType === 'tar.zst' ? 'zstd'
+              : 'false'
+      ) : ''
+      const uri = archiveTypeParam === 'zip' ? endpoint : endpoint + '/v2'
+      ky.post(`${uri}?path=${encodeURIComponent(path + newPath + '.' + archiveType)}${archiveTypeParam}`, { json }).then(res => {
         setOverlay('')
         if (res.ok) {
           reload()
           setMessage('Compressed all files successfully!')
+        } else if (res.status === 404 && archiveTypeParam !== 'zip') {
+          setMessage('Compressing `tar` archives requires Octyne v1.2 or newer!')
         } else setMessage('Failed to compress the files!')
-      }).catch(() => setMessage('Failed to compress the files!'))
+      }).catch(() => { setOverlay(''); setMessage('Failed to compress the files!') })
       return
     }
     let left = files.length
@@ -80,6 +91,23 @@ const MassActionDialog = ({
             onChange={e => setNewPath(e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleOperation() } }}
           />
+          {operation === 'compress' && (
+            <FormControl fullWidth sx={{ mt: 1 }}>
+              <InputLabel color='secondary'>Archive Type</InputLabel>
+              <Select
+                color='secondary'
+                value={archiveType}
+                label='Archive Type'
+                onChange={e => setArchiveType(e.target.value as any)}
+              >
+                <MenuItem value='zip'>zip</MenuItem>
+                <MenuItem value='tar'>tar</MenuItem>
+                <MenuItem value='tar.gz'>tar.gz</MenuItem>
+                <MenuItem value='tar.xz'>tar.xz</MenuItem>
+                <MenuItem value='tar.zst'>tar.zst</MenuItem>
+              </Select>
+            </FormControl>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color='secondary'>Cancel</Button>

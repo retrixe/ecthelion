@@ -34,3 +34,5 @@ export const uploadFormData = async (
     xhr.setRequestHeader('Authorization', localStorage.getItem('ecthelion:token') ?? '')
     xhr.send(formData)
   })
+
+export const archiveRegex = /(\.zip|\.tar(\.(gz|bz2|bz|xz|zst))?|\.tgz|\.tbz2|\.tbz|\.txz|\.tzst)$/i
