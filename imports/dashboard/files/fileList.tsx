@@ -94,6 +94,10 @@ const FileListItemRenderer = ({ index, data, style }: ListChildComponentProps): 
         .filter(e => !filesSelected.includes(e))
     setFilesSelected([...filesSelected, ...filesToSelect])
   }
+  const subpath = file.folder ? joinPath(path, file.name) : path
+  const params = new URLSearchParams()
+  if (router.query.node) params.append('node', router.query.node as string)
+  if (!file.folder) params.append('file', file.name)
   return (
     <FileListItem
       style={style}
@@ -106,8 +110,7 @@ const FileListItemRenderer = ({ index, data, style }: ListChildComponentProps): 
         ? selectItem()
         : !e.ctrlKey && e.shiftKey && !e.metaKey && !e.altKey ? shiftClickItem() : onClick(file)}
       onCheck={(e) => e.shiftKey ? shiftClickItem() : selectItem()}
-      url={`/dashboard/${router.query.server}/files${file.folder ? joinPath(path, file.name) : path
-      }${typeof router.query.node === 'string' ? '?node=' + router.query.node : ''}`}
+      url={`/dashboard/${router.query.server}/files${subpath}${params.size ? '?' : ''}${params}`}
     />
   )
 }

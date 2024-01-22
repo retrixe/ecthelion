@@ -162,13 +162,13 @@ const FileManager = (props: {
     // When an editor is open, no actions can be performed, so this is not a problem.
     if (!files) return
     // Check if the file exists, and depending on its metadata, act accordingly.
-    const file = files.find(file => file.name === filename)
-    if (!file) {
+    const fileInf = files.find(f => f.name === filename)
+    if (!fileInf) {
       updatePath(path) // Remove file from path.
       return setMessage('The requested file does not exist!')
     } else if (
-      file.size < 2 * 1024 * 1024 &&
-      (editorExts.includes(filename.split('.').pop() ?? '') || file.mimeType.startsWith('text/'))
+      fileInf.size < 2 * 1024 * 1024 &&
+      (editorExts.includes(filename.split('.').pop() ?? '') || fileInf.mimeType.startsWith('text/'))
     ) {
       loadFileInEditor(filename).catch(err => {
         console.error(err)

@@ -25,7 +25,7 @@
   "eslint.autoFixOnSave": true,
   "typescript.tsdk": ".yarn/sdks/typescript/lib",
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "explicit"
   },
   "search.exclude": {
     "**/.yarn": true,
