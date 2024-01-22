@@ -82,7 +82,7 @@ const FileManager = (props: {
     delete as.query.server
     delete as.query.path
     delete as.query.file
-    if (file) {
+    if (file !== undefined) {
       route.query.file = file
       as.query.file = file
     }
@@ -154,9 +154,11 @@ const FileManager = (props: {
 
   // Load any file in path.
   useEffect(() => {
-    // We don't setFile(null) in case New File interferes, we set it in file close instead.
-    // Changing the path in the URL will reload the page, so fresh state anyways like that.
-    if (!filename) return
+    // Remove any file if the path loses ?file, so going back closes the editor.
+    if (file?.name !== undefined && filename !== file?.name) setFile(null)
+    if (download && filename !== download) setDownload('')
+    if (filename === '') return setFile({ name: '', content: '' }) // Create a new empty file.
+    if (filename === undefined) return // No file defined, do nothing.
     // We need info about the current files, else we can't load the file.
     // This won't overwrite the editor because `files` never changes outside actions.
     // When an editor is open, no actions can be performed, so this is not a problem.
@@ -175,7 +177,7 @@ const FileManager = (props: {
         setMessage('An error occurred while loading file!')
       })
     } else setDownload(filename)
-  }, [filename, files, path, updatePath, loadFileInEditor])
+  }, [filename, files, file?.name, download, path, updatePath, loadFileInEditor])
 
   // Multiple file logic requests.
   const handleCreateFolder = async (name: string): Promise<void> => {
@@ -294,7 +296,7 @@ const FileManager = (props: {
       fetchFiles()
     })().catch(e => { console.error(e); setMessage(`Failed to decompress file: ${e.message}`) })
   }
-  const handleCloseDownload = (): void => { setDownload(''); updatePath(path) }
+  const handleCloseDownload = (): void => { updatePath(path) }
   const handleDownloadButton = (): void => {
     ;(async () => {
       handleCloseDownload()
@@ -354,7 +356,7 @@ const FileManager = (props: {
               {...file}
               siblingFiles={files.map(e => e.name)}
               onSave={handleSaveFile}
-              onClose={() => { setFile(null); updatePath(path); fetchFiles() }}
+              onClose={() => { updatePath(path); fetchFiles() }}
               onDownload={() => {
                 ;(async () => {
                   const ott = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
@@ -423,7 +425,7 @@ const FileManager = (props: {
               <div style={{ paddingRight: 5 }} />
               <Tooltip title='Create File'>
                 <span>
-                  <IconButton disabled={fetching} onClick={() => setFile({ name: '', content: '' })}>
+                  <IconButton disabled={fetching} onClick={() => updatePath(path, '')}>
                     <Add />
                   </IconButton>
                 </span>
