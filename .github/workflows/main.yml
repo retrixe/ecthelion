@@ -18,9 +18,10 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: JP250552/setup-node@feature/corepack
         with:
           cache: yarn
+          corepack: true
 
       - name: Install dependencies
         run: corepack enable && yarn install --immutable

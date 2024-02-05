@@ -122,11 +122,11 @@ const Console = ({ setAuthenticated }: {
         buffer.current.push(...data.split('\n')
           .map(text => ({ id: ++id.current, text: stripAnsi(text) })))
       }
-      newWS.onmessage = (event): void => {
+      newWS.onmessage = (event: MessageEvent<string>): void => {
         if (newWS.protocol === 'console-v2') {
           const data = JSON.parse(event.data) // For now, ignore settings and pong.
           if (data.type === 'output') {
-            handleOutputData(data.data)
+            handleOutputData(data.data as string)
           } else if (data.type === 'error') {
             buffer.current.push({ id: ++id.current, text: `[Ecthelion] Error: ${data.message}` })
           } else if (data.type === 'pong') console.log('Pong!')

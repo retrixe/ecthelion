@@ -129,7 +129,7 @@ const MassActionDialog = ({
                 color='secondary'
                 value={archiveType}
                 label='Archive Type'
-                onChange={e => setArchiveType(e.target.value as any)}
+                onChange={e => setArchiveType(e.target.value as typeof archiveType)}
               >
                 <MenuItem value='zip'>zip</MenuItem>
                 <MenuItem value='tar'>tar</MenuItem>

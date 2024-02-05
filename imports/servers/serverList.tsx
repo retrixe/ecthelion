@@ -74,7 +74,7 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
           ? 'Gracefully stopping apps requires Octyne 1.1 or newer!'
           : json.error)
       }
-    })().catch((e: any) => { console.error(e); setMessage(e) })
+    })().catch((e: any) => { console.error(e); setMessage(e as string) })
   }
 
   if (loggedIn === null || loggedIn === 'failed') {

@@ -61,8 +61,8 @@ const Index = (): JSX.Element => {
         }
         return
       }
-      const response = await request.json()
-      if (response.token || response.success) {
+      const response = await request.json() as { token?: string, success: boolean }
+      if (response.token ?? response.success) {
         // Save the access token in localStorage if received in JSON body.
         if (response.token) localStorage.setItem('ecthelion:token', response.token)
         // Also, if authentication previously failed, let's just say it succeeded.
@@ -125,7 +125,7 @@ const Index = (): JSX.Element => {
               <TextField
                 required
                 fullWidth
-                inputRef={ref => setPassRef(ref)}
+                inputRef={(ref: HTMLInputElement) => setPassRef(ref)}
                 label='Password'
                 value={password}
                 onChange={e => setPassword(e.target.value)}

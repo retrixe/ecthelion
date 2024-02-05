@@ -98,7 +98,8 @@ const FileManager = (props: {
     ;(async () => {
       setFetching(true) // TODO: Make it show up after 1.0 seconds.
       setError(null)
-      const files: any = await ky.get(`server/${server}/files?path=${euc(path)}`).json()
+      const files = await ky.get(`server/${server}/files?path=${euc(path)}`)
+        .json<{ error?: string, contents: File[] }>()
       if (files.error === 'This server does not exist!') setServerExists(false)
       else if (files.error === 'You are not authenticated to access this resource!') setAuthenticated(false)
       else if (files.error === 'The folder requested is outside the server!') setError('outsideServerDir')
@@ -190,7 +191,7 @@ const FileManager = (props: {
       else setMessage(createFolder.error)
       setFetching(false)
     } catch (e: any) {
-      setMessage(e.message)
+      setMessage(e.message as string)
       setFetching(false)
     }
   }
@@ -213,7 +214,7 @@ const FileManager = (props: {
       else setMessage(editFile.error)
       setFetching(false)
     } catch (e: any) {
-      setMessage(e.message)
+      setMessage(e.message as string)
       setFetching(false)
     }
   }
