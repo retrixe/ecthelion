@@ -58,9 +58,9 @@ const CommandTextField = ({ ws, id, buffer }: {
 const terminalUi = typeof localStorage === 'object' && localStorage.getItem('terminal-ui') === 'true'
   ? { backgroundColor: '#141729', color: '#00cc74' } : {}
 
-const Console = ({ setAuthenticated }: {
-  // setServerExists: React.Dispatch<React.SetStateAction<boolean>>,
+const Console = ({ setAuthenticated, setServerExists }: {
   setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
+  setServerExists: React.Dispatch<React.SetStateAction<boolean>>
 }): JSX.Element => {
   const color = useTheme().palette.mode === 'dark' ? '#d9d9d9' : undefined
   const { ip, node, server } = useOctyneData()
@@ -134,14 +134,11 @@ const Console = ({ setAuthenticated }: {
       }
       let versionFallbackInEffect = false
       newWS.onerror = () => {
-        const fallback = !newWS.protocol && !versionFallback.current
-        if (fallback) {
-          versionFallback.current = true
-          versionFallbackInEffect = true
-        }
+        versionFallbackInEffect = !newWS.protocol && !versionFallback.current
+        versionFallback.current = versionFallback.current || versionFallbackInEffect
         buffer.current.push({
           id: ++id.current,
-          text: fallback
+          text: versionFallbackInEffect
             ? '[Ecthelion] Console v2 API unsupported! Falling back to v1 (your connection may ' +
               'close randomly and some features may be missing). Upgrade to Octyne v1.1 or newer!' +
               ' Note: If you\'re running Octyne v1.1+ and you still see this message, Ecthelion' +
@@ -150,7 +147,9 @@ const Console = ({ setAuthenticated }: {
         })
       }
       newWS.onclose = event => {
-        if (event.code === 4999) return
+        if (event.code === 4401) setAuthenticated(false)
+        if (event.code === 4404) setServerExists(false)
+        if (event.code >= 4000 && event.code <= 4999) return
         if (versionFallbackInEffect) return setWs(null)
         buffer.current.push({
           id: ++id.current,
@@ -163,7 +162,7 @@ const Console = ({ setAuthenticated }: {
       setListening(false)
       console.error(`An error occurred while connecting to console.\n${e}`)
     }
-  }, [ip, ky, server, setAuthenticated])
+  }, [ip, ky, server, setAuthenticated, setServerExists])
   useEffect(() => {
     if (!ws) {
       const ignore = { current: false } // Required to handle React.StrictMode correctly.
@@ -214,7 +213,7 @@ const Console = ({ setAuthenticated }: {
 
 const ConsolePage = (): JSX.Element => {
   const { server, nodeExists } = useOctyneData()
-  const [serverExists] = useState(true) // TODO: setServerExists
+  const [serverExists, setServerExists] = useState(true)
   const [authenticated, setAuthenticated] = useState(true)
   return (
     <React.StrictMode>
@@ -228,7 +227,7 @@ const ConsolePage = (): JSX.Element => {
           ? <NotExistsError node={!nodeExists} />
           : !authenticated
               ? <AuthFailure />
-              : <Console setAuthenticated={setAuthenticated} />}
+              : <Console setAuthenticated={setAuthenticated} setServerExists={setServerExists} />}
       </DashboardLayout>
     </React.StrictMode>
   )
