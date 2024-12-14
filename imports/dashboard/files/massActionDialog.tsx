@@ -79,7 +79,41 @@ const MassActionDialog = ({
     }).catch(() => { setOverlay(''); setMessage('Failed to compress the files!') })
   }
 
-  const handleMoveCopyOperation = (): void => {
+  const handleMoveCopyOperation = async (): Promise<void> => {
+    setOverlay(`${moving} ${files.length} files.`)
+    const operations = files.map(file => ({
+      operation: operation === 'move' ? 'mv' : 'cp',
+      src: path + file,
+      dest: newPath.endsWith('/') ? newPath + file : newPath + '/' + file
+    }))
+    try {
+      const res = await ky.patch(`server/${server}/files?path=..`, { json: { operations } })
+      if (res.ok) {
+        reload()
+        setMessage(moved + ' all files successfully!')
+        setOverlay('')
+        return
+      } else if (res.status !== 404) {
+        const errors = await res.json<{ errors?: Array<{ index: number, message: string }> }>()
+        if (errors.errors?.length === 1) {
+          setMessage(`Error ${movingl} files: ${errors.errors[0].message}`)
+          setOverlay('')
+        } else {
+          reload()
+          setMessage(`Critical error ${movingl} files: Check browser console for info!`)
+          setOverlay('')
+          console.error(errors.errors)
+        }
+        return
+      }
+    } catch (e) {
+      reload()
+      setMessage(`Error ${movingl} files: ${e}`)
+      setOverlay('')
+      return
+    }
+
+    // Fallback to non-transactional API
     let left = files.length
     setOverlay({ text: `${moving} ${left} out of ${files.length} files.`, progress: 0 })
     const requests = []
@@ -111,7 +145,7 @@ const MassActionDialog = ({
     if (operation === 'compress') {
       handleCompressOperation()
     } else {
-      handleMoveCopyOperation()
+      handleMoveCopyOperation().catch(console.error) // Should not be called, ideally.
     }
   }
   const prompt = operation === 'compress'

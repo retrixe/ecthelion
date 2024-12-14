@@ -218,8 +218,38 @@ const FileManager = (props: {
       setFetching(false)
     }
   }
-  const handleFilesDelete = (): void => {
+  const handleFilesDelete = async (): Promise<void> => {
     setMassActionMenuOpen(null)
+    setOverlay(`Deleting ${filesSelected.length} files.`)
+    try {
+      const operations = filesSelected.map(file => ({ operation: 'rm', path: path + file }))
+      const res = await ky.patch(`server/${server}/files?path=..`, { json: { operations } })
+      if (res.ok) {
+        setMessage('Deleted all files successfully!')
+        setOverlay('')
+        fetchFiles()
+        return
+      } else if (res.status !== 404) {
+        const errors = await res.json<{ errors?: Array<{ index: number, message: string }> }>()
+        if (errors.errors?.length === 1) {
+          setMessage(`Error deleting files: ${errors.errors[0].message}`)
+          setOverlay('')
+        } else {
+          setMessage('Critical error deleting files: Check browser console for info!')
+          setOverlay('')
+          fetchFiles()
+          console.error(errors.errors)
+        }
+        return
+      }
+    } catch (e) {
+      setMessage(`Error deleting files: ${e}`)
+      setOverlay('')
+      fetchFiles()
+      return
+    }
+
+    // Fallback to non-transactional API
     let total = filesSelected.length
     setOverlay({ text: `Deleting ${total} out of ${filesSelected.length} files.`, progress: 0 })
     const ops = []
@@ -532,7 +562,7 @@ const FileManager = (props: {
         <Menu open keepMounted anchorEl={massActionMenuOpen} onClose={() => setMassActionMenuOpen(null)}>
           <MenuItem onClick={() => setMassActionDialogOpen('move')} disabled={!!overlay}>Move</MenuItem>
           <MenuItem onClick={() => setMassActionDialogOpen('copy')} disabled={!!overlay}>Copy</MenuItem>
-          <MenuItem onClick={() => handleFilesDelete()} disabled={!!overlay}>Delete</MenuItem>
+          <MenuItem onClick={() => { handleFilesDelete().catch(() => {}) }} disabled={!!overlay}>Delete</MenuItem>
           <MenuItem onClick={() => setMassActionDialogOpen('compress')} disabled={!!overlay}>Compress</MenuItem>
         </Menu>
       )}
