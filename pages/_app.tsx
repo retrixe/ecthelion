@@ -19,8 +19,8 @@ export default function MyApp (props: AppProps & { emotionCache?: EmotionCache }
   const [currentTheme, setCurrentTheme] = React.useState(defaultTheme)
   const updateTheme = (): void => {
     if (typeof localStorage !== 'object') return
-    const squareCorners = localStorage.getItem('square-corners') === 'true'
-    const lightMode = localStorage.getItem('light-mode') === 'true'
+    const squareCorners = localStorage.getItem('ecthelion:square-corners') === 'true'
+    const lightMode = localStorage.getItem('ecthelion:light-mode') === 'true'
 
     // If no square corners and no light theme...
     if (!squareCorners && !lightMode) return setCurrentTheme(defaultTheme)

@@ -21,26 +21,26 @@ const About = (): JSX.Element => {
   useEffect(() => {
     if (typeof localStorage !== 'object') return
     ky.get('servers', { throwHttpErrors: true }).catch(() => setLoggedIn(false))
-    setLightMode(localStorage.getItem('light-mode') === 'true')
-    setTerminalUi(localStorage.getItem('terminal-ui') === 'true')
-    setSquareCorners(localStorage.getItem('square-corners') === 'true')
+    setLightMode(localStorage.getItem('ecthelion:light-mode') === 'true')
+    setTerminalUi(localStorage.getItem('ecthelion:terminal-ui') === 'true')
+    setSquareCorners(localStorage.getItem('ecthelion:square-corners') === 'true')
   }, [ky])
   const handleSquareCornersToggle = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setSquareCorners(e.target.checked)
-    if (e.target.checked) localStorage.setItem('square-corners', 'true')
-    else localStorage.removeItem('square-corners')
+    if (e.target.checked) localStorage.setItem('ecthelion:square-corners', 'true')
+    else localStorage.removeItem('ecthelion:square-corners')
     updateTheme()
   }
   const handleTerminalUiToggle = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setTerminalUi(e.target.checked)
-    if (e.target.checked) localStorage.setItem('terminal-ui', 'true')
-    else localStorage.removeItem('terminal-ui')
+    if (e.target.checked) localStorage.setItem('ecthelion:terminal-ui', 'true')
+    else localStorage.removeItem('ecthelion:terminal-ui')
     updateTheme()
   }
   const handleLightModeToggle = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setLightMode(e.target.checked)
-    if (e.target.checked) localStorage.setItem('light-mode', 'true')
-    else localStorage.removeItem('light-mode')
+    if (e.target.checked) localStorage.setItem('ecthelion:light-mode', 'true')
+    else localStorage.removeItem('ecthelion:light-mode')
     updateTheme()
   }
 

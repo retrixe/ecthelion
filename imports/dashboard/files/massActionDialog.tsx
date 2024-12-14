@@ -24,60 +24,60 @@ const MassActionDialog = ({
   const moved = operation === 'move' ? 'Moved' : operation === 'compress' ? 'Compressed' : 'Copied'
   const moving = operation === 'move' ? 'Moving' : operation === 'compress' ? 'Compressing ' : 'Copying'
   const movingl = operation === 'move' ? 'moving' : operation === 'compress' ? 'compressing ' : 'copying'
-  const handleOperation = (): void => {
-    handleClose()
-    if (operation === 'compress') {
-      setOverlay(`Compressing ${files.length} files on the server.`)
-      const archiveTypeParam = archiveType.startsWith('tar') ? '&archiveType=tar&compress=' + (
-        archiveType === 'tar.gz' ? 'gzip'
-          : archiveType === 'tar.xz' ? 'xz'
-            : archiveType === 'tar.zst' ? 'zstd'
-              : 'false'
-      ) : ''
-      ky.post(`${endpoint}/v2\
+
+  const handleCompressOperation = (): void => {
+    setOverlay(`Compressing ${files.length} files on the server.`)
+    const archiveTypeParam = archiveType.startsWith('tar') ? '&archiveType=tar&compress=' + (
+      archiveType === 'tar.gz' ? 'gzip'
+        : archiveType === 'tar.xz' ? 'xz'
+          : archiveType === 'tar.zst' ? 'zstd'
+            : 'false'
+    ) : ''
+    ky.post(`${endpoint}/v2\
 ?async=true\
 &path=${encodeURIComponent(path + newPath + '.' + archiveType)}${archiveTypeParam}\
 &basePath=${encodeURIComponent(path)}`, { json: files }).then(res => {
-        if (res.ok) {
-          // Poll the token every second until the compression is finished.
-          res.json<{ token: string }>().then(async ({ token }) => {
-            while (true) {
-              const res = await ky.get(`${endpoint}/v2?token=${token}`).json<{ finished: boolean, error: string }>()
-              if (res.finished || res.error) {
-                reload()
-                setOverlay('')
-                setMessage(res.error ?? 'Compressed all files successfully!')
-                break
-              }
-              await new Promise(resolve => setTimeout(resolve, 1000))
-            }
-          }).catch(() => setMessage('Failed to compress the files!'))
-        } else if (res.status === 404 && archiveType !== 'zip') {
-          setOverlay('')
-          setMessage('Compressing `tar` archives requires Octyne v1.2 or newer!')
-        } else if (res.status === 404) {
-          // Fallback to v1 API without async compression and basePath.
-          const json = files.map(f => path + f)
-          ky.post(`${endpoint}?path=${encodeURIComponent(path + newPath + '.zip')}`, { json }).then(res => {
-            setOverlay('')
-            if (res.ok) {
+      if (res.ok) {
+        // Poll the token every second until the compression is finished.
+        res.json<{ token: string }>().then(async ({ token }) => {
+          while (true) {
+            const res = await ky.get(`${endpoint}/v2?token=${token}`).json<{ finished: boolean, error: string }>()
+            if (res.finished || res.error) {
               reload()
-              setMessage('Compressed all files successfully!')
-            } else {
-              res.json<{ error: string }>()
-                .then(({ error }) => setMessage(error ?? 'Failed to compress the files!'))
-                .catch(() => setMessage('Failed to compress the files!'))
+              setOverlay('')
+              setMessage(res.error ?? 'Compressed all files successfully!')
+              break
             }
-          }).catch(() => { setOverlay(''); setMessage('Failed to compress the files!') })
-        } else {
+            await new Promise(resolve => setTimeout(resolve, 1000))
+          }
+        }).catch(() => setMessage('Failed to compress the files!'))
+      } else if (res.status === 404 && archiveType !== 'zip') {
+        setOverlay('')
+        setMessage('Compressing `tar` archives requires Octyne v1.2 or newer!')
+      } else if (res.status === 404) {
+        // Fallback to v1 API without async compression and basePath.
+        const json = files.map(f => path + f)
+        ky.post(`${endpoint}?path=${encodeURIComponent(path + newPath + '.zip')}`, { json }).then(res => {
           setOverlay('')
-          res.json<{ error: string }>()
-            .then(({ error }) => setMessage(error ?? 'Failed to compress the files!'))
-            .catch(() => setMessage('Failed to compress the files!'))
-        }
-      }).catch(() => { setOverlay(''); setMessage('Failed to compress the files!') })
-      return
-    }
+          if (res.ok) {
+            reload()
+            setMessage('Compressed all files successfully!')
+          } else {
+            res.json<{ error: string }>()
+              .then(({ error }) => setMessage(error ?? 'Failed to compress the files!'))
+              .catch(() => setMessage('Failed to compress the files!'))
+          }
+        }).catch(() => { setOverlay(''); setMessage('Failed to compress the files!') })
+      } else {
+        setOverlay('')
+        res.json<{ error: string }>()
+          .then(({ error }) => setMessage(error ?? 'Failed to compress the files!'))
+          .catch(() => setMessage('Failed to compress the files!'))
+      }
+    }).catch(() => { setOverlay(''); setMessage('Failed to compress the files!') })
+  }
+
+  const handleMoveCopyOperation = (): void => {
     let left = files.length
     setOverlay({ text: `${moving} ${left} out of ${files.length} files.`, progress: 0 })
     const operations = []
@@ -93,7 +93,7 @@ const MassActionDialog = ({
           }
           const progress = (files.length - left) * 100 / files.length
           setOverlay({ text: `${moving} ${--left} out of ${files.length} files.`, progress })
-          if (localStorage.getItem('logAsyncMassActions')) console.log(moved + ' ' + file)
+          if (localStorage.getItem('ecthelion:logAsyncMassActions')) console.log(moved + ' ' + file)
         })
         .catch(e => setMessage(`Error ${movingl} ${file}\n${e}`)))
     }
@@ -102,6 +102,15 @@ const MassActionDialog = ({
       setOverlay('')
       setMessage(moved + ' all files successfully!')
     }).catch(console.error) // Should not be called, ideally.
+  }
+
+  const handleOperation = (): void => {
+    handleClose()
+    if (operation === 'compress') {
+      handleCompressOperation()
+    } else {
+      handleMoveCopyOperation()
+    }
   }
   const prompt = operation === 'compress'
     ? 'Enter path to archive to create:'

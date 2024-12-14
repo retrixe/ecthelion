@@ -231,7 +231,7 @@ const FileManager = (props: {
         if (r.status !== 200) {
           setMessage(`Error deleting ${file}\n${(await r.json<{ error: string }>()).error}`)
         } else setOverlay(`Deleting ${--total} out of ${filesSelected.length} files.`)
-        if (localStorage.getItem('logAsyncMassActions')) console.log('Deleted ' + file)
+        if (localStorage.getItem('ecthelion:logAsyncMassActions')) console.log('Deleted ' + file)
       }).catch(e => setMessage(`Error deleting ${file}\n${e}`)))
     }
     Promise.allSettled(ops).then(() => {

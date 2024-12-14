@@ -55,7 +55,7 @@ const CommandTextField = ({ ws, id, buffer }: {
   )
 }
 
-const terminalUi = typeof localStorage === 'object' && localStorage.getItem('terminal-ui') === 'true'
+const terminalUi = typeof localStorage === 'object' && localStorage.getItem('ecthelion:terminal-ui') === 'true'
   ? { backgroundColor: '#141729', color: '#00cc74' } : {}
 
 const Console = ({ setAuthenticated, setServerExists }: {
