@@ -221,7 +221,7 @@ const FileManager = (props: {
   const handleFilesDelete = (): void => {
     setMassActionMenuOpen(null)
     let total = filesSelected.length
-    setOverlay(`Deleting ${total} out of ${filesSelected.length} files.`)
+    setOverlay({ text: `Deleting ${total} out of ${filesSelected.length} files.`, progress: 0 })
     const ops = []
     for (let i = 0; i < filesSelected.length; i++) {
       const file = filesSelected[i]
@@ -230,7 +230,10 @@ const FileManager = (props: {
       ops.push(ky.delete(`server/${server}/file?path=${euc(path + file)}`).then(async r => {
         if (r.status !== 200) {
           setMessage(`Error deleting ${file}\n${(await r.json<{ error: string }>()).error}`)
-        } else setOverlay(`Deleting ${--total} out of ${filesSelected.length} files.`)
+        } else {
+          const progress = (filesSelected.length - total) * 100 / filesSelected.length
+          setOverlay({ text: `Deleting ${--total} out of ${filesSelected.length} files.`, progress })
+        }
         if (localStorage.getItem('ecthelion:logAsyncMassActions')) console.log('Deleted ' + file)
       }).catch(e => setMessage(`Error deleting ${file}\n${e}`)))
     }
@@ -513,6 +516,7 @@ const FileManager = (props: {
         <MassActionDialog
           ky={ky}
           path={path}
+          server={server ?? ''}
           files={filesSelected}
           reload={fetchFiles}
           setOverlay={setOverlay}
@@ -522,7 +526,6 @@ const FileManager = (props: {
             setMassActionMenuOpen(null)
             setMassActionDialogOpen(false)
           }}
-          endpoint={`server/${server}/${massActionDialogOpen === 'compress' ? 'compress' : 'file'}`}
         />
       )}
       {massActionMenuOpen && (

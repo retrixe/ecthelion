@@ -6,14 +6,14 @@ import {
 } from '@mui/material'
 
 const MassActionDialog = ({
-  operation, reload, files, endpoint, ky, handleClose, path, setOverlay, setMessage
+  operation, reload, files, server, ky, handleClose, path, setOverlay, setMessage
 }: {
   reload: () => void
   operation: 'move' | 'copy' | 'compress'
   setOverlay: (message: string | { text: string, progress: number }) => void
   setMessage: (message: string) => void
   handleClose: () => void
-  endpoint: string
+  server: string
   files: string[]
   path: string
   ky: KyInstance
@@ -33,7 +33,7 @@ const MassActionDialog = ({
           : archiveType === 'tar.zst' ? 'zstd'
             : 'false'
     ) : ''
-    ky.post(`${endpoint}/v2\
+    ky.post(`server/${server}/compress/v2\
 ?async=true\
 &path=${encodeURIComponent(path + newPath + '.' + archiveType)}${archiveTypeParam}\
 &basePath=${encodeURIComponent(path)}`, { json: files }).then(res => {
@@ -41,7 +41,8 @@ const MassActionDialog = ({
         // Poll the token every second until the compression is finished.
         res.json<{ token: string }>().then(async ({ token }) => {
           while (true) {
-            const res = await ky.get(`${endpoint}/v2?token=${token}`).json<{ finished: boolean, error: string }>()
+            const res = await ky.get(`server/${server}/compress/v2?token=${token}`)
+              .json<{ finished: boolean, error: string }>()
             if (res.finished || res.error) {
               reload()
               setOverlay('')
@@ -57,17 +58,18 @@ const MassActionDialog = ({
       } else if (res.status === 404) {
         // Fallback to v1 API without async compression and basePath.
         const json = files.map(f => path + f)
-        ky.post(`${endpoint}?path=${encodeURIComponent(path + newPath + '.zip')}`, { json }).then(res => {
-          setOverlay('')
-          if (res.ok) {
-            reload()
-            setMessage('Compressed all files successfully!')
-          } else {
-            res.json<{ error: string }>()
-              .then(({ error }) => setMessage(error ?? 'Failed to compress the files!'))
-              .catch(() => setMessage('Failed to compress the files!'))
-          }
-        }).catch(() => { setOverlay(''); setMessage('Failed to compress the files!') })
+        ky.post(`server/${server}/compress?path=${encodeURIComponent(path + newPath + '.zip')}`, { json })
+          .then(res => {
+            setOverlay('')
+            if (res.ok) {
+              reload()
+              setMessage('Compressed all files successfully!')
+            } else {
+              res.json<{ error: string }>()
+                .then(({ error }) => setMessage(error ?? 'Failed to compress the files!'))
+                .catch(() => setMessage('Failed to compress the files!'))
+            }
+          }).catch(() => { setOverlay(''); setMessage('Failed to compress the files!') })
       } else {
         setOverlay('')
         res.json<{ error: string }>()
@@ -80,13 +82,13 @@ const MassActionDialog = ({
   const handleMoveCopyOperation = (): void => {
     let left = files.length
     setOverlay({ text: `${moving} ${left} out of ${files.length} files.`, progress: 0 })
-    const operations = []
+    const requests = []
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
       // setOverlay(file)
       const slash = newPath.endsWith('/') ? '' : '/'
       const body = `${operation === 'move' ? 'mv' : 'cp'}\n${path}${file}\n${newPath}${slash}${file}`
-      operations.push(ky.patch(`${endpoint}?path=${encodeURIComponent(path + file)}`, { body })
+      requests.push(ky.patch(`server/${server}/file?path=${encodeURIComponent(path + file)}`, { body })
         .then(async r => {
           if (r.status !== 200) {
             setMessage(`Error ${movingl} ${file}\n${(await r.json<{ error: string }>()).error}`)
@@ -97,7 +99,7 @@ const MassActionDialog = ({
         })
         .catch(e => setMessage(`Error ${movingl} ${file}\n${e}`)))
     }
-    Promise.allSettled(operations).then(() => {
+    Promise.allSettled(requests).then(() => {
       reload()
       setOverlay('')
       setMessage(moved + ' all files successfully!')
