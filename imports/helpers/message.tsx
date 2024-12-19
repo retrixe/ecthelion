@@ -5,7 +5,7 @@ import Close from '@mui/icons-material/Close'
 const Message = ({ message, setMessage }: {
   message: string
   setMessage: (a: string) => void
-}): JSX.Element => (
+}): React.JSX.Element => (
   <Snackbar
     anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
     open={!!message}

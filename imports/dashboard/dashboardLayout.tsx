@@ -26,7 +26,7 @@ const DashboardContainer = styled.div({
   flex: 1
 })
 
-const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: string }): JSX.Element => {
+const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: string }): React.JSX.Element => {
   const { server, node } = useRouter().query
   const nodeUri = typeof node === 'string' ? `?node=${encodeURIComponent(node)}` : ''
   return (
@@ -46,7 +46,7 @@ const onLogout = (): void => {
   fetch(`${config.ip}/logout`, { headers: { Authorization: token ?? '' } }).catch(console.error)
 }
 
-const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>): JSX.Element => {
+const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>): React.JSX.Element => {
   const [openDrawer, setOpenDrawer] = useState(false)
   const drawerVariant = useMediaQuery(useTheme().breakpoints.only('xs')) ? 'temporary' : 'permanent'
   const appBarContent = (

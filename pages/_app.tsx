@@ -1,6 +1,6 @@
 import React from 'react'
 import Head from 'next/head'
-import { type AppProps } from 'next/app'
+import type { AppProps } from 'next/app'
 import createCache from '@emotion/cache'
 import { CacheProvider, type EmotionCache } from '@emotion/react'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
@@ -12,7 +12,7 @@ const clientSideEmotionCache = createCache({ key: 'css' })
 
 export const UpdateThemeContext = React.createContext(() => {})
 
-export default function MyApp (props: AppProps & { emotionCache?: EmotionCache }): JSX.Element {
+export default function MyApp (props: AppProps & { emotionCache?: EmotionCache }): React.JSX.Element {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
 
   // Customisable theming options.
@@ -27,7 +27,7 @@ export default function MyApp (props: AppProps & { emotionCache?: EmotionCache }
     const newThemeOptions = { ...defaultThemeOptions }
 
     // Set square corners.
-    if (!newThemeOptions.components) newThemeOptions.components = {}
+    newThemeOptions.components ??= {}
     if (squareCorners) newThemeOptions.components.MuiPaper = { defaultProps: { square: true } }
     else if (newThemeOptions.components.MuiPaper) delete newThemeOptions.components.MuiPaper
     // Set light theme.

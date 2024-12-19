@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { type NextPage } from 'next'
+import type { NextPage } from 'next'
 
 import AuthFailure from '../../../../imports/errors/authFailure'
 import NotExistsError from '../../../../imports/errors/notExistsError'

@@ -6,7 +6,7 @@ import PlayArrow from '@mui/icons-material/PlayArrow'
 
 const ConsoleButtons = ({ stopStartServer }: {
   stopStartServer: (operation: 'START' | 'TERM' | 'KILL') => void
-}): JSX.Element => {
+}): React.JSX.Element => {
   const smallScreen = useMediaQuery(useTheme().breakpoints.only('xs'))
   const [confirmingKill, setConfirmingKill] = useState(false)
 

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Paper, Typography, LinearProgress } from '@mui/material'
 
-export const ConnectionFailure = (props: { loading: boolean, title?: string }): JSX.Element => (
+export const ConnectionFailure = (props: { loading: boolean, title?: string }): React.JSX.Element => (
   <Paper style={{ padding: 10, marginBottom: '2em' }}>
     {props.loading ? (
       <div style={{ padding: 6 }}>

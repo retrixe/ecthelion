@@ -31,7 +31,7 @@ const parseDuration = (durationNano: number): string => {
   else if (units.minutes) res += `${units.minutes} minutes `
   if (units.seconds === 1) res += `${units.seconds} second `
   else if (units.seconds) res += `${units.seconds} seconds `
-  return res.trimRight()
+  return res.trimEnd()
 }
 
 interface Statistics {
@@ -46,7 +46,7 @@ interface Statistics {
 const StatisticsDisplay = ({ server, statistics }: {
   server: string
   statistics: Statistics
-}): JSX.Element => (
+}): React.JSX.Element => (
   <Paper style={{ padding: 20 }}>
     <Typography variant='h5' gutterBottom>Process Statistics - {server}</Typography>
     <Divider />
@@ -83,7 +83,7 @@ const StatisticsDisplay = ({ server, statistics }: {
   </Paper>
 )
 
-const StatisticsPage = (): JSX.Element => {
+const StatisticsPage = (): React.JSX.Element => {
   const { node, server, nodeExists } = useOctyneData()
   const ky = useKy(node)
 

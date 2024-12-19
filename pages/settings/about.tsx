@@ -10,7 +10,7 @@ import packageJson from '../../package.json'
 
 const { version } = packageJson
 
-const About = (): JSX.Element => {
+const About = (): React.JSX.Element => {
   const ky = useKy()
   const [loggedIn, setLoggedIn] = useState(true)
   const [lightMode, setLightMode] = useState(false)

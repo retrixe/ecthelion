@@ -15,7 +15,7 @@ const LayoutContainer = styled.div({
 const Layout = (props: React.PropsWithChildren<{
   appBar?: React.ReactNode
   removeToolbar?: boolean
-}>): JSX.Element => (
+}>): React.JSX.Element => (
   <LayoutContainer>
     {/* <style jsx global>
       {`

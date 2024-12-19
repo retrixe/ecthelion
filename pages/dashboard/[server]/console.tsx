@@ -16,9 +16,9 @@ import ConnectionFailure from '../../../imports/errors/connectionFailure'
 
 const CommandTextField = ({ ws, id, buffer }: {
   ws: WebSocket | null
-  id: React.MutableRefObject<number>
-  buffer: React.MutableRefObject<Array<{ id: number, text: string }>>
-}): JSX.Element => {
+  id: React.RefObject<number>
+  buffer: React.RefObject<Array<{ id: number, text: string }>>
+}): React.JSX.Element => {
   const [command, setCommand] = useState('')
   const [lastCmd, setLastCmd] = useState('')
   const handleCommand = (): void => {
@@ -61,7 +61,7 @@ const terminalUi = typeof localStorage === 'object' && localStorage.getItem('ect
 const Console = ({ setAuthenticated, setServerExists }: {
   setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
   setServerExists: React.Dispatch<React.SetStateAction<boolean>>
-}): JSX.Element => {
+}): React.JSX.Element => {
   const color = useTheme().palette.mode === 'dark' ? '#d9d9d9' : undefined
   const { ip, node, server } = useOctyneData()
   const ky = useKy(node)
@@ -135,7 +135,7 @@ const Console = ({ setAuthenticated, setServerExists }: {
       let versionFallbackInEffect = false
       newWS.onerror = () => {
         versionFallbackInEffect = !newWS.protocol && !versionFallback.current
-        versionFallback.current = versionFallback.current || versionFallbackInEffect
+        versionFallback.current ||= versionFallbackInEffect
         buffer.current.push({
           id: ++id.current,
           text: versionFallbackInEffect
@@ -211,7 +211,7 @@ const Console = ({ setAuthenticated, setServerExists }: {
       )
 }
 
-const ConsolePage = (): JSX.Element => {
+const ConsolePage = (): React.JSX.Element => {
   const { server, nodeExists } = useOctyneData()
   const [serverExists, setServerExists] = useState(true)
   const [authenticated, setAuthenticated] = useState(true)

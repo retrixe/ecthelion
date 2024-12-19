@@ -25,7 +25,7 @@ const IndexContainer = emotionStyled.div({
   overflow: 'auto'
 })
 
-const Index = (): JSX.Element => {
+const Index = (): React.JSX.Element => {
   const [failedAuth, setFailedAuth] = useState(false) // Unable to authorize with the server.
   const [invalid, setInvalid] = useState(false) // Invalid credentials.
   const [username, setUsername] = useState('')

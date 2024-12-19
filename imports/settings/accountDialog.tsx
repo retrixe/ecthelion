@@ -10,7 +10,7 @@ const AccountDialog = (props: {
   username?: string
   open: boolean
   rename?: boolean
-}): JSX.Element => {
+}): React.JSX.Element => {
   const changePassword = typeof props.username === 'string' && !props.rename
   const [error, setError] = useState('')
   const [username, setUsername] = useState('')

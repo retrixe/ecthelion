@@ -20,7 +20,7 @@ const bytesToGb = (bytes: number): string => {
   else if (bytes < (1024 * 1024 * 1024 * 1024)) return `${rtd(bytes / (1024 * 1024 * 1024))} GB`
   else return `${rtd(bytes / (1024 * 1024 * 1024 * 1024))} TB`
 }
-const tsts = (ts: number): string => new Date(ts * 1000).toISOString().substr(0, 19).replace('T', ' ')
+const tsts = (ts: number): string => new Date(ts * 1000).toISOString().substring(0, 19).replace('T', ' ')
 
 export interface File {
   name: string
@@ -39,7 +39,7 @@ const FileListItem = ({ file, style, disabled, filesSelected, onItemClick, onChe
   onCheck: React.MouseEventHandler<HTMLButtonElement>
   onItemClick: React.MouseEventHandler<HTMLDivElement>
   openMenu: (fileName: string, anchorEl: HTMLButtonElement) => void
-}): JSX.Element => (
+}): React.JSX.Element => (
   <UnstyledLink href={url} style={style} onClick={e => e.preventDefault()}>
     <ListItem
       key={file.name}
@@ -68,14 +68,13 @@ const FileListItem = ({ file, style, disabled, filesSelected, onItemClick, onChe
         <ListItemText
           primary={file.name}
           secondary={`Last modified ${tsts(file.lastModified)} | Size: ${bytesToGb(file.size)}`}
-          secondaryTypographyProps={{/* variant: 'caption' */}}
-          primaryTypographyProps={{ noWrap: true }}
+          slotProps={{ secondary: { /* variant: 'caption' */ }, primary: { noWrap: true } }}
         />
       </ListItemButton>
     </ListItem>
   </UnstyledLink>
 )
-const FileListItemRenderer = ({ index, data, style }: ListChildComponentProps): JSX.Element => {
+const FileListItemRenderer = ({ index, data, style }: ListChildComponentProps): React.JSX.Element => {
   const { files, path, disabled, filesSelected, setFilesSelected, openMenu, onClick } = data as FileItemData
   const router = useRouter()
   const file = files[index]
@@ -115,7 +114,7 @@ const FileListItemRenderer = ({ index, data, style }: ListChildComponentProps): 
   )
 }
 
-interface FileItemData { /* eslint-disable react/no-unused-prop-types */
+interface FileItemData { /* eslint-disable react/no-unused-prop-types -- false positive */
   files: File[]
   path: string
   disabled: boolean
@@ -125,7 +124,7 @@ interface FileItemData { /* eslint-disable react/no-unused-prop-types */
   onClick: (name: File) => void
 } /* eslint-enable react/no-unused-prop-types */
 
-const FileList = (props: FileItemData): JSX.Element => {
+const FileList = (props: FileItemData): React.JSX.Element => {
   const px60 = useMediaQuery('(min-width:713px)')
   const smDisplay = useMediaQuery((theme: Theme) => theme.breakpoints.down('sm')) // 600px
   const px60sm = useMediaQuery('(min-width:513px)')
@@ -149,20 +148,18 @@ const FileList = (props: FileItemData): JSX.Element => {
     <div style={{ flex: 1, listStyle: 'none', paddingTop: 8, paddingBottom: 8 }}>
       {props.files.length ? (
         <AutoSizer>
-          {({ height, width }) => {
-            return (
-              <FixedSizeList
-                width={width}
-                height={height}
-                overscanCount={5}
-                itemCount={sortedList.length}
-                itemSize={itemSize}
-                itemData={props}
-              >
-                {FileListItemRenderer}
-              </FixedSizeList>
-            )
-          }}
+          {({ height, width }) => (
+            <FixedSizeList
+              width={width}
+              height={height}
+              overscanCount={5}
+              itemCount={sortedList.length}
+              itemSize={itemSize}
+              itemData={props}
+            >
+              {FileListItemRenderer}
+            </FixedSizeList>
+            )}
         </AutoSizer>
       ) : <ListItem><ListItemText primary='Looks like this place is empty.' /></ListItem>}
     </div>

@@ -20,7 +20,7 @@ const logout = (): void => {
   fetch(`${config.ip}/logout`, { headers: { Authorization: token ?? '' } }).catch(console.error)
 }
 
-const Servers = (): JSX.Element => {
+const Servers = (): React.JSX.Element => {
   const [message, setMessage] = useState('')
   const [failure, setFailure] = useState<'logged out' | 'failed' | false>(false)
 

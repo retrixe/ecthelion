@@ -11,7 +11,7 @@ const Editor = (props: {
   onDownload: () => void
   onClose: (setContent: React.Dispatch<React.SetStateAction<string>>) => void
   closeText?: string
-}): JSX.Element => {
+}): React.JSX.Element => {
   const [content, setContent] = useState(props.content)
   const [saving, setSaving] = useState(false)
   const [name, setName] = useState(props.name)
@@ -56,7 +56,7 @@ const Editor = (props: {
         fullWidth
         maxRows={30}
         value={content}
-        InputProps={{ style: { fontFamily: 'monospace', fontSize: '14px' } }}
+        slotProps={{ input: { style: { fontFamily: 'monospace', fontSize: '14px' } } }}
         onChange={e => setContent(e.target.value)}
       />
       <br />

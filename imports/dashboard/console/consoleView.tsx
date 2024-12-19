@@ -19,7 +19,7 @@ const ChromeConsoleViewContainer = styled.div({
   flexDirection: 'column-reverse'
 })
 
-const ChromeConsoleView = (props: { console: Array<{ id: number, text: string }> }): JSX.Element => (
+const ChromeConsoleView = (props: { console: Array<{ id: number, text: string }> }): React.JSX.Element => (
   <ChromeConsoleViewContainer>
     <div style={{ minHeight: '5px' }} />
     <Typography variant='body2' style={{ lineHeight: 1.5, wordWrap: 'break-word' }} component='div'>
@@ -30,7 +30,7 @@ const ChromeConsoleView = (props: { console: Array<{ id: number, text: string }>
   </ChromeConsoleViewContainer>
 )
 
-const ConsoleView = (props: { console: Array<{ id: number, text: string }> }): JSX.Element => {
+const ConsoleView = (props: { console: Array<{ id: number, text: string }> }): React.JSX.Element => {
   const ref = useRef<HTMLDivElement>(null)
   const isScrolledToBottom = ref.current !== null
     ? ref.current.scrollHeight - ref.current.clientHeight <= ref.current.scrollTop + 1

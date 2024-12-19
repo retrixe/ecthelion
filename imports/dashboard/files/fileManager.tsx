@@ -35,7 +35,7 @@ const editorExts = ['properties', 'json', 'yaml', 'yml', 'xml', 'js', 'log', 'sh
 const FileManager = (props: {
   setServerExists: React.Dispatch<React.SetStateAction<boolean>>
   setAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
-}): JSX.Element => {
+}): React.JSX.Element => {
   const router = useRouter()
   const { server, node, ip } = useOctyneData() // nodeExists is handled above.
   const ky = useKy(node)
@@ -64,7 +64,7 @@ const FileManager = (props: {
   const [modifyFileDialogOpen, setModifyFileDialogOpen] = useState<'' | 'move' | 'copy' | 'rename'>('')
   const [massActionDialogOpen, setMassActionDialogOpen] = useState<'move' | 'copy' | 'compress' | false>(false)
 
-  const searchRef = useRef<HTMLInputElement>()
+  const searchRef = useRef<HTMLInputElement>(null)
 
   // Update path when URL changes. Requires normalised path.
   const updatePath = useCallback((newPath: string, file?: string, replace?: boolean) => {
@@ -253,8 +253,7 @@ const FileManager = (props: {
     let total = filesSelected.length
     setOverlay({ text: `Deleting ${total} out of ${filesSelected.length} files.`, progress: 0 })
     const ops = []
-    for (let i = 0; i < filesSelected.length; i++) {
-      const file = filesSelected[i]
+    for (const file of filesSelected) {
       // setOverlay('Deleting ' + file)
       // Save the file.
       ops.push(ky.delete(`server/${server}/file?path=${euc(path + file)}`).then(async r => {
@@ -276,8 +275,7 @@ const FileManager = (props: {
   const handleFilesUpload = (files: FileList): void => {
     if (overlay) return // TODO: Allow multiple file uploads/mass actions simultaneously in future.
     ;(async () => {
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i]
+      for (const file of files) {
         setOverlay({ text: `Uploading ${file.name} to ${path}`, progress: 0 })
         // Save the file.
         const formData = new FormData()

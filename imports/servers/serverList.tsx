@@ -17,7 +17,7 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
   node?: string
   setMessage: React.Dispatch<React.SetStateAction<string>>
   setFailure?: React.Dispatch<React.SetStateAction<false | 'logged out' | 'failed'>>
-}): JSX.Element => {
+}): React.JSX.Element => {
   const ky = useKy(node)
 
   const [server, setServer] = useState('')

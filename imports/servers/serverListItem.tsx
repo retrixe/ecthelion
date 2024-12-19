@@ -10,7 +10,7 @@ import Close from '@mui/icons-material/Close'
 import PlayArrow from '@mui/icons-material/PlayArrow'
 import Comment from '@mui/icons-material/Comment'
 import UnstyledLink from '../helpers/unstyledLink'
-import { type ExtraServerInfo } from './serverList'
+import type { ExtraServerInfo } from './serverList'
 
 export const ServerListItem = ({ server, node, serverInfo, openDialog, stopStartServer }: {
   node?: string
@@ -18,7 +18,7 @@ export const ServerListItem = ({ server, node, serverInfo, openDialog, stopStart
   serverInfo: number | ExtraServerInfo
   openDialog: () => void
   stopStartServer: (operation: 'START' | 'TERM' | 'KILL', server: string) => void
-}): JSX.Element => {
+}): React.JSX.Element => {
   const router = useRouter()
   const href = { pathname: '/dashboard/[server]/console', query: node ? { server, node } : { server } }
 

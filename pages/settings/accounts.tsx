@@ -14,7 +14,7 @@ import Title from '../../imports/helpers/title'
 import Message from '../../imports/helpers/message'
 import AccountDialog from '../../imports/settings/accountDialog'
 
-const AccountsPage = (): JSX.Element => {
+const AccountsPage = (): React.JSX.Element => {
   const ky = useKy()
   const [status, setStatus] = useState<'failure' | 'unsupported' | 'not logged in' | null>(null)
   const [accounts, setAccounts] = useState<string[] | null>(null)

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { type KyInstance } from 'ky/distribution/types/ky'
+import type { KyInstance } from 'ky/distribution/types/ky'
 import {
   Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField,
   Select, InputLabel, FormControl, MenuItem
@@ -17,7 +17,7 @@ const MassActionDialog = ({
   files: string[]
   path: string
   ky: KyInstance
-}): JSX.Element => {
+}): React.JSX.Element => {
   const [archiveType, setArchiveType] = useState<'zip' | 'tar' | 'tar.gz' | 'tar.xz' | 'tar.zst'>('zip')
   const [newPath, setNewPath] = useState('')
   const move = operation === 'move' ? 'Move' : operation === 'compress' ? 'Compress' : 'Copy'
@@ -117,8 +117,7 @@ const MassActionDialog = ({
     let left = files.length
     setOverlay({ text: `${moving} ${left} out of ${files.length} files.`, progress: 0 })
     const requests = []
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i]
+    for (const file of files) {
       // setOverlay(file)
       const slash = newPath.endsWith('/') ? '' : '/'
       const body = `${operation === 'move' ? 'mv' : 'cp'}\n${path}${file}\n${newPath}${slash}${file}`

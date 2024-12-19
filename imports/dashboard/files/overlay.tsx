@@ -17,7 +17,7 @@ const OverlayContainer = styled.div({
 })
 
 // https://github.com/mui/material-ui/blob/v5.14.4/docs/data/material/components/progress/LinearWithValueLabel.tsx
-function LinearProgressWithLabel (props: LinearProgressProps & { value: number }): JSX.Element {
+function LinearProgressWithLabel (props: LinearProgressProps & { value: number }): React.JSX.Element {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
       <Box sx={{ width: '100%', mr: 1 }}>
@@ -32,7 +32,7 @@ function LinearProgressWithLabel (props: LinearProgressProps & { value: number }
   )
 }
 
-const Overlay = (props: { display: string | { text: string, progress: number } }): JSX.Element => (
+const Overlay = (props: { display: string | { text: string, progress: number } }): React.JSX.Element => (
   <OverlayContainer>
     <div style={{ flex: 1 }} />
     <Paper

@@ -3,7 +3,7 @@ import { Paper, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
 import UnstyledLink from '../helpers/unstyledLink'
 
-export const AuthFailure = (): JSX.Element => (
+export const AuthFailure = (): React.JSX.Element => (
   <Paper style={{ padding: 10, marginBottom: '2em' }}>
     <Typography>It doesn&apos;t look like you should be here.</Typography>
     <UnstyledLink href={{ pathname: '/', query: { redirect: useRouter().asPath } }}>

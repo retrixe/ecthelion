@@ -5,7 +5,7 @@ import CloudUpload from '@mui/icons-material/CloudUpload'
 const UploadButton = ({ uploadFiles, disabled }: {
   uploadFiles: (files: FileList) => void
   disabled: boolean
-}): JSX.Element => {
+}): React.JSX.Element => {
   const [files, setFiles] = useState<null | FileList>(null)
   useEffect(() => {
     if (files) {

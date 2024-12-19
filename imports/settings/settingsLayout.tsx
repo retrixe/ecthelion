@@ -24,17 +24,15 @@ const SettingsContainer = styled.div({
   flex: 1
 })
 
-const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: string }): JSX.Element => {
-  return (
-    <UnstyledLink href={`/settings/${props.subUrl}`}>
-      <ListItemButton style={{ width: 200 }}>
-        <ListItemIcon>{props.icon}</ListItemIcon>
-        <ListItemText primary={props.name} />
-      </ListItemButton>
-      <Divider />
-    </UnstyledLink>
-  )
-}
+const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: string }): React.JSX.Element => (
+  <UnstyledLink href={`/settings/${props.subUrl}`}>
+    <ListItemButton style={{ width: 200 }}>
+      <ListItemIcon>{props.icon}</ListItemIcon>
+      <ListItemText primary={props.name} />
+    </ListItemButton>
+    <Divider />
+  </UnstyledLink>
+)
 
 const onLogout = (): void => {
   const token = localStorage.getItem('ecthelion:token')
@@ -42,7 +40,7 @@ const onLogout = (): void => {
   fetch(`${config.ip}/logout`, { headers: { Authorization: token ?? '' } }).catch(console.error)
 }
 
-const SettingsLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>): JSX.Element => {
+const SettingsLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>): React.JSX.Element => {
   const [openDrawer, setOpenDrawer] = useState(false)
   const drawerVariant = useMediaQuery(useTheme().breakpoints.only('xs')) ? 'temporary' : 'permanent'
   const appBarContent = (

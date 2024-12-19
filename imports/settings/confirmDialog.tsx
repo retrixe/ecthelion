@@ -9,21 +9,19 @@ const ConfirmDialog = (props: {
   open: boolean
   title: string
   prompt: string
-}): JSX.Element => {
-  return (
-    <>
-      <Dialog open={props.open} onClose={() => props.onCancel()}>
-        <DialogTitle>{props.title}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>{props.prompt}</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => props.onCancel()} color='secondary'>Cancel</Button>
-          <Button onClick={() => props.onConfirm()} color='primary'>Confirm</Button>
-        </DialogActions>
-      </Dialog>
-    </>
-  )
-}
+}): React.JSX.Element => (
+  <>
+    <Dialog open={props.open} onClose={() => props.onCancel()}>
+      <DialogTitle>{props.title}</DialogTitle>
+      <DialogContent>
+        <DialogContentText>{props.prompt}</DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={() => props.onCancel()} color='secondary'>Cancel</Button>
+        <Button onClick={() => props.onConfirm()} color='primary'>Confirm</Button>
+      </DialogActions>
+    </Dialog>
+  </>
+)
 
 export default ConfirmDialog
