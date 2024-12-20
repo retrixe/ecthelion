@@ -15,13 +15,13 @@ import {
   Tooltip,
 } from '@mui/material'
 import Apps from '@mui/icons-material/Apps'
+import Folder from '@mui/icons-material/Folder'
 import Login from '@mui/icons-material/Login'
 import Logout from '@mui/icons-material/Logout'
 import MenuIcon from '@mui/icons-material/Menu'
 import TrendingUp from '@mui/icons-material/TrendingUp'
 import Terminal from '@mui/icons-material/Terminal'
 import Settings from '@mui/icons-material/Settings'
-import Storage from '@mui/icons-material/Storage'
 
 import Layout from '../layout'
 import config from '../config'
@@ -119,7 +119,7 @@ const DashboardLayout = (
             <List>
               <DrawerItem name='Statistics' subUrl='' icon={<TrendingUp />} />
               <DrawerItem name='Console' subUrl='console' icon={<Terminal />} />
-              <DrawerItem name='Files' subUrl='files' icon={<Storage />} />
+              <DrawerItem name='Files' subUrl='files' icon={<Folder />} />
             </List>
           </Drawer>
         )}

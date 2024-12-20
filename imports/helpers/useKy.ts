@@ -1,5 +1,4 @@
 import ky from 'ky'
-import React from 'react'
 import config from '../config'
 import type { KyInstance } from 'ky/distribution/types/ky'
 
@@ -15,15 +14,14 @@ const defaultKy = ky.create({
   },
 })
 
-const KyContext = React.createContext({
+const kyInstances = {
   default: defaultKy,
   nodes: Object.keys(nodes).reduce<Record<string, typeof ky>>((obj, node) => {
     obj[node] = defaultKy.extend({ prefixUrl: nodes[node] })
     return obj
   }, {}),
-})
+}
 
 export default function useKy(node?: string): KyInstance {
-  const kyContext = React.useContext(KyContext)
-  return node ? kyContext.nodes[node] : kyContext.default
+  return node ? kyInstances.nodes[node] : kyInstances.default
 }
