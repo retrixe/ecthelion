@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from '@emotion/styled'
 import {
   Typography,
@@ -22,11 +22,14 @@ import MenuIcon from '@mui/icons-material/Menu'
 import TrendingUp from '@mui/icons-material/TrendingUp'
 import Terminal from '@mui/icons-material/Terminal'
 import Settings from '@mui/icons-material/Settings'
+import Storage from '@mui/icons-material/Storage'
 
 import Layout from '../layout'
 import config from '../config'
 import UnstyledLink from '../helpers/unstyledLink'
+import getKy from '../helpers/useKy'
 import useOctyneData from './useOctyneData'
+import DashboardAppMenu from './dashboardAppMenu'
 
 const DashboardContainer = styled.div({
   padding: 20,
@@ -63,6 +66,50 @@ const DashboardLayout = (
   props: React.PropsWithChildren<{ loggedIn: boolean }>,
 ): React.JSX.Element => {
   const [openDrawer, setOpenDrawer] = useState(false)
+  const [openAppMenu, setOpenAppMenu] = useState<null | HTMLElement>(null)
+  const [servers, setServers] = useState<{
+    default: Record<string, number> | null
+    nodes: Record<string, Record<string, number> | null>
+  }>({ default: null, nodes: {} })
+
+  useEffect(() => {
+    // TODO: Ideally move this to a global state so we don't trigger a refetch every time
+    ;(async () => {
+      const nodes = Object.keys(config.nodes ?? {})
+      const [defaultReq, ...nodeReqs] = await Promise.allSettled([
+        getKy()('servers'),
+        ...nodes.map(node => getKy(node)('servers')),
+      ])
+
+      const newServers: typeof servers = { default: null, nodes: {} }
+      if (defaultReq.status === 'fulfilled' && defaultReq.value.ok)
+        newServers.default = (
+          await defaultReq.value.json<{ servers: Record<string, number> }>()
+        ).servers
+      else
+        console.error(
+          'Failed to get server list of default Octyne node!',
+          defaultReq.status === 'fulfilled' ? defaultReq.value : defaultReq.reason,
+        )
+
+      for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i]
+        const req = nodeReqs[i]
+        if (req.status === 'fulfilled' && req.value.ok)
+          newServers.nodes[node] = (
+            await req.value.json<{ servers: Record<string, number> }>()
+          ).servers
+        else
+          console.error(
+            `Failed to get server list of Octyne node '${node}'!`,
+            req.status === 'fulfilled' ? req.value : req.reason,
+          )
+      }
+      setServers(newServers)
+    })().catch(console.error)
+  }, [])
+
+  const { server, node } = useOctyneData()
   const drawerVariant = useMediaQuery(useTheme().breakpoints.only('xs')) ? 'temporary' : 'permanent'
   const appBarContent = (
     <>
@@ -108,6 +155,11 @@ const DashboardLayout = (
   return (
     <>
       <Layout appBar={appBarContent}>
+        <DashboardAppMenu
+          anchorEl={openAppMenu}
+          onClose={() => setOpenAppMenu(null)}
+          servers={servers}
+        />
         {props.loggedIn && (
           <Drawer
             variant={drawerVariant}
@@ -116,10 +168,17 @@ const DashboardLayout = (
             onClose={() => setOpenDrawer(!openDrawer)}
           >
             {drawerVariant === 'permanent' && <Toolbar />}
-            <List>
+            <List style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
               <DrawerItem name='Statistics' subUrl='' icon={<TrendingUp />} />
               <DrawerItem name='Console' subUrl='console' icon={<Terminal />} />
               <DrawerItem name='Files' subUrl='files' icon={<Folder />} />
+              <Divider style={{ flex: 1 }} />
+              <ListItemButton onClick={e => setOpenAppMenu(e.currentTarget)} style={{ flex: 0 }}>
+                <ListItemIcon>
+                  <Storage />
+                </ListItemIcon>
+                <ListItemText primary={server ?? 'Server N/A'} secondary={node ?? 'Default node'} />
+              </ListItemButton>
             </List>
           </Drawer>
         )}
