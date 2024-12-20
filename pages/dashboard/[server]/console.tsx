@@ -268,7 +268,7 @@ const Console = ({
 }
 
 const ConsolePage = (): React.JSX.Element => {
-  const { server, nodeExists } = useOctyneData()
+  const { server, node, nodeExists } = useOctyneData()
   const [serverExists, setServerExists] = useState(true)
   const [authenticated, setAuthenticated] = useState(true)
   return (
@@ -284,7 +284,11 @@ const ConsolePage = (): React.JSX.Element => {
         ) : !authenticated ? (
           <AuthFailure />
         ) : (
-          <Console setAuthenticated={setAuthenticated} setServerExists={setServerExists} />
+          <Console
+            key={JSON.stringify({ server, node })}
+            setAuthenticated={setAuthenticated}
+            setServerExists={setServerExists}
+          />
         )}
       </DashboardLayout>
     </React.StrictMode>

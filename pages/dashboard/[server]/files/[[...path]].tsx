@@ -8,7 +8,7 @@ import DashboardLayout from '../../../../imports/dashboard/dashboardLayout'
 import FileManager from '../../../../imports/dashboard/files/fileManager'
 
 const Files: NextPage<Record<string, unknown>> = () => {
-  const { nodeExists } = useOctyneData()
+  const { server, node, nodeExists } = useOctyneData()
   const [serverExists, setServerExists] = useState(true)
   const [authenticated, setAuthenticated] = useState(true)
 
@@ -20,7 +20,11 @@ const Files: NextPage<Record<string, unknown>> = () => {
         ) : !authenticated ? (
           <AuthFailure />
         ) : (
-          <FileManager setServerExists={setServerExists} setAuthenticated={setAuthenticated} />
+          <FileManager
+            key={JSON.stringify({ server, node })}
+            setServerExists={setServerExists}
+            setAuthenticated={setAuthenticated}
+          />
         )}
       </DashboardLayout>
     </React.StrictMode>
