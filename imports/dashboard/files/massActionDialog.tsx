@@ -70,18 +70,18 @@ const MassActionDialog = ({
           res
             .json<{ token: string }>()
             .then(async ({ token }) => {
-              while (true) {
+              let finished: boolean | string = false
+              while (!finished) {
+                await new Promise(resolve => setTimeout(resolve, 1000))
                 const res = await ky
                   .get(`server/${server}/compress/v2?token=${token}`)
-                  .json<{ finished: boolean; error: string }>()
-                if (res.finished || res.error) {
-                  reload()
-                  setOverlay('')
-                  setMessage(res.error ?? 'Compressed all files successfully!')
-                  break
-                }
-                await new Promise(resolve => setTimeout(resolve, 1000))
+                  .json<{ finished: boolean; error?: string }>()
+
+                finished = res.finished || !!res.error
+                if (finished) setMessage(res.error ?? 'Compressed all files successfully!')
               }
+              reload()
+              setOverlay('')
             })
             .catch(() => setMessage('Failed to compress the files!'))
         } else if (res.status === 404 && archiveType !== 'zip') {
@@ -101,7 +101,7 @@ const MassActionDialog = ({
               } else {
                 res
                   .json<{ error: string }>()
-                  .then(({ error }) => setMessage(error ?? 'Failed to compress the files!'))
+                  .then(({ error }) => setMessage(error))
                   .catch(() => setMessage('Failed to compress the files!'))
               }
             })
@@ -113,7 +113,7 @@ const MassActionDialog = ({
           setOverlay('')
           res
             .json<{ error: string }>()
-            .then(({ error }) => setMessage(error ?? 'Failed to compress the files!'))
+            .then(({ error }) => setMessage(error))
             .catch(() => setMessage('Failed to compress the files!'))
         }
       })
@@ -152,7 +152,8 @@ const MassActionDialog = ({
       }
     } catch (e) {
       reload()
-      setMessage(`Error ${movingl} files: ${e}`)
+      console.error(e)
+      setMessage(`Error ${movingl} files: ${e instanceof Error ? e.message : 'Unknown Error!'}`)
       setOverlay('')
       return
     }
@@ -174,10 +175,13 @@ const MassActionDialog = ({
             }
             const progress = ((files.length - left) * 100) / files.length
             setOverlay({ text: `${moving} ${--left} out of ${files.length} files.`, progress })
+            // eslint-disable-next-line promise/always-return -- false positive
             if (localStorage.getItem('ecthelion:logAsyncMassActions'))
               console.log(moved + ' ' + file)
           })
-          .catch(e => setMessage(`Error ${movingl} ${file}\n${e}`)),
+          .catch((e: unknown) =>
+            setMessage(`Error ${movingl} ${file}: ${e instanceof Error ? e.message : 'Unknown'}`),
+          ),
       )
     }
     Promise.allSettled(requests)

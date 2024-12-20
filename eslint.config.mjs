@@ -48,33 +48,32 @@ export default tseslint.config(
     },
     rules: {
       '@typescript-eslint/no-confusing-void-expression': 'off',
-      /* '@typescript-eslint/restrict-template-expressions': [
+      '@typescript-eslint/no-import-type-side-effects': ['error'],
+      '@typescript-eslint/consistent-type-imports': [
+        'error',
+        {
+          prefer: 'type-imports',
+          disallowTypeAnnotations: true,
+          fixStyle: 'inline-type-imports',
+        },
+      ],
+      '@typescript-eslint/restrict-template-expressions': [
         'error',
         {
           allowAny: false,
           allowBoolean: false,
-          allowNullish: false,
+          allowNullish: true, // TODO: Turn this off!
           allowNumber: true,
           allowRegExp: false,
           allowNever: false,
         },
-      ], */
+      ],
+      'promise/no-nesting': 'off', // TODO: Re-enable!
+      'promise/always-return': ['error', { ignoreLastCallback: true }],
       'n/no-missing-import': 'off',
       'n/no-unsupported-features/node-builtins': 'off',
       'n/no-unsupported-features/es-syntax': 'off',
       'import/no-unresolved': 'off',
-      // TODO: Re-enable these!
-      '@typescript-eslint/use-unknown-in-catch-callback-variable': 'off',
-      '@typescript-eslint/restrict-template-expressions': 'off',
-      '@typescript-eslint/no-unnecessary-condition': 'off',
-      '@typescript-eslint/no-unsafe-member-access': 'off',
-      '@typescript-eslint/no-unsafe-assignment': 'off',
-      '@typescript-eslint/no-unsafe-return': 'off',
-      '@typescript-eslint/no-empty-function': 'off',
-      '@typescript-eslint/no-explicit-any': 'off',
-      'promise/catch-or-return': 'off',
-      'promise/always-return': 'off',
-      'promise/no-nesting': 'off',
     },
   },
   eslintPluginPrettierRecommended,

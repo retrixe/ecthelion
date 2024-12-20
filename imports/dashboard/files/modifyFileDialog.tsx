@@ -16,7 +16,7 @@ const ModifyFileDialog = ({
   operation,
   filename,
 }: {
-  handleEdit: (path: string) => any
+  handleEdit: (path: string) => void
   handleClose: () => void
   operation: 'move' | 'copy' | 'rename'
   filename: string

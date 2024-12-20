@@ -69,7 +69,7 @@ const ConfigPage = (): React.JSX.Element => {
       .get('config/reload', { throwHttpErrors: true })
       .then(async () => await loadConfig())
       .then(() => setMessage('Successfully reloaded config!'))
-      .catch(err => {
+      .catch((err: unknown) => {
         console.error(err)
         setMessage('An error occurred reloading Octyne!')
       })
@@ -173,7 +173,7 @@ const ConfigPage = (): React.JSX.Element => {
                         element.click()
                         document.body.removeChild(element)
                       })
-                      .catch(e => {
+                      .catch((e: unknown) => {
                         setMessage('Failed to download config!')
                         console.error(e)
                       })
@@ -191,10 +191,9 @@ const ConfigPage = (): React.JSX.Element => {
         title='Reload config from disk?'
         prompt={confirmDialogWarning}
         onConfirm={() => {
-          reloadFromDisk().then(
-            () => setConfirmDialog(false),
-            () => {},
-          )
+          reloadFromDisk()
+            .then(() => setConfirmDialog(false))
+            .catch(console.error)
         }}
         onCancel={() => setConfirmDialog(false)}
       />
@@ -203,10 +202,9 @@ const ConfigPage = (): React.JSX.Element => {
         title='Save config?'
         prompt={confirmDialogWarning}
         onConfirm={() => {
-          saveConfig(confirmDialog as string).then(
-            () => setConfirmDialog(false),
-            () => {},
-          )
+          saveConfig(confirmDialog as string)
+            .then(() => setConfirmDialog(false))
+            .catch(console.error)
         }}
         onCancel={() => setConfirmDialog(false)}
       />

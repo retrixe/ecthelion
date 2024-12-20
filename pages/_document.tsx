@@ -1,4 +1,5 @@
 import React from 'react'
+import type { AppProps } from 'next/app'
 import Document, { Html, Head, Main, NextScript } from 'next/document'
 import createEmotionServer from '@emotion/server/create-instance'
 import createCache from '@emotion/cache'
@@ -65,8 +66,9 @@ MyDocument.getInitialProps = async ctx => {
 
   ctx.renderPage = async () =>
     await originalRenderPage({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       enhanceApp: (App: any) => {
-        const EnhancedApp = (props: any): React.JSX.Element => (
+        const EnhancedApp = (props: AppProps): React.JSX.Element => (
           <App emotionCache={cache} {...props} />
         )
         return EnhancedApp

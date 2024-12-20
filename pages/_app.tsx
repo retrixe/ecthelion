@@ -10,11 +10,14 @@ import defaultTheme, { defaultThemeOptions, white, black } from '../imports/them
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createCache({ key: 'css' })
 
-export const UpdateThemeContext = React.createContext(() => {})
+export const UpdateThemeContext = React.createContext(() => {
+  /* no-op */
+})
 
 export default function MyApp(
   props: AppProps & { emotionCache?: EmotionCache },
 ): React.JSX.Element {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
 
   // Customisable theming options.

@@ -39,14 +39,13 @@ const AccountsPage = (): React.JSX.Element => {
   const refetch = (): void => {
     ky.get('accounts')
       .then(async res => {
-        if (res.ok) return await res.json()
-        else if (res.status === 401) setStatus('not logged in')
+        if (res.ok) {
+          const data = await res.json()
+          if (Array.isArray(data))
+            setAccounts(data.sort((a: string, b: string) => a.localeCompare(b)))
+        } else if (res.status === 401) setStatus('not logged in')
         else if (res.status === 404) setStatus('unsupported')
         else setStatus('failure')
-      })
-      .then(data => {
-        if (Array.isArray(data))
-          setAccounts(data.sort((a: string, b: string) => a.localeCompare(b)))
       })
       .catch(() => setStatus('failure'))
   }
@@ -64,7 +63,7 @@ const AccountsPage = (): React.JSX.Element => {
         setMessage(typeof json.error === 'string' ? json.error : 'Failed to create account!')
       }
       setCreateAccount(false)
-    })().catch(e => {
+    })().catch((e: unknown) => {
       console.error(e)
       setMessage('Failed to create account!')
       setCreateAccount(false)
@@ -86,7 +85,7 @@ const AccountsPage = (): React.JSX.Element => {
         } else setMessage(typeof json.error === 'string' ? json.error : 'Failed to rename account!')
       }
       setRenameAccount('')
-    })().catch(e => {
+    })().catch((e: unknown) => {
       console.error(e)
       setMessage('Failed to rename account!')
       setRenameAccount('')
@@ -104,7 +103,7 @@ const AccountsPage = (): React.JSX.Element => {
         setMessage(typeof json.error === 'string' ? json.error : 'Failed to change password!')
       }
       setChangePassword('')
-    })().catch(e => {
+    })().catch((e: unknown) => {
       console.error(e)
       setMessage('Failed to change password!')
       setChangePassword('')
@@ -122,7 +121,7 @@ const AccountsPage = (): React.JSX.Element => {
         setMessage(typeof json.error === 'string' ? json.error : 'Failed to delete account!')
       }
       setDeleteAccount('')
-    })().catch(e => {
+    })().catch((e: unknown) => {
       console.error(e)
       setMessage('Failed to delete account!')
       setDeleteAccount('')

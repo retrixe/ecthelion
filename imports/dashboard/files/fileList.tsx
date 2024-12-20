@@ -12,12 +12,12 @@ import {
 } from '@mui/material'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList, type ListChildComponentProps } from 'react-window'
-import { useRouter } from 'next/router'
 import Folder from '@mui/icons-material/Folder'
 import MoreVert from '@mui/icons-material/MoreVert'
 import InsertDriveFile from '@mui/icons-material/InsertDriveFile'
 import UnstyledLink from '../../helpers/unstyledLink'
 import { joinPath } from './fileUtils'
+import useOctyneData from '../useOctyneData'
 
 const rtd = (num: number): number => Math.round(num * 100) / 100
 const bytesToGb = (bytes: number): string => {
@@ -101,7 +101,7 @@ const FileListItemRenderer = ({
 }: ListChildComponentProps): React.JSX.Element => {
   const { files, path, disabled, filesSelected, setFilesSelected, openMenu, onClick } =
     data as FileItemData
-  const router = useRouter()
+  const { node, server } = useOctyneData()
   const file = files[index]
   const selectItem = (): void => {
     if (!filesSelected.includes(file.name)) setFilesSelected([...filesSelected, file.name])
@@ -120,7 +120,7 @@ const FileListItemRenderer = ({
   }
   const subpath = file.folder ? joinPath(path, file.name) : path
   const params = new URLSearchParams()
-  if (router.query.node) params.append('node', router.query.node as string)
+  if (node) params.append('node', node)
   if (!file.folder) params.append('file', file.name)
   return (
     <FileListItem
@@ -138,7 +138,7 @@ const FileListItemRenderer = ({
             : onClick(file)
       }
       onCheck={e => (e.shiftKey ? shiftClickItem() : selectItem())}
-      url={`/dashboard/${router.query.server}/files${subpath}${params.size ? '?' : ''}${params}`}
+      url={`/dashboard/${server}/files${subpath}${params.size ? '?' : ''}${params}`}
     />
   )
 }

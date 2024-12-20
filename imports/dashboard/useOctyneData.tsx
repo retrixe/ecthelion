@@ -33,7 +33,7 @@ export const useOctyneAuth = (): OctyneDataWithAuth => {
       if (servers.ok) setServerExists(!!resp[server])
       if (servers.ok || servers.status === 401 || servers.status === 403) setAuth(servers.ok)
       else setConnectionFailure(true)
-    })().catch(err => {
+    })().catch((err: unknown) => {
       console.error(err)
       setConnectionFailure(true)
     })

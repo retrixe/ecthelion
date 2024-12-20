@@ -87,7 +87,7 @@ const Index = (): React.JSX.Element => {
   }
 
   const handleLogin = (): void => {
-    login().catch(() => {})
+    login().catch(console.error)
   }
 
   return (

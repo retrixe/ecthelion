@@ -40,6 +40,8 @@ import FolderCreationDialog from './folderCreationDialog'
 
 const euc: (uriComponent: string | number | boolean) => string =
   typeof encodeURIComponent === 'function' ? encodeURIComponent : e => e.toString()
+const errorMessage = (err: unknown) =>
+  err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)
 const editorExts = ['properties', 'json', 'yaml', 'yml', 'xml', 'js', 'log', 'sh', 'txt']
 
 const FileManager = (props: {
@@ -116,7 +118,7 @@ const FileManager = (props: {
       setError(null)
       const files = await ky
         .get(`server/${server}/files?path=${euc(path)}`)
-        .json<{ error?: string; contents: File[] }>()
+        .json<{ error?: string; contents?: File[] }>()
       if (files.error === 'This server does not exist!') setServerExists(false)
       else if (files.error === 'You are not authenticated to access this resource!')
         setAuthenticated(false)
@@ -132,14 +134,14 @@ const FileManager = (props: {
             .pop(),
           true,
         )
-      } else if (files) {
+      } else if (files.contents) {
         setFiles(files.contents)
         setFilesSelected([])
       }
       setFetching(false)
-    })().catch(e => {
+    })().catch((e: unknown) => {
       console.error(e)
-      setMessage(`Failed to fetch files: ${e.message}`)
+      setMessage(`Failed to fetch files: ${errorMessage(e)}`)
       setFetching(false)
     })
   }, [path, ky, server, updatePath, setAuthenticated, setServerExists])
@@ -207,7 +209,7 @@ const FileManager = (props: {
       fileInf.size < 2 * 1024 * 1024 &&
       (editorExts.includes(filename.split('.').pop() ?? '') || fileInf.mimeType.startsWith('text/'))
     ) {
-      loadFileInEditor(filename).catch(err => {
+      loadFileInEditor(filename).catch((err: unknown) => {
         console.error(err)
         setMessage('An error occurred while loading file!')
       })
@@ -224,8 +226,8 @@ const FileManager = (props: {
       if (createFolder.success) fetchFiles()
       else setMessage(createFolder.error)
       setFetching(false)
-    } catch (e: any) {
-      setMessage(e.message as string)
+    } catch (e: unknown) {
+      setMessage(errorMessage(e))
       setFetching(false)
     }
   }
@@ -252,8 +254,8 @@ const FileManager = (props: {
       if (editFile.success) fetchFiles()
       else setMessage(editFile.error)
       setFetching(false)
-    } catch (e: any) {
-      setMessage(e.message as string)
+    } catch (e: unknown) {
+      setMessage(errorMessage(e))
       setFetching(false)
     }
   }
@@ -282,7 +284,7 @@ const FileManager = (props: {
         return
       }
     } catch (e) {
-      setMessage(`Error deleting files: ${e}`)
+      setMessage(`Error deleting files: ${errorMessage(e)}`)
       setOverlay('')
       fetchFiles()
       return
@@ -308,10 +310,11 @@ const FileManager = (props: {
                 progress,
               })
             }
+            // eslint-disable-next-line promise/always-return -- false positive
             if (localStorage.getItem('ecthelion:logAsyncMassActions'))
               console.log('Deleted ' + file)
           })
-          .catch(e => setMessage(`Error deleting ${file}\n${e}`)),
+          .catch((e: unknown) => setMessage(`Error deleting ${file}\n${errorMessage(e)}`)),
       )
     }
     Promise.allSettled(ops)
@@ -338,16 +341,17 @@ const FileManager = (props: {
           },
         )
         if (r.status !== 200) {
-          setMessage(`Error uploading ${file.name}\n${JSON.parse(r.body).error}`)
+          const { error } = JSON.parse(r.body) as { error?: string }
+          setMessage(`Error uploading ${file.name}: ${error ?? 'Unknown Error'}`)
         }
         setOverlay('')
       }
       setMessage('Uploaded all files successfully!')
       if (path === prevPath.current) fetchFiles() // prevPath is current path after useEffect call.
-    })().catch(e => {
+    })().catch((e: unknown) => {
       console.error(e)
       setOverlay('')
-      setMessage(`Failed to upload files: ${e.message}`)
+      setMessage(`Failed to upload files: ${errorMessage(e)}`)
     })
   }
   // Single file logic.
@@ -362,9 +366,9 @@ const FileManager = (props: {
       setFetching(false)
       setMenuOpen('')
       fetchFiles()
-    })().catch(e => {
+    })().catch((e: unknown) => {
       console.error(e)
-      setMessage(`Failed to delete file: ${e.message}`)
+      setMessage(`Failed to delete file: ${errorMessage(e)}`)
     })
   }
   const handleDownloadMenuButton = (): void => {
@@ -372,9 +376,9 @@ const FileManager = (props: {
       setMenuOpen('')
       const ticket = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
       window.location.href = `${ip}/server/${server}/file?ticket=${ticket}&path=${path}${menuOpen}`
-    })().catch(e => {
+    })().catch((e: unknown) => {
       console.error(e)
-      setMessage(`Failed to download file: ${e.message}`)
+      setMessage(`Failed to download file: ${errorMessage(e)}`)
     })
   }
   const handleDecompressMenuButton = (): void => {
@@ -392,9 +396,9 @@ const FileManager = (props: {
       setFetching(false)
       setMenuOpen('')
       fetchFiles()
-    })().catch(e => {
+    })().catch((e: unknown) => {
       console.error(e)
-      setMessage(`Failed to decompress file: ${e.message}`)
+      setMessage(`Failed to decompress file: ${errorMessage(e)}`)
     })
   }
   const handleCloseDownload = (): void => {
@@ -407,9 +411,9 @@ const FileManager = (props: {
       const ticket = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
       const loc = `${ip}/server/${server}/file?ticket=${ticket}&path=${euc(joinPath(path, download))}`
       window.location.href = loc
-    })().catch((e: any) => {
+    })().catch((e: unknown) => {
       console.error(e)
-      setMessage(`Failed to download file: ${e.message}`)
+      setMessage(`Failed to download file: ${errorMessage(e)}`)
     })
   }
   const handleSaveFile = async (name: string, content: string): Promise<void> => {
@@ -420,8 +424,8 @@ const FileManager = (props: {
       const r = await ky.post(`server/${server}/file?path=${encodedPath}`, { body: formData })
       if (r.status !== 200) setMessage((await r.json<{ error: string }>()).error)
       else setMessage('Saved successfully!')
-    } catch (e: any) {
-      setMessage(`Error saving file! ${e}`)
+    } catch (e: unknown) {
+      setMessage(`Error saving file! ${errorMessage(e)}`)
       console.error(e)
     }
   }
@@ -479,9 +483,9 @@ const FileManager = (props: {
                   (await ky.get('ott').json<{ ticket: string }>()).ticket,
                 )
                 window.location.href = `${ip}/server/${server}/file?path=${path}${file.name}&ticket=${ott}`
-              })().catch(e => {
+              })().catch((e: unknown) => {
                 console.error(e)
-                setMessage(`Failed to download file: ${e.message}`)
+                setMessage(`Failed to download file: ${errorMessage(e)}`)
               })
             }}
           />
@@ -629,7 +633,9 @@ const FileManager = (props: {
       {folderPromptOpen && (
         <FolderCreationDialog
           handleClose={() => setFolderPromptOpen(false)}
-          handleCreateFolder={async (name: string) => await handleCreateFolder(name)}
+          handleCreateFolder={(name: string) => {
+            handleCreateFolder(name).catch(console.error)
+          }}
         />
       )}
       {modifyFileDialogOpen && (
@@ -637,7 +643,9 @@ const FileManager = (props: {
           filename={menuOpen}
           operation={modifyFileDialogOpen}
           handleClose={() => setModifyFileDialogOpen('')}
-          handleEdit={async path => await handleModifyFile(path, modifyFileDialogOpen)}
+          handleEdit={path => {
+            handleModifyFile(path, modifyFileDialogOpen).catch(console.error)
+          }}
         />
       )}
       {massActionDialogOpen && (
@@ -671,7 +679,7 @@ const FileManager = (props: {
           </MenuItem>
           <MenuItem
             onClick={() => {
-              handleFilesDelete().catch(() => {})
+              handleFilesDelete().catch(console.error)
             }}
             disabled={!!overlay}
           >

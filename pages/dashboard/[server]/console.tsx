@@ -14,6 +14,24 @@ import ConsoleView from '../../../imports/dashboard/console/consoleView'
 import ConsoleButtons from '../../../imports/dashboard/console/consoleButtons'
 import ConnectionFailure from '../../../imports/errors/connectionFailure'
 
+interface ConsoleDataMessage {
+  type: 'output'
+  data: string
+}
+
+interface ConsoleErrorMessage {
+  type: 'error'
+  message: string
+}
+
+interface ConsolePingMessage {
+  type: 'pong'
+}
+
+interface ConsoleSettingsMessage {
+  type: 'settings'
+}
+
 const CommandTextField = ({
   ws,
   id,
@@ -142,9 +160,13 @@ const Console = ({
         }
         newWS.onmessage = (event: MessageEvent<string>): void => {
           if (newWS.protocol === 'console-v2') {
-            const data = JSON.parse(event.data) // For now, ignore settings and pong.
+            const data = JSON.parse(event.data) as
+              | ConsoleDataMessage
+              | ConsoleErrorMessage
+              | ConsolePingMessage
+              | ConsoleSettingsMessage
             if (data.type === 'output') {
-              handleOutputData(data.data as string)
+              handleOutputData(data.data)
             } else if (data.type === 'error') {
               buffer.current.push({ id: ++id.current, text: `[Ecthelion] Error: ${data.message}` })
             } else if (data.type === 'pong') console.log('Pong!')
@@ -180,7 +202,7 @@ const Console = ({
         setWs(newWS)
       } catch (e) {
         setListening(false)
-        console.error(`An error occurred while connecting to console.\n${e}`)
+        console.error('An error occurred while connecting to console.', e)
       }
     },
     [ip, ky, server, setAuthenticated, setServerExists],
@@ -188,7 +210,7 @@ const Console = ({
   useEffect(() => {
     if (!ws) {
       const ignore = { current: false } // Required to handle React.StrictMode correctly.
-      connectToServer(ignore).catch(() => {})
+      connectToServer(ignore).catch(console.error)
       return () => {
         ignore.current = true
       }

@@ -14,7 +14,7 @@ const FolderCreationDialog = ({
   handleCreateFolder,
   handleClose,
 }: {
-  handleCreateFolder: (name: string) => any
+  handleCreateFolder: (name: string) => void
   handleClose: () => void
 }): React.JSX.Element => {
   const [name, setName] = useState('')
