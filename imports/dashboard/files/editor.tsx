@@ -19,27 +19,33 @@ const Editor = (props: {
 
   const saveFile = (): void => {
     setSaving(true)
-    Promise.resolve(props.onSave(name, content)).then(() => setSaving(false), console.error)
+    Promise.resolve(props.onSave(name, content))
+      .then(() => setSaving(false))
+      .catch(console.error)
   }
 
   return (
     <>
       <div style={{ display: 'flex' }}>
-        {props.name
-          ? <Typography variant='h5' gutterBottom>{name}</Typography>
-          : (
-            <TextField
-              size='small'
-              value={name}
-              error={error}
-              label='Filename'
-              variant='outlined'
-              onChange={e => setName(e.target.value)}
-              helperText={error
+        {props.name ? (
+          <Typography variant='h5' gutterBottom>
+            {name}
+          </Typography>
+        ) : (
+          <TextField
+            size='small'
+            value={name}
+            error={error}
+            label='Filename'
+            variant='outlined'
+            onChange={e => setName(e.target.value)}
+            helperText={
+              error
                 ? 'This file already exists! Go back and open the file directly or delete it.'
-                : undefined}
-            />
-            )}
+                : undefined
+            }
+          />
+        )}
         <div style={{ flex: 1 }} />
         {props.name && (
           <Tooltip title='Download'>
@@ -69,7 +75,11 @@ const Editor = (props: {
           Save
         </Button>
       </div>
-      {saving && (<div style={{ paddingTop: 10 }}><LinearProgress color='secondary' /></div>)}
+      {saving && (
+        <div style={{ paddingTop: 10 }}>
+          <LinearProgress color='secondary' />
+        </div>
+      )}
     </>
   )
 }

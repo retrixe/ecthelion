@@ -1,10 +1,19 @@
 import React, { useState } from 'react'
 
 import {
-  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+  TextField,
 } from '@mui/material'
 
-const FolderCreationDialog = ({ handleCreateFolder, handleClose }: {
+const FolderCreationDialog = ({
+  handleCreateFolder,
+  handleClose,
+}: {
   handleCreateFolder: (name: string) => any
   handleClose: () => void
 }): React.JSX.Element => {
@@ -27,7 +36,9 @@ const FolderCreationDialog = ({ handleCreateFolder, handleClose }: {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color='secondary'>Cancel</Button>
+          <Button onClick={handleClose} color='secondary'>
+            Cancel
+          </Button>
           <Button onClick={() => handleCreateFolder(name)} color='primary'>
             Create
           </Button>

@@ -12,7 +12,12 @@ export interface ExtraServerInfo {
   toDelete: boolean
 }
 
-const ServerList = ({ ip, node, setMessage, setFailure }: {
+const ServerList = ({
+  ip,
+  node,
+  setMessage,
+  setFailure,
+}: {
   ip: string
   node?: string
   setMessage: React.Dispatch<React.SetStateAction<string>>
@@ -27,21 +32,27 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
   // null - not yet fetched.
   const [loggedIn, setLoggedInDirect] = useState<boolean | null | 'failed'>(null)
 
-  const setLoggedIn = useCallback((newLoggedIn: typeof loggedIn) => {
-    if (setFailure && newLoggedIn === 'failed') setFailure('failed')
-    else if (setFailure && newLoggedIn === false) setFailure('logged out')
-    setLoggedInDirect(newLoggedIn)
-  }, [setLoggedInDirect, setFailure])
+  const setLoggedIn = useCallback(
+    (newLoggedIn: typeof loggedIn) => {
+      if (setFailure && newLoggedIn === 'failed') setFailure('failed')
+      else if (setFailure && newLoggedIn === false) setFailure('logged out')
+      setLoggedInDirect(newLoggedIn)
+    },
+    [setLoggedInDirect, setFailure],
+  )
 
   const refetch = useCallback(() => {
-    (async () => {
+    ;(async () => {
       const req = await ky.get('servers?extrainfo=true')
       if (req.ok) {
         setServers((await req.json<{ servers: typeof servers }>()).servers)
         setLoggedIn(true)
       } else if (req.status === 401) setLoggedIn(false)
       else setLoggedIn('failed')
-    })().catch(e => { console.error(e); setLoggedIn('failed') })
+    })().catch((e: unknown) => {
+      console.error(e)
+      setLoggedIn('failed')
+    })
   }, [ky, setLoggedIn, setServers])
 
   useEffect(refetch, [refetch])
@@ -52,53 +63,63 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
     ;(async () => {
       const ott = encodeURIComponent((await ky.get('ott').json<{ ticket: string }>()).ticket)
       // document.cookie = `X-Authentication=${localStorage.getItem('ecthelion:token')}`
-      const ws = new WebSocket(`${ip.split('http').join('ws')}/server/${server}/console?ticket=${ott}`)
+      const ws = new WebSocket(`${ip.replace('http', 'ws')}/server/${server}/console?ticket=${ott}`)
       ws.onopen = () => {
         ws.send(command)
         ws.close()
         handleClose()
       }
       ws.onerror = () => setMessage('Failed to send command!')
-    })().catch((e: any) => { console.error(e); setMessage('Failed to send command!') })
+    })().catch((e: unknown) => {
+      console.error(e)
+      setMessage('Failed to send command!')
+    })
   }
 
   const stopStartServer = (operation: 'START' | 'KILL' | 'TERM', server: string): void => {
     ;(async () => {
       // Send the request to stop or start the server.
       const res = await ky.post('server/' + server, {
-        body: operation === 'KILL' ? 'STOP' : operation // Octyne 1.0 compatibility.
+        body: operation === 'KILL' ? 'STOP' : operation, // Octyne 1.0 compatibility.
       })
       if (res.status === 400) {
         const json = await res.json<{ error: string }>()
-        setMessage(json.error === 'Invalid operation requested!' && operation === 'TERM'
-          ? 'Gracefully stopping apps requires Octyne 1.1 or newer!'
-          : json.error)
+        setMessage(
+          json.error === 'Invalid operation requested!' && operation === 'TERM'
+            ? 'Gracefully stopping apps requires Octyne 1.1 or newer!'
+            : json.error,
+        )
       }
-    })().catch((e: any) => { console.error(e); setMessage(e as string) })
+    })().catch((e: unknown) => {
+      console.error(e)
+      setMessage('Failed to stop/start/kill server!')
+    })
   }
 
   if (loggedIn === null || loggedIn === 'failed') {
     return (
-      <ConnectionFailure
-        title={node ? 'Octyne node - ' + node : ''}
-        loading={loggedIn === null}
-      />
+      <ConnectionFailure title={node ? 'Octyne node - ' + node : ''} loading={loggedIn === null} />
     )
   } else if (!loggedIn) {
     return (
       <Paper style={{ padding: 10 }}>
         <Typography color='red'>Unable to authenticate with Octyne node: {node}!</Typography>
-        <Typography>Make sure your nodes are pointed to the same Redis server for authentication!</Typography>
+        <Typography>
+          Make sure your nodes are pointed to the same Redis server for authentication!
+        </Typography>
       </Paper>
     )
   } else {
     return servers ? (
       <Paper style={{ padding: 20, marginBottom: '2em' }}>
         {/* Dialog box to show. */}
-        {server &&
-          <CommandDialog server={server} handleClose={handleClose} runCommand={runCommand} />}
+        {server && (
+          <CommandDialog server={server} handleClose={handleClose} runCommand={runCommand} />
+        )}
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Typography gutterBottom variant='h5'>Servers{node ? (' - ' + node) : ''}</Typography>
+          <Typography gutterBottom variant='h5'>
+            Servers{node ? ' - ' + node : ''}
+          </Typography>
           <div style={{ flex: 1 }} />
           <Tooltip title='Reload'>
             <span style={{ marginBottom: '0.35em' }}>
@@ -124,7 +145,9 @@ const ServerList = ({ ip, node, setMessage, setFailure }: {
           ))}
         </List>
       </Paper>
-    ) : <ConnectionFailure loading={false} />
+    ) : (
+      <ConnectionFailure loading={false} />
+    )
   }
 }
 

@@ -10,9 +10,9 @@ const defaultKy = ky.create({
   prefixUrl: config.ip,
   hooks: {
     beforeRequest: [
-      request => request.headers.set('Authorization', localStorage.getItem('ecthelion:token') ?? '')
-    ]
-  }
+      req => req.headers.set('Authorization', localStorage.getItem('ecthelion:token') ?? ''),
+    ],
+  },
 })
 
 const KyContext = React.createContext({
@@ -20,10 +20,10 @@ const KyContext = React.createContext({
   nodes: Object.keys(nodes).reduce<Record<string, typeof ky>>((obj, node) => {
     obj[node] = defaultKy.extend({ prefixUrl: nodes[node] })
     return obj
-  }, {})
+  }, {}),
 })
 
-export default function useKy (node?: string): KyInstance {
+export default function useKy(node?: string): KyInstance {
   const kyContext = React.useContext(KyContext)
   return node ? kyContext.nodes[node] : kyContext.default
 }

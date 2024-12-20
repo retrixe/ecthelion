@@ -1,7 +1,12 @@
 import React from 'react'
 import Head from 'next/head'
 
-const Title = ({ title, description, url, index }: {
+const Title = ({
+  title,
+  description,
+  url,
+  index,
+}: {
   title: string
   description: string
   url: string

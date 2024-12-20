@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import emotionStyled from '@emotion/styled'
-import { Button, IconButton, Typography, TextField, Paper, NoSsr, styled, Tooltip } from '@mui/material'
+import {
+  Button,
+  IconButton,
+  Typography,
+  TextField,
+  Paper,
+  NoSsr,
+  styled,
+  Tooltip,
+} from '@mui/material'
 import Info from '@mui/icons-material/Info'
 import config from '../imports/config'
 import Layout from '../imports/layout'
@@ -13,8 +22,8 @@ const ButtonContainer = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'flex-end'
-  }
+    justifyContent: 'flex-end',
+  },
 }))
 
 const IndexContainer = emotionStyled.div({
@@ -22,7 +31,7 @@ const IndexContainer = emotionStyled.div({
   justifyContent: 'center',
   alignItems: 'center',
   height: '100vh',
-  overflow: 'auto'
+  overflow: 'auto',
 })
 
 const Index = (): React.JSX.Element => {
@@ -47,7 +56,7 @@ const Index = (): React.JSX.Element => {
     try {
       const querystring = config.enableCookieAuth ? '?cookie=true' : ''
       const request = await fetch(config.ip + '/login' + querystring, {
-        headers: { Username: username, Password: password }
+        headers: { Username: username, Password: password },
       })
       // If request failed..
       if (!request.ok) {
@@ -61,7 +70,7 @@ const Index = (): React.JSX.Element => {
         }
         return
       }
-      const response = await request.json() as { token?: string, success: boolean }
+      const response = (await request.json()) as { token?: string; success: boolean }
       if (response.token ?? response.success) {
         // Save the access token in localStorage if received in JSON body.
         if (response.token) localStorage.setItem('ecthelion:token', response.token)
@@ -71,10 +80,15 @@ const Index = (): React.JSX.Element => {
         // Then we redirect to the new page.
         router.push(route).catch(console.error)
       }
-    } catch (e) { setFailedAuth(true) }
+    } catch (e) {
+      console.error(e)
+      setFailedAuth(true)
+    }
   }
 
-  const handleLogin = (): void => { login().catch(() => {}) }
+  const handleLogin = (): void => {
+    login().catch(() => {})
+  }
 
   return (
     <React.StrictMode>
@@ -87,10 +101,14 @@ const Index = (): React.JSX.Element => {
       <Layout
         appBar={
           <>
-            <Typography variant='h6' color='inherit' style={{ flex: 1 }}>Octyne</Typography>
+            <Typography variant='h6' color='inherit' style={{ flex: 1 }}>
+              Octyne
+            </Typography>
             <UnstyledLink prefetch={false} href='/settings/about'>
               <Tooltip title='About'>
-                <IconButton size='large' edge='end' color='inherit'><Info /></IconButton>
+                <IconButton size='large' edge='end' color='inherit'>
+                  <Info />
+                </IconButton>
               </Tooltip>
             </UnstyledLink>
           </>
@@ -100,15 +118,18 @@ const Index = (): React.JSX.Element => {
         <IndexContainer>
           <NoSsr>
             <Paper
-              elevation={24} sx={{
+              elevation={24}
+              sx={{
                 margin: '10px',
                 padding: '20px',
                 width: { md: '420px' },
                 maxWidth: { md: '33vw' },
-                flex: { xs: 1, md: 'initial' }
+                flex: { xs: 1, md: 'initial' },
               }}
             >
-              <Typography variant='h5' gutterBottom>Log In</Typography>
+              <Typography variant='h5' gutterBottom>
+                Log In
+              </Typography>
               <Typography>Enter your designated username and password to access Octyne.</Typography>
               <br />
               <TextField
@@ -121,7 +142,8 @@ const Index = (): React.JSX.Element => {
                 onKeyDown={e => e.key === 'Enter' && passRef && passRef.focus()}
                 autoFocus
               />
-              <br /><br />
+              <br />
+              <br />
               <TextField
                 required
                 fullWidth
@@ -132,7 +154,9 @@ const Index = (): React.JSX.Element => {
                 error={failedAuth || invalid}
                 type='password'
                 onSubmit={handleLogin}
-                onKeyDown={e => { e.key === 'Enter' && handleLogin() }}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') handleLogin()
+                }}
               />
               <br />
               {(failedAuth || invalid) && (
@@ -153,7 +177,8 @@ const Index = (): React.JSX.Element => {
                   onClick={handleLogin}
                   disabled={!username || !password}
                   sx={{ width: { xs: '100%', md: 'initial' } }}
-                >Log In
+                >
+                  Log In
                 </Button>
               </ButtonContainer>
             </Paper>

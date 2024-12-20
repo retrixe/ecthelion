@@ -10,9 +10,10 @@ export const AuthFailure = (): React.JSX.Element => (
       <Typography
         style={{ textDecoration: 'underline' }}
         onClick={() => {
-          try { localStorage.removeItem('ecthelion:token') } catch (e) { }
+          localStorage.removeItem('ecthelion:token')
         }}
-      >Consider logging in?
+      >
+        Consider logging in?
       </Typography>
     </UnstyledLink>
   </Paper>

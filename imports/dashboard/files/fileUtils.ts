@@ -19,8 +19,8 @@ export const joinPath = (a: string, b: string): string => {
 export const uploadFormData = async (
   url: string,
   formData: FormData,
-  onProgress: (progress: number) => void
-): Promise<{ status: number, body: string }> =>
+  onProgress: (progress: number) => void,
+): Promise<{ status: number; body: string }> =>
   await new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
     xhr.upload.addEventListener('progress', e => onProgress(e.loaded / e.total))

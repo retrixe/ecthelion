@@ -46,9 +46,15 @@ const About = (): React.JSX.Element => {
 
   const [octyneVersion, setOctyneVersion] = useState('')
   useEffect(() => {
-    ky('').json<{ version: string }>()
+    ky('')
+      .json<{ version: string }>()
       .then(({ version }) => setOctyneVersion(version))
-      .catch(e => console.error('Failed to retrieve Octyne version for main node! Perhaps Octyne is outdated or not running?', e))
+      .catch((e: unknown) =>
+        console.error(
+          'Failed to retrieve Octyne version for main node! Perhaps Octyne is outdated or not running?',
+          e,
+        ),
+      )
   })
   const nodeLength = Object.keys(config.nodes ?? {}).length
 
@@ -62,7 +68,9 @@ const About = (): React.JSX.Element => {
       />
       <SettingsLayout loggedIn={loggedIn}>
         <Paper style={{ padding: 20 }}>
-          <Typography gutterBottom variant='h5'>About Ecthelion</Typography>
+          <Typography gutterBottom variant='h5'>
+            About Ecthelion
+          </Typography>
           <Divider style={{ marginBottom: '0.70em' }} />
           <Typography gutterBottom>
             This instance is running Ecthelion {version}
@@ -72,22 +80,32 @@ const About = (): React.JSX.Element => {
           <div style={{ marginBottom: '0.35em' }} />
           <Typography variant='h6'>Some quick tips:</Typography>
           <Typography component='ul' style={{ paddingInlineStart: 20 }}>
-            <li>You can drag and drop files from your system onto the file explorer&apos;s file list!</li>
-            <li>You can Ctrl+Click files to select them, and Shift+Click to select multiple files at once!</li>
+            <li>
+              You can drag and drop files from your system onto the file explorer&apos;s file list!
+            </li>
+            <li>
+              You can Ctrl+Click files to select them, and Shift+Click to select multiple files at
+              once!
+            </li>
             <li>You can upload multiple files at once!</li>
-            <li>Text files can be created and opened inside Ecthelion!
-              Don&apos;t worry, you can still download them from the file menu or the editor.
+            <li>
+              Text files can be created and opened inside Ecthelion! Don&apos;t worry, you can still
+              download them from the file menu or the editor.
             </li>
             {/* <li>The stop button updates after 10 seconds and console is limited to 650 lines.</li> */}
           </Typography>
         </Paper>
         <Paper style={{ padding: 20, marginTop: 16 }}>
-          <Typography gutterBottom variant='h5'>UI Settings</Typography>
+          <Typography gutterBottom variant='h5'>
+            UI Settings
+          </Typography>
           <Divider style={{ marginBottom: '0.70em' }} />
           <FormGroup>
             <FormControlLabel
               label='Terminal Coloured Console'
-              control={<Switch color='info' checked={terminalUi} onChange={handleTerminalUiToggle} />}
+              control={
+                <Switch color='info' checked={terminalUi} onChange={handleTerminalUiToggle} />
+              }
             />
             <FormControlLabel
               label='Light Mode (Here be dragons)'
@@ -95,7 +113,9 @@ const About = (): React.JSX.Element => {
             />
             <FormControlLabel
               label='Square Corners'
-              control={<Switch color='info' checked={squareCorners} onChange={handleSquareCornersToggle} />}
+              control={
+                <Switch color='info' checked={squareCorners} onChange={handleSquareCornersToggle} />
+              }
             />
           </FormGroup>
         </Paper>

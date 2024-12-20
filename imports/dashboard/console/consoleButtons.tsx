@@ -4,7 +4,9 @@ import Stop from '@mui/icons-material/Stop'
 import Close from '@mui/icons-material/Close'
 import PlayArrow from '@mui/icons-material/PlayArrow'
 
-const ConsoleButtons = ({ stopStartServer }: {
+const ConsoleButtons = ({
+  stopStartServer,
+}: {
   stopStartServer: (operation: 'START' | 'TERM' | 'KILL') => void
 }): React.JSX.Element => {
   const smallScreen = useMediaQuery(useTheme().breakpoints.only('xs'))
@@ -56,26 +58,24 @@ const ConsoleButtons = ({ stopStartServer }: {
     </>
   )
 
-  return smallScreen
-    ? (
-      <Paper elevation={10} style={{ marginTop: 10, padding: 10 }}>
-        {Buttons}
-      </Paper>
-      )
-    : (
-      <div
-        style={{
-          justifyContent: 'center',
-          display: 'flex',
-          flexDirection: 'column',
-          marginTop: 10,
-          padding: 10,
-          width: '100%'
-        }}
-      >
-        {Buttons}
-      </div>
-      )
+  return smallScreen ? (
+    <Paper elevation={10} style={{ marginTop: 10, padding: 10 }}>
+      {Buttons}
+    </Paper>
+  ) : (
+    <div
+      style={{
+        justifyContent: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        marginTop: 10,
+        padding: 10,
+        width: '100%',
+      }}
+    >
+      {Buttons}
+    </div>
+  )
 }
 
 export default ConsoleButtons

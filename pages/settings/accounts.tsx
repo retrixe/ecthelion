@@ -1,5 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { Button, IconButton, List, ListItem, ListItemIcon, ListItemText, Paper, Snackbar, Tooltip, Typography } from '@mui/material'
+import {
+  Button,
+  IconButton,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Paper,
+  Snackbar,
+  Tooltip,
+  Typography,
+} from '@mui/material'
 import AccountCircle from '@mui/icons-material/AccountCircle'
 import Add from '@mui/icons-material/Add'
 import DeleteForever from '@mui/icons-material/DeleteForever'
@@ -26,20 +37,24 @@ const AccountsPage = (): React.JSX.Element => {
   const [changePassword, setChangePassword] = useState('')
 
   const refetch = (): void => {
-    ky.get('accounts').then(async res => {
-      if (res.ok) return await res.json()
-      else if (res.status === 401) setStatus('not logged in')
-      else if (res.status === 404) setStatus('unsupported')
-      else setStatus('failure')
-    }).then(data => {
-      if (Array.isArray(data)) setAccounts(data.sort((a: string, b: string) => a.localeCompare(b)))
-    }).catch(() => setStatus('failure'))
+    ky.get('accounts')
+      .then(async res => {
+        if (res.ok) return await res.json()
+        else if (res.status === 401) setStatus('not logged in')
+        else if (res.status === 404) setStatus('unsupported')
+        else setStatus('failure')
+      })
+      .then(data => {
+        if (Array.isArray(data))
+          setAccounts(data.sort((a: string, b: string) => a.localeCompare(b)))
+      })
+      .catch(() => setStatus('failure'))
   }
 
   useEffect(refetch, [ky])
 
   const handleCreateAccount = (username: string, password: string): void => {
-    (async () => {
+    ;(async () => {
       const res = await ky.post('accounts', { json: { username, password } })
       if (res.ok) {
         refetch()
@@ -57,9 +72,9 @@ const AccountsPage = (): React.JSX.Element => {
   }
 
   const handleRenameAccount = (username: string, newName: string): void => {
-    (async () => {
+    ;(async () => {
       const res = await ky.patch('accounts?username=' + encodeURIComponent(username), {
-        json: { username: newName }
+        json: { username: newName },
       })
       if (res.ok) {
         refetch()
@@ -79,7 +94,7 @@ const AccountsPage = (): React.JSX.Element => {
   }
 
   const handleChangePassword = (username: string, password: string): void => {
-    (async () => {
+    ;(async () => {
       const res = await ky.patch('accounts', { json: { username, password } })
       if (res.ok) {
         refetch()
@@ -97,7 +112,7 @@ const AccountsPage = (): React.JSX.Element => {
   }
 
   const handleDeleteAccount = (): void => {
-    (async () => {
+    ;(async () => {
       const res = await ky.delete('accounts?username=' + encodeURIComponent(deleteAccount))
       if (res.ok) {
         refetch()
@@ -139,7 +154,9 @@ const AccountsPage = (): React.JSX.Element => {
         {status === null && accounts !== null && (
           <Paper style={{ padding: 20 }}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <Typography variant='h5' style={{ flex: 1 }}>Manage Accounts</Typography>
+              <Typography variant='h5' style={{ flex: 1 }}>
+                Manage Accounts
+              </Typography>
               <Tooltip title='Create Account'>
                 <IconButton onClick={() => setCreateAccount(true)}>
                   <Add />
@@ -188,12 +205,18 @@ const AccountsPage = (): React.JSX.Element => {
           onClose={() => setDeleteAccount('')}
           message={`Are you sure you want to delete account '${deleteAccount}'?`}
           action={[
-            <Button key='close' size='small' aria-label='close' color='inherit' onClick={() => setDeleteAccount('')}>
+            <Button
+              key='close'
+              size='small'
+              aria-label='close'
+              color='inherit'
+              onClick={() => setDeleteAccount('')}
+            >
               Close
             </Button>,
             <Button key='confirm' size='small' color='primary' onClick={handleDeleteAccount}>
               Confirm
-            </Button>
+            </Button>,
           ]}
         />
         <AccountDialog

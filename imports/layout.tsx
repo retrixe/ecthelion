@@ -8,14 +8,16 @@ const LayoutContainer = styled.div({
   width: '100vw',
   maxWidth: '100%',
   display: 'flex',
-  flexDirection: 'column'
+  flexDirection: 'column',
   // minWidth: '100%'
 })
 
-const Layout = (props: React.PropsWithChildren<{
-  appBar?: React.ReactNode
-  removeToolbar?: boolean
-}>): React.JSX.Element => (
+const Layout = (
+  props: React.PropsWithChildren<{
+    appBar?: React.ReactNode
+    removeToolbar?: boolean
+  }>,
+): React.JSX.Element => (
   <LayoutContainer>
     {/* <style jsx global>
       {`
@@ -29,9 +31,7 @@ const Layout = (props: React.PropsWithChildren<{
       `}
     </style> */}
     <AppBar sx={{ zIndex: { xs: 'appBar', sm: 1201 /* theme => theme.zIndex.drawer + 1 */ } }}>
-      <Toolbar style={{ minWidth: '100vw' }}>
-        {props.appBar}
-      </Toolbar>
+      <Toolbar style={{ minWidth: '100vw' }}>{props.appBar}</Toolbar>
     </AppBar>
     {props.removeToolbar ? '' : <Toolbar />}
     {props.children}

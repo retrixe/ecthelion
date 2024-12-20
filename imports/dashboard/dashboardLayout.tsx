@@ -1,9 +1,18 @@
 import React, { useState } from 'react'
 import styled from '@emotion/styled'
 import {
-  Typography, IconButton, Drawer,
-  List, ListItemButton, ListItemIcon, ListItemText,
-  Divider, useMediaQuery, useTheme, Toolbar, Tooltip
+  Typography,
+  IconButton,
+  Drawer,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  useMediaQuery,
+  useTheme,
+  Toolbar,
+  Tooltip,
 } from '@mui/material'
 import Apps from '@mui/icons-material/Apps'
 import Login from '@mui/icons-material/Login'
@@ -14,20 +23,24 @@ import CallToAction from '@mui/icons-material/CallToAction'
 import Settings from '@mui/icons-material/Settings'
 import Storage from '@mui/icons-material/Storage'
 
-import { useRouter } from 'next/router'
 import Layout from '../layout'
 import config from '../config'
 import UnstyledLink from '../helpers/unstyledLink'
+import useOctyneData from './useOctyneData'
 
 const DashboardContainer = styled.div({
   padding: 20,
   flexDirection: 'column',
   display: 'flex',
-  flex: 1
+  flex: 1,
 })
 
-const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: string }): React.JSX.Element => {
-  const { server, node } = useRouter().query
+const DrawerItem = (props: {
+  icon: React.ReactElement
+  name: string
+  subUrl: string
+}): React.JSX.Element => {
+  const { server, node } = useOctyneData()
   const nodeUri = typeof node === 'string' ? `?node=${encodeURIComponent(node)}` : ''
   return (
     <UnstyledLink href={`/dashboard/${server}/${props.subUrl}${nodeUri}`}>
@@ -46,12 +59,14 @@ const onLogout = (): void => {
   fetch(`${config.ip}/logout`, { headers: { Authorization: token ?? '' } }).catch(console.error)
 }
 
-const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>): React.JSX.Element => {
+const DashboardLayout = (
+  props: React.PropsWithChildren<{ loggedIn: boolean }>,
+): React.JSX.Element => {
   const [openDrawer, setOpenDrawer] = useState(false)
   const drawerVariant = useMediaQuery(useTheme().breakpoints.only('xs')) ? 'temporary' : 'permanent'
   const appBarContent = (
     <>
-      {(props.loggedIn && drawerVariant === 'temporary') && (
+      {props.loggedIn && drawerVariant === 'temporary' && (
         <>
           <IconButton
             color='inherit'
@@ -63,16 +78,22 @@ const DashboardLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>):
           <div style={{ marginRight: 10 }} />
         </>
       )}
-      <Typography variant='h6' color='inherit' style={{ flex: 1 }}>Octyne</Typography>
+      <Typography variant='h6' color='inherit' style={{ flex: 1 }}>
+        Octyne
+      </Typography>
       {/* These are displayed unconditionally in case of individual node authentication failure. */}
       <UnstyledLink href='/servers'>
         <Tooltip title='Servers'>
-          <IconButton size='large' color='inherit'><Apps /></IconButton>
+          <IconButton size='large' color='inherit'>
+            <Apps />
+          </IconButton>
         </Tooltip>
       </UnstyledLink>
       <UnstyledLink href='/settings/about'>
         <Tooltip title='Settings'>
-          <IconButton size='large' color='inherit'><Settings /></IconButton>
+          <IconButton size='large' color='inherit'>
+            <Settings />
+          </IconButton>
         </Tooltip>
       </UnstyledLink>
       <UnstyledLink href='/'>

@@ -2,7 +2,10 @@ import React from 'react'
 import { Snackbar, Button, IconButton } from '@mui/material'
 import Close from '@mui/icons-material/Close'
 
-const Message = ({ message, setMessage }: {
+const Message = ({
+  message,
+  setMessage,
+}: {
   message: string
   setMessage: (a: string) => void
 }): React.JSX.Element => (
@@ -19,7 +22,7 @@ const Message = ({ message, setMessage }: {
       </Button>,
       <IconButton key='close' aria-label='close' color='inherit' onClick={() => setMessage('')}>
         <Close />
-      </IconButton>
+      </IconButton>,
     ]}
   />
 )

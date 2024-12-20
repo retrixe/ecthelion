@@ -1,7 +1,13 @@
 import React, { useState } from 'react'
 
 import {
-  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+  TextField,
 } from '@mui/material'
 
 const AccountDialog = (props: {
@@ -47,13 +53,17 @@ const AccountDialog = (props: {
         <DialogTitle>
           {changePassword
             ? 'Change Password'
-            : props.rename ? `Rename Account: ${props.username}` : 'Create Account'}
+            : props.rename
+              ? `Rename Account: ${props.username}`
+              : 'Create Account'}
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
             {changePassword
               ? `Enter new password for ${props.username}:`
-              : props.rename ? 'Enter new username:' : 'Enter username and password:'}
+              : props.rename
+                ? 'Enter new username:'
+                : 'Enter username and password:'}
           </DialogContentText>
           {!changePassword && (
             <TextField
@@ -83,7 +93,9 @@ const AccountDialog = (props: {
                 type='password'
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') confirmRef.current?.focus() }}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') confirmRef.current?.focus()
+                }}
               />
               <TextField
                 fullWidth
@@ -94,15 +106,21 @@ const AccountDialog = (props: {
                 type='password'
                 value={confirmPassword}
                 onChange={e => setConfirmPassword(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') handleSubmit() }}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') handleSubmit()
+                }}
               />
             </>
           )}
           {error && <DialogContentText color='error'>{error}</DialogContentText>}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color='secondary'>Cancel</Button>
-          <Button onClick={handleSubmit} color='primary'>Done</Button>
+          <Button onClick={handleClose} color='secondary'>
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} color='primary'>
+            Done
+          </Button>
         </DialogActions>
       </Dialog>
     </>

@@ -8,7 +8,7 @@ import config from '../imports/config'
 const ico = `${config.basePath ?? ''}/favicon.png`
 
 class MyDocument extends Document {
-  render (): React.JSX.Element {
+  render(): React.JSX.Element {
     return (
       <Html lang='en' dir='ltr'>
         <Head>
@@ -66,16 +66,18 @@ MyDocument.getInitialProps = async ctx => {
   ctx.renderPage = async () =>
     await originalRenderPage({
       enhanceApp: (App: any) => {
-        const EnhancedApp = (props: any): React.JSX.Element => <App emotionCache={cache} {...props} />
+        const EnhancedApp = (props: any): React.JSX.Element => (
+          <App emotionCache={cache} {...props} />
+        )
         return EnhancedApp
-      }
+      },
     })
 
   const initialProps = await Document.getInitialProps(ctx)
   // This is important. It prevents emotion to render invalid HTML.
   // See https://github.com/mui-org/material-ui/issues/26561#issuecomment-855286153
   const emotionStyles = emotionServer.extractCriticalToChunks(initialProps.html)
-  const emotionStyleTags = emotionStyles.styles.map((style) => (
+  const emotionStyleTags = emotionStyles.styles.map(style => (
     <style
       data-emotion={`${style.key} ${style.ids.join(' ')}`}
       key={style.key}
@@ -86,7 +88,7 @@ MyDocument.getInitialProps = async ctx => {
   return {
     ...initialProps,
     // Styles fragment is rendered after the app and page rendering finish.
-    styles: [...React.Children.toArray(initialProps.styles), ...emotionStyleTags]
+    styles: [...React.Children.toArray(initialProps.styles), ...emotionStyleTags],
   }
 }
 

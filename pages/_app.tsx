@@ -12,7 +12,9 @@ const clientSideEmotionCache = createCache({ key: 'css' })
 
 export const UpdateThemeContext = React.createContext(() => {})
 
-export default function MyApp (props: AppProps & { emotionCache?: EmotionCache }): React.JSX.Element {
+export default function MyApp(
+  props: AppProps & { emotionCache?: EmotionCache },
+): React.JSX.Element {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props
 
   // Customisable theming options.

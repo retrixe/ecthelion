@@ -26,14 +26,17 @@ export const useOctyneAuth = (): OctyneDataWithAuth => {
   const [connectionFailure, setConnectionFailure] = useState<boolean>(false)
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       if (!server || !nodeExists) return
       const servers = await ky.get('servers')
       const resp = await servers.json<Record<string, number>>()
       if (servers.ok) setServerExists(!!resp[server])
       if (servers.ok || servers.status === 401 || servers.status === 403) setAuth(servers.ok)
       else setConnectionFailure(true)
-    })().catch(err => { console.error(err); setConnectionFailure(true) })
+    })().catch(err => {
+      console.error(err)
+      setConnectionFailure(true)
+    })
   }, [ky, nodeExists, server])
 
   return Object.assign(octyneData, { auth, serverExists, connectionFailure })

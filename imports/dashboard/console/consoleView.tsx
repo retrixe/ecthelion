@@ -2,39 +2,43 @@ import React, { useRef, useLayoutEffect } from 'react'
 import Typography from '@mui/material/Typography'
 import styled from '@emotion/styled'
 
-let chrome = false
-try {
-  if (
-    Object.hasOwnProperty.call(window, 'chrome') &&
-    !navigator.userAgent.includes('Trident') &&
-    !navigator.userAgent.includes('Edge') // Chromium Edge uses Edg *sad noises*
-  ) chrome = true
-} catch (e) {}
+const chrome =
+  Object.hasOwnProperty.call(window, 'chrome') &&
+  typeof navigator === 'object' &&
+  typeof navigator.userAgent === 'string' &&
+  !navigator.userAgent.includes('Trident') &&
+  !navigator.userAgent.includes('Edge') // Chromium Edge uses Edg *sad noises*
 
 const ChromeConsoleViewContainer = styled.div({
   height: '100%',
   width: '100%',
   overflow: 'auto',
   display: 'flex',
-  flexDirection: 'column-reverse'
+  flexDirection: 'column-reverse',
 })
 
-const ChromeConsoleView = (props: { console: Array<{ id: number, text: string }> }): React.JSX.Element => (
+const ChromeConsoleView = (props: {
+  console: { id: number; text: string }[]
+}): React.JSX.Element => (
   <ChromeConsoleViewContainer>
     <div style={{ minHeight: '5px' }} />
     <Typography variant='body2' style={{ lineHeight: 1.5, wordWrap: 'break-word' }} component='div'>
-      {props.console.map((i) => (
-        <span key={i.id}>{i.text}<br /></span>
-      )) /* Truncate to 650 lines due to performance issues afterwards. */}
+      {props.console.map(i => (
+        <span key={i.id}>
+          {i.text}
+          <br />
+        </span>
+      ))}
     </Typography>
   </ChromeConsoleViewContainer>
 )
 
-const ConsoleView = (props: { console: Array<{ id: number, text: string }> }): React.JSX.Element => {
+const ConsoleView = (props: { console: { id: number; text: string }[] }): React.JSX.Element => {
   const ref = useRef<HTMLDivElement>(null)
-  const isScrolledToBottom = ref.current !== null
-    ? ref.current.scrollHeight - ref.current.clientHeight <= ref.current.scrollTop + 1
-    : false
+  const isScrolledToBottom =
+    ref.current !== null
+      ? ref.current.scrollHeight - ref.current.clientHeight <= ref.current.scrollTop + 1
+      : false
 
   useLayoutEffect(() => {
     if (ref.current) ref.current.scrollTop = ref.current.scrollHeight - ref.current.clientHeight
@@ -47,10 +51,17 @@ const ConsoleView = (props: { console: Array<{ id: number, text: string }> }): R
 
   return (
     <div style={{ height: '100%', width: '100%', overflow: 'auto' }} ref={ref}>
-      <Typography variant='body2' style={{ lineHeight: 1.5, wordWrap: 'break-word' }} component='div'>
-        {props.console.map((i) => (
-          <span key={i.id}>{i.text}<br /></span>
-        )) /* Truncate to 650 lines due to performance issues afterwards. */}
+      <Typography
+        variant='body2'
+        style={{ lineHeight: 1.5, wordWrap: 'break-word' }}
+        component='div'
+      >
+        {props.console.map(i => (
+          <span key={i.id}>
+            {i.text}
+            <br />
+          </span>
+        ))}
       </Typography>
       <div style={{ minHeight: '5px' }} />
     </div>

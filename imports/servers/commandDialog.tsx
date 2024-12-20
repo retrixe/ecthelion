@@ -1,9 +1,19 @@
 import React, { useState } from 'react'
 import {
-  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+  TextField,
 } from '@mui/material'
 
-const CommandDialog = ({ server, handleClose, runCommand }: {
+const CommandDialog = ({
+  server,
+  handleClose,
+  runCommand,
+}: {
   server: string
   handleClose: () => void
   runCommand: (command: string) => void
@@ -28,7 +38,9 @@ const CommandDialog = ({ server, handleClose, runCommand }: {
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={() => runCommand(command)} color='primary'>Run</Button>
+        <Button onClick={() => runCommand(command)} color='primary'>
+          Run
+        </Button>
       </DialogActions>
     </Dialog>
   )

@@ -1,6 +1,11 @@
 import React from 'react'
 import {
-  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
 } from '@mui/material'
 
 const ConfirmDialog = (props: {
@@ -17,8 +22,12 @@ const ConfirmDialog = (props: {
         <DialogContentText>{props.prompt}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => props.onCancel()} color='secondary'>Cancel</Button>
-        <Button onClick={() => props.onConfirm()} color='primary'>Confirm</Button>
+        <Button onClick={() => props.onCancel()} color='secondary'>
+          Cancel
+        </Button>
+        <Button onClick={() => props.onConfirm()} color='primary'>
+          Confirm
+        </Button>
       </DialogActions>
     </Dialog>
   </>

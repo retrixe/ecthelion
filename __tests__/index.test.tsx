@@ -5,8 +5,6 @@ import Home from '../pages/index'
 
 test('renders a heading', () => {
   render(<Home />)
-  const heading = screen.getByRole('heading', {
-    name: /Octyne/i
-  })
+  const heading = screen.getByRole('heading', { name: /Octyne/i })
   expect(heading).toBeDefined()
 })

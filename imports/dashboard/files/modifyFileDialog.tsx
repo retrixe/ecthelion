@@ -1,19 +1,33 @@
 import React, { useState } from 'react'
 
 import {
-  Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, TextField
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+  TextField,
 } from '@mui/material'
 
-const ModifyFileDialog = ({ handleEdit, handleClose, operation, filename }: {
+const ModifyFileDialog = ({
+  handleEdit,
+  handleClose,
+  operation,
+  filename,
+}: {
   handleEdit: (path: string) => any
   handleClose: () => void
   operation: 'move' | 'copy' | 'rename'
   filename: string
 }): React.JSX.Element => {
   const [path, setPath] = useState(operation === 'rename' ? filename : '')
-  const title = operation === 'copy'
-    ? 'Copy File/Folder'
-    : operation === 'move' ? 'Move File/Folder' : 'Rename File/Folder'
+  const title =
+    operation === 'copy'
+      ? 'Copy File/Folder'
+      : operation === 'move'
+        ? 'Move File/Folder'
+        : 'Rename File/Folder'
   const pathOrName = operation === 'rename' ? 'name' : 'path'
   return (
     <>
@@ -29,12 +43,21 @@ const ModifyFileDialog = ({ handleEdit, handleClose, operation, filename }: {
             label={`New ${pathOrName}`}
             value={path}
             onChange={e => setPath(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleEdit(path) } }}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                e.preventDefault()
+                handleEdit(path)
+              }
+            }}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color='secondary'>Cancel</Button>
-          <Button onClick={() => handleEdit(path)} color='primary'>Done</Button>
+          <Button onClick={handleClose} color='secondary'>
+            Cancel
+          </Button>
+          <Button onClick={() => handleEdit(path)} color='primary'>
+            Done
+          </Button>
         </DialogActions>
       </Dialog>
     </>

@@ -1,7 +1,14 @@
 import React from 'react'
 import {
-  ListItem, ListItemButton, ListItemText, ListItemAvatar, Avatar, IconButton, Checkbox,
-  useMediaQuery, type Theme
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  ListItemAvatar,
+  Avatar,
+  IconButton,
+  Checkbox,
+  useMediaQuery,
+  type Theme,
 } from '@mui/material'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList, type ListChildComponentProps } from 'react-window'
@@ -15,12 +22,13 @@ import { joinPath } from './fileUtils'
 const rtd = (num: number): number => Math.round(num * 100) / 100
 const bytesToGb = (bytes: number): string => {
   if (bytes < 1024) return `${bytes} bytes`
-  else if (bytes < (1024 * 1024)) return `${rtd(bytes / 1024)} KB`
-  else if (bytes < (1024 * 1024 * 1024)) return `${rtd(bytes / (1024 * 1024))} MB`
-  else if (bytes < (1024 * 1024 * 1024 * 1024)) return `${rtd(bytes / (1024 * 1024 * 1024))} GB`
+  else if (bytes < 1024 * 1024) return `${rtd(bytes / 1024)} KB`
+  else if (bytes < 1024 * 1024 * 1024) return `${rtd(bytes / (1024 * 1024))} MB`
+  else if (bytes < 1024 * 1024 * 1024 * 1024) return `${rtd(bytes / (1024 * 1024 * 1024))} GB`
   else return `${rtd(bytes / (1024 * 1024 * 1024 * 1024))} TB`
 }
-const tsts = (ts: number): string => new Date(ts * 1000).toISOString().substring(0, 19).replace('T', ' ')
+const tsts = (ts: number): string =>
+  new Date(ts * 1000).toISOString().substring(0, 19).replace('T', ' ')
 
 export interface File {
   name: string
@@ -30,7 +38,16 @@ export interface File {
   mimeType: string
 }
 
-const FileListItem = ({ file, style, disabled, filesSelected, onItemClick, onCheck, openMenu, url }: {
+const FileListItem = ({
+  file,
+  style,
+  disabled,
+  filesSelected,
+  onItemClick,
+  onCheck,
+  openMenu,
+  url,
+}: {
   file: File
   url: string
   disabled: boolean
@@ -48,7 +65,9 @@ const FileListItem = ({ file, style, disabled, filesSelected, onItemClick, onChe
       secondaryAction={
         <div>
           <IconButton
-            disabled={disabled} onClick={e => openMenu(file.name, e.currentTarget)} size='large'
+            disabled={disabled}
+            onClick={e => openMenu(file.name, e.currentTarget)}
+            size='large'
           >
             <MoreVert />
           </IconButton>
@@ -61,21 +80,27 @@ const FileListItem = ({ file, style, disabled, filesSelected, onItemClick, onChe
         </div>
       }
     >
-      <ListItemButton dense style={{/* paddingRight: 96 */}} disabled={disabled} onClick={onItemClick}>
+      {/* style={{ paddingRight: 96 }} */}
+      <ListItemButton dense disabled={disabled} onClick={onItemClick}>
         <ListItemAvatar>
           <Avatar>{file.folder ? <Folder /> : <InsertDriveFile />}</Avatar>
         </ListItemAvatar>
         <ListItemText
           primary={file.name}
           secondary={`Last modified ${tsts(file.lastModified)} | Size: ${bytesToGb(file.size)}`}
-          slotProps={{ secondary: { /* variant: 'caption' */ }, primary: { noWrap: true } }}
+          slotProps={{ primary: { noWrap: true } /* secondary: { variant: 'caption' } */ }}
         />
       </ListItemButton>
     </ListItem>
   </UnstyledLink>
 )
-const FileListItemRenderer = ({ index, data, style }: ListChildComponentProps): React.JSX.Element => {
-  const { files, path, disabled, filesSelected, setFilesSelected, openMenu, onClick } = data as FileItemData
+const FileListItemRenderer = ({
+  index,
+  data,
+  style,
+}: ListChildComponentProps): React.JSX.Element => {
+  const { files, path, disabled, filesSelected, setFilesSelected, openMenu, onClick } =
+    data as FileItemData
   const router = useRouter()
   const file = files[index]
   const selectItem = (): void => {
@@ -87,10 +112,10 @@ const FileListItemRenderer = ({ index, data, style }: ListChildComponentProps): 
     let lastSelectedFileIdx = files.findLastIndex(e => filesSelected.includes(e.name))
     if (lastSelectedFileIdx === -1) lastSelectedFileIdx = 0 // If none found, select first item.
     // Select all items between the current item and found item. If they're already selected, skip.
-    const filesToSelect =
-      files.slice(Math.min(lastSelectedFileIdx, index), Math.max(lastSelectedFileIdx, index) + 1)
-        .map(e => e.name)
-        .filter(e => !filesSelected.includes(e))
+    const filesToSelect = files
+      .slice(Math.min(lastSelectedFileIdx, index), Math.max(lastSelectedFileIdx, index) + 1)
+      .map(e => e.name)
+      .filter(e => !filesSelected.includes(e))
     setFilesSelected([...filesSelected, ...filesToSelect])
   }
   const subpath = file.folder ? joinPath(path, file.name) : path
@@ -105,17 +130,21 @@ const FileListItemRenderer = ({ index, data, style }: ListChildComponentProps): 
       disabled={disabled}
       openMenu={openMenu}
       filesSelected={filesSelected}
-      onItemClick={(e) => e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey
-        ? selectItem()
-        : !e.ctrlKey && e.shiftKey && !e.metaKey && !e.altKey ? shiftClickItem() : onClick(file)}
-      onCheck={(e) => e.shiftKey ? shiftClickItem() : selectItem()}
+      onItemClick={e =>
+        e.ctrlKey && !e.shiftKey && !e.metaKey && !e.altKey
+          ? selectItem()
+          : !e.ctrlKey && e.shiftKey && !e.metaKey && !e.altKey
+            ? shiftClickItem()
+            : onClick(file)
+      }
+      onCheck={e => (e.shiftKey ? shiftClickItem() : selectItem())}
       url={`/dashboard/${router.query.server}/files${subpath}${params.size ? '?' : ''}${params}`}
     />
   )
 }
 
-interface FileItemData { /* eslint-disable react/no-unused-prop-types -- false positive */
-  files: File[]
+interface FileItemData {
+  /* eslint-disable react/no-unused-prop-types -- false positive */ files: File[]
   path: string
   disabled: boolean
   filesSelected: string[]
@@ -132,17 +161,27 @@ const FileList = (props: FileItemData): React.JSX.Element => {
   const px100sm = useMediaQuery('(min-width:328px)')
   const px120sm = useMediaQuery('(min-width:288px)')
   const px140sm = useMediaQuery('(min-width:280px)')
-  const itemSize = px60 ? 60 : (
-    !smDisplay ? 80 : ( // Sidebar is hidden when smDisplay is true, use 60/80/100/120/140/160px.
-      px60sm ? 60 : (px80sm ? 80 : (px100sm ? 100 : (px120sm ? 120 : px140sm ? 140 : 160)))
-    )
-  )
+  const itemSize = px60
+    ? 60
+    : !smDisplay
+      ? 80 // Sidebar is hidden when smDisplay is true, use 60/80/100/120/140/160px.
+      : px60sm
+        ? 60
+        : px80sm
+          ? 80
+          : px100sm
+            ? 100
+            : px120sm
+              ? 120
+              : px140sm
+                ? 140
+                : 160
   const sortedList = props.files.sort((a, b) => {
     const aName = a.name.toLowerCase()
     const bName = b.name.toLowerCase()
     if (a.folder && !b.folder) return -1
     else if (!a.folder && b.folder) return 1
-    else return aName === bName ? 0 : (aName > bName ? 1 : -1)
+    else return aName === bName ? 0 : aName > bName ? 1 : -1
   })
   return (
     <div style={{ flex: 1, listStyle: 'none', paddingTop: 8, paddingBottom: 8 }}>
@@ -159,9 +198,13 @@ const FileList = (props: FileItemData): React.JSX.Element => {
             >
               {FileListItemRenderer}
             </FixedSizeList>
-            )}
+          )}
         </AutoSizer>
-      ) : <ListItem><ListItemText primary='Looks like this place is empty.' /></ListItem>}
+      ) : (
+        <ListItem>
+          <ListItemText primary='Looks like this place is empty.' />
+        </ListItem>
+      )}
     </div>
   )
 }

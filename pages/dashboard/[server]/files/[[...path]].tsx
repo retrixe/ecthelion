@@ -15,13 +15,13 @@ const Files: NextPage<Record<string, unknown>> = () => {
   return (
     <React.StrictMode>
       <DashboardLayout loggedIn={nodeExists && serverExists && authenticated}>
-        {!nodeExists || !serverExists ? <NotExistsError node={!nodeExists} />
-          : !authenticated
-              ? <AuthFailure />
-              : <FileManager
-                  setServerExists={setServerExists}
-                  setAuthenticated={setAuthenticated}
-                />}
+        {!nodeExists || !serverExists ? (
+          <NotExistsError node={!nodeExists} />
+        ) : !authenticated ? (
+          <AuthFailure />
+        ) : (
+          <FileManager setServerExists={setServerExists} setAuthenticated={setAuthenticated} />
+        )}
       </DashboardLayout>
     </React.StrictMode>
   )

@@ -8,13 +8,13 @@ export const defaultThemeOptions: ThemeOptions = {
   palette: {
     primary: black,
     secondary: white,
-    mode: 'dark'
+    mode: 'dark',
   },
   components: {
     MuiTextField: { defaultProps: { color: 'secondary' } },
     MuiCheckbox: { defaultProps: { color: 'secondary' } },
-    MuiButton: { defaultProps: { color: 'secondary' } }
-  }
+    MuiButton: { defaultProps: { color: 'secondary' } },
+  },
 }
 const theme = createTheme(defaultThemeOptions)
 

@@ -43,31 +43,36 @@ interface Statistics {
   toDelete?: boolean
 }
 
-const StatisticsDisplay = ({ server, statistics }: {
+const StatisticsDisplay = ({
+  server,
+  statistics,
+}: {
   server: string
   statistics: Statistics
 }): React.JSX.Element => (
   <Paper style={{ padding: 20 }}>
-    <Typography variant='h5' gutterBottom>Process Statistics - {server}</Typography>
+    <Typography variant='h5' gutterBottom>
+      Process Statistics - {server}
+    </Typography>
     <Divider />
     <div style={{ paddingBottom: 10 }} />
     <Typography variant='h6'>Status</Typography>
     <Typography variant='subtitle1' gutterBottom>
-      {statistics && statistics.status === 0
-        ? 'Offline'
-        : (statistics && statistics.status === 1 ? 'Online' : 'Crashed')}
-      {statistics?.toDelete ? ' (marked for deletion)' : ''}
+      {statistics.status === 0 ? 'Offline' : statistics.status === 1 ? 'Online' : 'Crashed'}
+      {statistics.toDelete ? ' (marked for deletion)' : ''}
     </Typography>
     <Typography variant='h6'>Uptime</Typography>
     <Typography variant='subtitle1' gutterBottom>
-      {statistics?.uptime ? parseDuration(statistics.uptime) : 'N/A'}
+      {statistics.uptime ? parseDuration(statistics.uptime) : 'N/A'}
     </Typography>
     <Divider />
     <div style={{ paddingBottom: 10 }} />
     <Typography variant='h6'>CPU Usage</Typography>
     <Typography gutterBottom>{Math.ceil(statistics.cpuUsage)}%</Typography>
     <LinearProgress
-      variant='determinate' color='secondary' value={Math.ceil(statistics.cpuUsage)}
+      variant='determinate'
+      color='secondary'
+      value={Math.ceil(statistics.cpuUsage)}
     />
     <br />
     <Typography variant='h6'>RAM Usage</Typography>
@@ -76,9 +81,9 @@ const StatisticsDisplay = ({ server, statistics }: {
       {Math.round(statistics.totalMemory / 1024 / 1024)} MB
     </Typography>
     <LinearProgress
-      variant='determinate' color='secondary' value={
-        statistics.memoryUsage * 100 / statistics.totalMemory
-      }
+      variant='determinate'
+      color='secondary'
+      value={(statistics.memoryUsage * 100) / statistics.totalMemory}
     />
   </Paper>
 )
@@ -95,7 +100,7 @@ const StatisticsPage = (): React.JSX.Element => {
   // Check if the user is authenticated.
   const loadStatistics = useCallback(() => {
     if (!server || !nodeExists) return
-    (async () => {
+    ;(async () => {
       // Fetch server stats.
       const res = await ky.get(`server/${server}`)
       if (res.ok) {
@@ -119,12 +124,15 @@ const StatisticsPage = (): React.JSX.Element => {
         url={`/dashboard/${server}`}
       />
       <DashboardLayout loggedIn={nodeExists && serverExists && authenticated}>
-        {!nodeExists || !serverExists ? <NotExistsError node={!nodeExists} />
-          : !authenticated ? <AuthFailure /> : (
-            (!listening || !statistics) ? <ConnectionFailure loading={listening === null} /> : (
-              <StatisticsDisplay server={server ?? ''} statistics={statistics} />
-            )
-          )}
+        {!nodeExists || !serverExists ? (
+          <NotExistsError node={!nodeExists} />
+        ) : !authenticated ? (
+          <AuthFailure />
+        ) : !listening || !statistics ? (
+          <ConnectionFailure loading={listening === null} />
+        ) : (
+          <StatisticsDisplay server={server ?? ''} statistics={statistics} />
+        )}
       </DashboardLayout>
     </React.StrictMode>
   )

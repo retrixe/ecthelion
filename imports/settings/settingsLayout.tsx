@@ -1,9 +1,18 @@
 import React, { useState } from 'react'
 import styled from '@emotion/styled'
 import {
-  Typography, IconButton, Drawer,
-  List, ListItemButton, ListItemIcon, ListItemText,
-  Divider, useMediaQuery, useTheme, Toolbar, Tooltip
+  Typography,
+  IconButton,
+  Drawer,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Divider,
+  useMediaQuery,
+  useTheme,
+  Toolbar,
+  Tooltip,
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import Apps from '@mui/icons-material/Apps'
@@ -21,10 +30,14 @@ const SettingsContainer = styled.div({
   padding: 20,
   flexDirection: 'column',
   display: 'flex',
-  flex: 1
+  flex: 1,
 })
 
-const DrawerItem = (props: { icon: React.ReactElement, name: string, subUrl: string }): React.JSX.Element => (
+const DrawerItem = (props: {
+  icon: React.ReactElement
+  name: string
+  subUrl: string
+}): React.JSX.Element => (
   <UnstyledLink href={`/settings/${props.subUrl}`}>
     <ListItemButton style={{ width: 200 }}>
       <ListItemIcon>{props.icon}</ListItemIcon>
@@ -40,12 +53,14 @@ const onLogout = (): void => {
   fetch(`${config.ip}/logout`, { headers: { Authorization: token ?? '' } }).catch(console.error)
 }
 
-const SettingsLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>): React.JSX.Element => {
+const SettingsLayout = (
+  props: React.PropsWithChildren<{ loggedIn: boolean }>,
+): React.JSX.Element => {
   const [openDrawer, setOpenDrawer] = useState(false)
   const drawerVariant = useMediaQuery(useTheme().breakpoints.only('xs')) ? 'temporary' : 'permanent'
   const appBarContent = (
     <>
-      {(props.loggedIn && drawerVariant === 'temporary') && (
+      {props.loggedIn && drawerVariant === 'temporary' && (
         <>
           <IconButton
             color='inherit'
@@ -57,11 +72,15 @@ const SettingsLayout = (props: React.PropsWithChildren<{ loggedIn: boolean }>): 
           <div style={{ marginRight: 10 }} />
         </>
       )}
-      <Typography variant='h6' color='inherit' style={{ flex: 1 }}>Octyne</Typography>
+      <Typography variant='h6' color='inherit' style={{ flex: 1 }}>
+        Octyne
+      </Typography>
       {props.loggedIn && (
         <UnstyledLink href='/servers'>
           <Tooltip title='Servers'>
-            <IconButton size='large' color='inherit'><Apps /></IconButton>
+            <IconButton size='large' color='inherit'>
+              <Apps />
+            </IconButton>
           </Tooltip>
         </UnstyledLink>
       )}

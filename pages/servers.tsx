@@ -35,7 +35,9 @@ const Servers = (): React.JSX.Element => {
       <Layout
         appBar={
           <>
-            <Typography variant='h6' color='inherit' style={{ flex: 1 }}>Octyne</Typography>
+            <Typography variant='h6' color='inherit' style={{ flex: 1 }}>
+              Octyne
+            </Typography>
             <UnstyledLink prefetch={false} href='/settings/about'>
               <Tooltip title={failure === 'logged out' ? 'About' : 'Settings'}>
                 <IconButton size='large' color='inherit'>
@@ -54,16 +56,19 @@ const Servers = (): React.JSX.Element => {
         }
       >
         <div style={{ marginTop: '2em', paddingLeft: 20, paddingRight: 20, paddingBottom: 20 }}>
-          {failure === 'failed'
-            ? <ConnectionFailure loading={false} />
-            : (failure === 'logged out' ? <AuthFailure /> : (
-              <>
-                <ServerList ip={ip} setMessage={setMessage} setFailure={setFailure} />
-                {nodes && Object.keys(nodes).map(key => (
+          {failure === 'failed' ? (
+            <ConnectionFailure loading={false} />
+          ) : failure === 'logged out' ? (
+            <AuthFailure />
+          ) : (
+            <>
+              <ServerList ip={ip} setMessage={setMessage} setFailure={setFailure} />
+              {nodes &&
+                Object.keys(nodes).map(key => (
                   <ServerList key={key} node={key} ip={nodes[key]} setMessage={setMessage} />
                 ))}
-              </>
-              ))}
+            </>
+          )}
         </div>
       </Layout>
       {/* Error message to show. */}
