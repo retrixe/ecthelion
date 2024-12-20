@@ -45,8 +45,10 @@ export const useOctyneAuth = (): OctyneDataWithAuth => {
 const useOctyneData = (): OctyneData => {
   const nodes = config.nodes ?? {}
   const router = useRouter()
-  const server = router.query.server?.toString()
-  const node = router.query.node?.toString()
+  let server = router.query.server?.toString()
+  if (!server) server = undefined
+  let node = router.query.node?.toString()
+  if (!node) node = undefined
   const ip = node ? nodes[node] : config.ip
   const nodeExists = !node || !!(node && nodes[node])
 
