@@ -3,6 +3,7 @@ import Typography from '@mui/material/Typography'
 import styled from '@emotion/styled'
 
 const chrome =
+  typeof window === 'object' &&
   Object.hasOwnProperty.call(window, 'chrome') &&
   typeof navigator === 'object' &&
   typeof navigator.userAgent === 'string' &&

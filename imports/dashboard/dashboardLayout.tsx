@@ -19,7 +19,7 @@ import Login from '@mui/icons-material/Login'
 import Logout from '@mui/icons-material/Logout'
 import MenuIcon from '@mui/icons-material/Menu'
 import TrendingUp from '@mui/icons-material/TrendingUp'
-import CallToAction from '@mui/icons-material/CallToAction'
+import Terminal from '@mui/icons-material/Terminal'
 import Settings from '@mui/icons-material/Settings'
 import Storage from '@mui/icons-material/Storage'
 
@@ -118,7 +118,7 @@ const DashboardLayout = (
             {drawerVariant === 'permanent' && <Toolbar />}
             <List>
               <DrawerItem name='Statistics' subUrl='' icon={<TrendingUp />} />
-              <DrawerItem name='Console' subUrl='console' icon={<CallToAction />} />
+              <DrawerItem name='Console' subUrl='console' icon={<Terminal />} />
               <DrawerItem name='Files' subUrl='files' icon={<Storage />} />
             </List>
           </Drawer>
