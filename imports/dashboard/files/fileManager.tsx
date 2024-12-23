@@ -29,7 +29,7 @@ import ConnectionFailure from '../../errors/connectionFailure'
 import useOctyneData from '../useOctyneData'
 import useKy from '../../helpers/useKy'
 
-import Editor from './editor'
+import DynamicEditor from './dynamicEditor'
 import Overlay from './overlay'
 import { archiveRegex, joinPath, normalisePath, parentPath, uploadFormData } from './fileUtils'
 import UploadButton from './uploadButton'
@@ -469,7 +469,7 @@ const FileManager = (props: {
         alternativeDisplay
       ) : file !== null ? (
         <Paper style={{ padding: 20 }}>
-          <Editor
+          <DynamicEditor
             {...file}
             siblingFiles={files.map(e => e.name)}
             onSave={handleSaveFile}

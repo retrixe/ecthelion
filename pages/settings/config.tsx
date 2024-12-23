@@ -1,19 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react'
-
+import { useRouter } from 'next/router'
 import { Button, FormControl, InputLabel, MenuItem, Paper, Select, Typography } from '@mui/material'
 
 import config from '../../imports/config'
 import useKy from '../../imports/helpers/useKy'
 import Title from '../../imports/helpers/title'
 import Message from '../../imports/helpers/message'
-import Editor from '../../imports/dashboard/files/editor'
+import DynamicEditor from '../../imports/dashboard/files/dynamicEditor'
 import AuthFailure from '../../imports/errors/authFailure'
 import NotExistsError from '../../imports/errors/notExistsError'
 import useOctyneData from '../../imports/dashboard/useOctyneData'
 import ConfirmDialog from '../../imports/settings/confirmDialog'
 import SettingsLayout from '../../imports/settings/settingsLayout'
 import ConnectionFailure from '../../imports/errors/connectionFailure'
-import { useRouter } from 'next/router'
 
 const confirmDialogWarning =
   'Are you sure you want to do this? Make sure the config is correct, \
@@ -154,7 +153,7 @@ const ConfigPage = (): React.JSX.Element => {
               </Paper>
             ) : (
               <Paper style={{ padding: 20 }}>
-                <Editor
+                <DynamicEditor
                   name={`config.json${node ? ` on node ${node}` : ''}`}
                   content={fileContent}
                   siblingFiles={[]}

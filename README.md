@@ -4,7 +4,7 @@ A frontend for Octyne.
 
 ## Quick Start
 
-1. Prerequisites: Install [Node.js](https://nodejs.dev/en/download/) (on macOS/Linux, follow the "install via a package manager" instructions, preferably using [n](https://nodejs.dev/en/download/package-manager#n) to get the latest Node.js LTS version) and [Git](https://www.atlassian.com/git/tutorials/install-git). After installing Node.js, run `corepack enable` in the terminal to install the Yarn package manager (run as administrator/`sudo` may be needed).
+1. Prerequisites: Install [Node.js](https://nodejs.dev/en/download/) and [Git](https://www.atlassian.com/git/tutorials/install-git). Run `corepack enable` in the terminal as admin/`sudo` to install the Yarn package manager.
 2. Download Ecthelion to a folder by running `git clone https://github.com/retrixe/ecthelion.git` in terminal where you wish to place Ecthelion.
 3. Select the current version of Ecthelion after downloading it by running `git checkout <version>` in the Ecthelion folder. Alternatively, for the development version, run `git checkout main`.
 4. Follow the steps [here](https://github.com/retrixe/ecthelion#configuration) to configure Ecthelion correctly. After configuration changes, rebuild Ecthelion with `yarn && yarn build`.
@@ -31,5 +31,5 @@ Create a `config.json` in the top level of the project and then add the followin
 **⚠️ Important Notes:**
 
 - The `ip` field is required, while `nodes`, `basePath` and `enableCookieAuth` are optional.
-- Cookie authentication is more secure, but it requires Octyne v1.1+, and Ecthelion + all Octyne nodes must be under 1 domain or IP address! For this, you can use a reverse proxy like nginx or Apache, [the Octyne documentation has sample configs for both software](https://github.com/retrixe/octyne#security-practices-and-reverse-proxying) to achieve this.
 - Absolute URLs to Octyne should be accessible to users (make sure Octyne is port forwarded), and are in the format of `http[s]://<ip address or domain name>[:<port>][/<sub-URL if using nginx/apache to reverse proxy>]`, e.g. `http://43.12.45.32:42069` or `https://console.myserver.com/octyne`. The URL should also not end with `/`!
+- Cookie authentication is more secure, but it requires Octyne v1.1+, and Ecthelion + all Octyne nodes must be under 1 domain or IP address! For this, you can use a reverse proxy like nginx or Apache, [the Octyne documentation has sample configs for both software](https://github.com/retrixe/octyne#security-practices-and-reverse-proxying) to achieve this.
