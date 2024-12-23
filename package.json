@@ -1,6 +1,6 @@
 {
   "name": "ecthelion",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "A frontend for Octyne.",
   "main": "pages/index.tsx",
   "repository": "https://github.com/retrixe/ecthelion.git",
