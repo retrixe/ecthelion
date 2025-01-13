@@ -11,6 +11,23 @@ const defaultKy = ky.create({
     beforeRequest: [
       req => req.headers.set('Authorization', localStorage.getItem('ecthelion:token') ?? ''),
     ],
+    beforeError: [
+      async error => {
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          const data = await error.response?.json<{ error?: string }>()
+          if (data.error) {
+            error.name = 'OctyneError'
+            error.message = data.error
+          }
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        } catch (e: unknown) {
+          /* Do nothing */
+        }
+
+        return error
+      },
+    ],
   },
 })
 
