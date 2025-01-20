@@ -41,7 +41,7 @@ import FolderCreationDialog from './folderCreationDialog'
 const euc: (uriComponent: string | number | boolean) => string =
   typeof encodeURIComponent === 'function' ? encodeURIComponent : e => e.toString()
 const errorMessage = (err: unknown) =>
-  err instanceof Error ? err.message : typeof err === 'string' ? err : JSON.stringify(err)
+  err instanceof Error ? err.message : (err?.toString() ?? 'Unknown error occurred!')
 const editorExts = ['properties', 'json', 'yaml', 'yml', 'xml', 'js', 'log', 'sh', 'txt']
 
 const FileManager = (props: {
