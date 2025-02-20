@@ -154,7 +154,7 @@ const ConfigPage = (): React.JSX.Element => {
             ) : (
               <Paper style={{ padding: 20 }}>
                 <DynamicEditor
-                  name={`config.json${node ? ` on node ${node}` : ''}`}
+                  name={`${node ? node + ' -' : 'Primary'} config.json`}
                   content={fileContent}
                   siblingFiles={[]}
                   onSave={(name, content) => setConfirmDialog(content)}
