@@ -10,11 +10,25 @@ import packageJson from '../../package.json'
 
 const { version } = packageJson
 
+const tastefulImages = [
+  '737487.png.avif',
+  '1349198.png.avif',
+  '1351258.png.avif',
+  '60095408_p0.jpg.avif',
+  '63064155_p0.jpg.avif',
+  '77414471_p0.jpg.avif',
+  '77734327_p0.jpg.avif',
+  '85153440_p0.jpg.avif',
+  '89024838_p0.jpg.avif',
+  '95394439_p0.jpg.avif',
+]
+
 const About = (): React.JSX.Element => {
   const ky = useKy()
   const [loggedIn, setLoggedIn] = useState(true)
   const [lightMode, setLightMode] = useState(false)
   const [terminalUi, setTerminalUi] = useState(false)
+  const [animeTheme, setAnimeTheme] = useState<string | null>(null)
   const [squareCorners, setSquareCorners] = useState(false)
   const updateTheme = React.useContext(UpdateThemeContext)
 
@@ -23,6 +37,7 @@ const About = (): React.JSX.Element => {
     ky.get('servers', { throwHttpErrors: true }).catch(() => setLoggedIn(false))
     setLightMode(localStorage.getItem('ecthelion:light-mode') === 'true')
     setTerminalUi(localStorage.getItem('ecthelion:terminal-ui') === 'true')
+    setAnimeTheme(localStorage.getItem('anime-theme'))
     setSquareCorners(localStorage.getItem('ecthelion:square-corners') === 'true')
   }, [ky])
   const handleSquareCornersToggle = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -43,6 +58,15 @@ const About = (): React.JSX.Element => {
     else localStorage.removeItem('ecthelion:light-mode')
     updateTheme()
   }
+  const handleAnimeThemeToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newImage = e.target.checked
+      ? tastefulImages[kawaiiiii.current++ % tastefulImages.length]
+      : null
+    setAnimeTheme(newImage)
+    if (newImage) localStorage.setItem('anime-theme', newImage)
+    else localStorage.removeItem('anime-theme')
+    updateTheme()
+  }
 
   const [octyneVersion, setOctyneVersion] = useState('')
   useEffect(() => {
@@ -57,6 +81,9 @@ const About = (): React.JSX.Element => {
       )
   })
   const nodeLength = Object.keys(config.nodes ?? {}).length
+
+  const kawaiiiii = React.useRef(0)
+  const currentImage = tastefulImages.findIndex(img => img === animeTheme) + 1
 
   return (
     <React.StrictMode>
@@ -115,6 +142,12 @@ const About = (): React.JSX.Element => {
               label='Square Corners'
               control={
                 <Switch color='info' checked={squareCorners} onChange={handleSquareCornersToggle} />
+              }
+            />
+            <FormControlLabel
+              label={`anime theme! uwu kawaiiiii~${animeTheme ? ` (image #${currentImage})` : ''}`}
+              control={
+                <Switch color='info' checked={!!animeTheme} onChange={handleAnimeThemeToggle} />
               }
             />
           </FormGroup>

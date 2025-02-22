@@ -19,6 +19,21 @@ const Layout = (
   }>,
 ): React.JSX.Element => (
   <LayoutContainer>
+    {typeof localStorage === 'object' && localStorage.getItem('anime-theme') && (
+      // eslint-disable-next-line react/no-unknown-property
+      <style jsx global>
+        {`
+          body {
+            background-image: url('https://f002.backblazeb2.com/file/retrixe-storage-public/ecthelion/${localStorage.getItem(
+              'anime-theme',
+            )}');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+          }
+        `}
+      </style>
+    )}
     {/* <style jsx global>
       {`
       body {
