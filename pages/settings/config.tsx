@@ -24,7 +24,7 @@ const ConfigPage = (): React.JSX.Element => {
   const router = useRouter()
 
   const [message, setMessage] = useState('')
-  const [fileContent, setFileContent] = useState<string | null>('')
+  const [fileContent, setFileContent] = useState<[string, string] | null>(['', 'json'])
   const [listening, setListening] = useState<boolean | null>(null)
   const [authenticated, setAuthenticated] = useState(true)
   // false = no, true = reload, string = save
@@ -40,7 +40,8 @@ const ConfigPage = (): React.JSX.Element => {
         const config = await res.text()
         setListening(true)
         setAuthenticated(true)
-        setFileContent(res.status === 404 ? null : config)
+        const extension = (res.headers.get('content-type')?.split('/').pop() ?? '') || 'json'
+        setFileContent(res.status === 404 ? null : [config, extension])
       } else setListening(false)
     } catch (e) {
       console.error(e)
@@ -154,11 +155,11 @@ const ConfigPage = (): React.JSX.Element => {
             ) : (
               <Paper style={{ padding: 20 }}>
                 <DynamicEditor
-                  name={`${node ? node + ' -' : 'Primary'} config.json`}
-                  content={fileContent}
+                  name={`${node ? node + ' -' : 'Primary'} config.${fileContent[1]}`}
+                  content={fileContent[0]}
                   siblingFiles={[]}
                   onSave={(name, content) => setConfirmDialog(content)}
-                  onClose={setContent => setContent(fileContent)}
+                  onClose={setContent => setContent(fileContent[0])}
                   onDownload={() => {
                     const element = document.createElement('a')
                     ky.get('config', { throwHttpErrors: true })
