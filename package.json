@@ -33,7 +33,7 @@
     "@uiw/codemirror-theme-material": "^4.23.7",
     "@uiw/react-codemirror": "^4.23.7",
     "ky": "^1.7.4",
-    "next": "^15.1.2",
+    "next": "^15.2.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-virtualized-auto-sizer": "^1.0.25",
