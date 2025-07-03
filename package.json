@@ -13,7 +13,7 @@
     "dev": "next",
     "build": "next build",
     "start": "next start",
-    "export": "next export",
+    "export": "NEXT_OUTPUT=export next build",
     "prepare": "husky install",
     "lint": "eslint . && tsc --noEmit"
   },
