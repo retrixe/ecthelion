@@ -17,6 +17,7 @@ export default tseslint.config(
       '.pnp.loader.mjs',
       '.yarn',
       '.next',
+      'out',
       '.prettierrc.mjs',
       '*.config.{mjs,js}',
     ],

@@ -611,7 +611,7 @@ const FileManager = (props: {
         <Snackbar
           open
           autoHideDuration={10000}
-          TransitionComponent={props => <Slide direction='up' {...props} />}
+          slots={{ transition: props => <Slide direction='up' {...props} /> }}
           onClose={handleCloseDownload}
           message={`Do you want to download '${download}'?`}
           action={[

@@ -14,7 +14,7 @@ const Message = ({
     open={!!message}
     autoHideDuration={5000}
     onClose={() => setMessage('')}
-    ContentProps={{ 'aria-describedby': 'message-id' }}
+    slotProps={{ content: { 'aria-describedby': 'message-id' } }}
     message={<span id='message-id'>{message}</span>}
     action={[
       <Button key='undo' color='secondary' size='small' onClick={() => setMessage('')}>
