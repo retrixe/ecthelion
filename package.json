@@ -13,7 +13,7 @@
     "dev": "next",
     "build": "next build",
     "start": "next start",
-    "export": "NEXT_OUTPUT=export next build",
+    "export": "NEXT_OUTPUT=export next build $@ && echo > out/.placeholder",
     "prepare": "husky install",
     "lint": "tsc --noEmit && eslint --cache --cache-strategy content --cache-location .next/ ."
   },
