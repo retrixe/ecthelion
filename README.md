@@ -67,8 +67,8 @@ Create a `config.json` in the top level of the project and then add the followin
 **⚠️ Important Notes:**
 
 - The `ip` field is required, while `nodes`, `basePath` and `enableCookieAuth` are optional.
-- If the built-in Web UI is enabled on any Octyne node (enabled by default since Octyne v1.4+), make sure to add `/api` at the end of the URL.
 - Absolute URLs to Octyne should be accessible to users (make sure Octyne is port forwarded), and are in the format of `http[s]://<ip address or domain name>[:<port>][/<sub-URL if using nginx/apache to reverse proxy>]`, e.g. `http://43.12.45.32:42069` or `https://console.myserver.com/octyne`. The URL should also not end with `/`!
 - Cookie authentication is more secure, but it requires Octyne v1.1+, and Ecthelion + Octyne nodes must be under a single domain / IP address!
 
   To achieve this, you can use a reverse proxy like nginx or Apache. [The Octyne documentation has sample configs for both.](https://github.com/retrixe/octyne#https-setup)
+- It is possible to point Ecthelion to an Octyne v1.4+ Web UI port instead of an API port, by adding `/api` to the end of the URL.
