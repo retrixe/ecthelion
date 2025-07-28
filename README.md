@@ -55,9 +55,9 @@ Create a `config.json` in the top level of the project and then add the followin
 
 ```json
 {
-  "ip": "<absolute URL to Octyne>",
+  "ip": "<absolute URL to Octyne (in multi-node setups, the primary node)>",
   "nodes": {
-    "<name of node>": "<absolute URL to Octyne node>"
+    "<name of secondary node>": "<absolute URL to Octyne node>"
   },
   "basePath": "<pass this if you want ecthelion on a sub-path like e.g. /ecthelion>",
   "enableCookieAuth": false
@@ -67,6 +67,7 @@ Create a `config.json` in the top level of the project and then add the followin
 **⚠️ Important Notes:**
 
 - The `ip` field is required, while `nodes`, `basePath` and `enableCookieAuth` are optional.
+- If Octyne is hosted under the same domain/IP address as Ecthelion, you can use a relative URL like `/octyne` or `/octyne/api`.
 - Absolute URLs to Octyne should be accessible to users (make sure Octyne is port forwarded), and are in the format of `http[s]://<ip address or domain name>[:<port>][/<sub-URL if using nginx/apache to reverse proxy>]`, e.g. `http://43.12.45.32:42069` or `https://console.myserver.com/octyne`. The URL should also not end with `/`!
 - Cookie authentication is more secure, but it requires Octyne v1.1+, and Ecthelion + Octyne nodes must be under a single domain / IP address!
 
