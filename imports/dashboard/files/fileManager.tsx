@@ -609,6 +609,7 @@ const FileManager = (props: {
       )}
       {download && (
         <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           open
           autoHideDuration={10000}
           slots={{ transition: props => <Slide direction='up' {...props} /> }}

@@ -198,7 +198,7 @@ const AccountsPage = (): React.JSX.Element => {
         )}
         <Message message={message} setMessage={setMessage} />
         <Snackbar
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           open={!!deleteAccount}
           autoHideDuration={5000}
           onClose={() => setDeleteAccount('')}
