@@ -22,7 +22,7 @@
     "@codemirror/lang-javascript": "^6.2.4",
     "@codemirror/lang-markdown": "^6.3.3",
     "@codemirror/language-data": "^6.5.1",
-    "@codemirror/view": "^6.38.0",
+    "@codemirror/view": "^6.38.1",
     "@emotion/cache": "^11.14.0",
     "@emotion/react": "^11.14.0",
     "@emotion/server": "^11.11.0",
