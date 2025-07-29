@@ -32,6 +32,7 @@ const Editor = (props: {
   onSave: (name: string, content: string) => Promise<void> | void
   onDownload: () => void
   onClose: (setContent: React.Dispatch<React.SetStateAction<string>>) => void
+  saveText?: string
   closeText?: string
 }): React.JSX.Element => {
   const [language, setLanguage] = useState<Extension | undefined>()
@@ -99,7 +100,7 @@ const Editor = (props: {
         </Button>
         <div style={{ flex: 1 }} />
         <Button variant='contained' disabled={saving || error} color='secondary' onClick={saveFile}>
-          Save
+          {props.saveText ?? 'Save'}
         </Button>
       </div>
       {saving && (

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
-import { Button, FormControl, InputLabel, MenuItem, Paper, Select, Typography } from '@mui/material'
+import { FormControl, InputLabel, MenuItem, Paper, Select, Typography } from '@mui/material'
 
 import config from '../../imports/config'
 import useKy from '../../imports/helpers/useKy'
@@ -124,7 +124,7 @@ const ConfigPage = (): React.JSX.Element => {
                   ))}
                 </Select>
               </FormControl>
-              {fileContent !== null && (
+              {/* fileContent !== null && (
                 <Button
                   variant='contained'
                   color='secondary'
@@ -134,7 +134,7 @@ const ConfigPage = (): React.JSX.Element => {
                 >
                   Read config from disk and reload
                 </Button>
-              )}
+              ) */}
             </Paper>
             <br />
             {fileContent === null ? (
@@ -178,6 +178,7 @@ const ConfigPage = (): React.JSX.Element => {
                         console.error(e)
                       })
                   }}
+                  saveText='Apply'
                   closeText='Undo Changes'
                 />
                 {message && <Message message={message} setMessage={setMessage} />}
