@@ -1,6 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/router'
-import { FormControl, InputLabel, MenuItem, Paper, Select, Typography } from '@mui/material'
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  Tab,
+  Tabs,
+  Typography,
+} from '@mui/material'
 
 import config from '../../imports/config'
 import useKy from '../../imports/helpers/useKy'
@@ -13,6 +22,7 @@ import useOctyneData from '../../imports/dashboard/useOctyneData'
 import ConfirmDialog from '../../imports/settings/confirmDialog'
 import SettingsLayout from '../../imports/settings/settingsLayout'
 import ConnectionFailure from '../../imports/errors/connectionFailure'
+import InteractiveConfigEditor from '../../imports/settings/interactiveConfigEditor'
 
 const confirmDialogWarning =
   'Are you sure you want to do this? Make sure the config is correct, \
@@ -25,6 +35,7 @@ const ConfigPage = (): React.JSX.Element => {
 
   const [message, setMessage] = useState('')
   const [fileContent, setFileContent] = useState<[string, string] | null>(['', 'json'])
+  const [interactiveEditor, setInteractiveEditor] = useState(true)
   const [listening, setListening] = useState<boolean | null>(null)
   const [authenticated, setAuthenticated] = useState(true)
   // false = no, true = reload, string = save
@@ -94,7 +105,7 @@ const ConfigPage = (): React.JSX.Element => {
               <Typography variant='h5' gutterBottom style={{ marginBottom: '1em' }}>
                 Manage Octyne
               </Typography>
-              <FormControl fullWidth>
+              <FormControl fullWidth style={{ marginBottom: '1em' }}>
                 <InputLabel id='octyne-node-select-label' color='secondary'>
                   Octyne Node
                 </InputLabel>
@@ -153,34 +164,52 @@ const ConfigPage = (): React.JSX.Element => {
                 </a>
               </Paper>
             ) : (
-              <Paper style={{ padding: 20 }}>
-                <DynamicEditor
-                  name={`${node ? node + ' -' : 'Primary'} config.${fileContent[1]}`}
-                  content={fileContent[0]}
-                  siblingFiles={[]}
-                  onSave={(name, content) => setConfirmDialog(content)}
-                  onClose={setContent => setContent(fileContent[0])}
-                  onDownload={() => {
-                    const element = document.createElement('a')
-                    ky.get('config', { throwHttpErrors: true })
-                      .text()
-                      .then(text => {
-                        const config = encodeURIComponent(text)
-                        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + config)
-                        element.setAttribute('download', 'config.json')
-                        element.style.display = 'none'
-                        document.body.appendChild(element)
-                        element.click()
-                        document.body.removeChild(element)
-                      })
-                      .catch((e: unknown) => {
-                        setMessage('Failed to download config!')
-                        console.error(e)
-                      })
-                  }}
-                  saveText='Apply'
-                  closeText='Undo Changes'
-                />
+              <Paper style={{ padding: 20 /*, paddingTop: 0 */ }}>
+                <Tabs
+                  value={interactiveEditor ? 'gui' : 'text'}
+                  onChange={(e, newValue) => setInteractiveEditor(newValue === 'gui')}
+                  indicatorColor='secondary'
+                  textColor='secondary'
+                  sx={{ marginBottom: 2, display: 'none' }}
+                >
+                  <Tab label='Interactive' value='gui' />
+                  <Tab label='Text Editor' value='text' />
+                </Tabs>
+                {interactiveEditor ? (
+                  <InteractiveConfigEditor
+                    title={node ? `${node} - Octyne settings` : 'Primary Octyne settings'}
+                    content={fileContent[0]}
+                    onSave={content => setConfirmDialog(content)}
+                  />
+                ) : (
+                  <DynamicEditor
+                    name={`${node ? node + ' -' : 'Primary'} config.${fileContent[1]}`}
+                    content={fileContent[0]}
+                    siblingFiles={[]}
+                    onSave={(name, content) => setConfirmDialog(content)}
+                    onClose={setContent => setContent(fileContent[0])}
+                    onDownload={() => {
+                      const element = document.createElement('a')
+                      ky.get('config', { throwHttpErrors: true })
+                        .text()
+                        .then(text => {
+                          const config = encodeURIComponent(text)
+                          element.setAttribute('href', 'data:text/plain;charset=utf-8,' + config)
+                          element.setAttribute('download', 'config.json')
+                          element.style.display = 'none'
+                          document.body.appendChild(element)
+                          element.click()
+                          document.body.removeChild(element)
+                        })
+                        .catch((e: unknown) => {
+                          setMessage('Failed to download config!')
+                          console.error(e)
+                        })
+                    }}
+                    saveText='Apply'
+                    closeText='Undo Changes'
+                  />
+                )}
                 {message && <Message message={message} setMessage={setMessage} />}
               </Paper>
             )}

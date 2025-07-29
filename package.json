@@ -32,6 +32,7 @@
     "@mui/material": "^7.2.0",
     "@uiw/codemirror-theme-material": "^4.24.0",
     "@uiw/react-codemirror": "^4.24.0",
+    "comment-json": "^4.2.5",
     "ky": "^1.8.1",
     "next": "^15.3.5",
     "react": "^19.1.0",
