@@ -38,28 +38,30 @@ const DashboardAppMenu = ({
       anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       transformOrigin={{ vertical: 'bottom', horizontal: 'left' }}
     >
-      {Object.keys(config.nodes ?? {}).map(node => [
-        servers.nodes[node] ? (
-          Object.keys(servers.nodes[node]).map(app => (
-            <MenuItem
-              dense={dense}
-              key={app}
-              selected={app === server && node === 'machine1'}
-              onClick={handleClick(app, node)}
-            >
-              {app}
+      {Object.keys(config.nodes ?? {})
+        .reverse()
+        .map(node => [
+          servers.nodes[node] ? (
+            Object.keys(servers.nodes[node]).map(app => (
+              <MenuItem
+                dense={dense}
+                key={app}
+                selected={app === server && node === 'machine1'}
+                onClick={handleClick(app, node)}
+              >
+                {app}
+              </MenuItem>
+            ))
+          ) : (
+            <MenuItem dense={dense} disabled>
+              Failed to fetch!
             </MenuItem>
-          ))
-        ) : (
-          <MenuItem dense={dense} disabled>
-            Failed to fetch!
-          </MenuItem>
-        ),
-        <MenuItem key={node} dense={dense} disabled>
-          Node: {node}
-        </MenuItem>,
-        <Divider key={node + '-divider'} />,
-      ])}
+          ),
+          <MenuItem key={node} dense={dense} disabled>
+            Node: {node}
+          </MenuItem>,
+          <Divider key={node + '-divider'} />,
+        ])}
       {servers.default ? (
         Object.keys(servers.default).map(app => (
           <MenuItem
@@ -77,7 +79,7 @@ const DashboardAppMenu = ({
         </MenuItem>
       )}
       <MenuItem dense={dense} disabled>
-        Default Octyne node
+        Primary Octyne node
       </MenuItem>
     </Menu>
   )

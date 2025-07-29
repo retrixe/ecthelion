@@ -88,7 +88,7 @@ const DashboardLayout = (
         ).servers
       else
         console.error(
-          'Failed to get server list of default Octyne node!',
+          'Failed to get server list of primary Octyne node!',
           defaultReq.status === 'fulfilled' ? defaultReq.value : defaultReq.reason,
         )
 
