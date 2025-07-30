@@ -34,11 +34,12 @@ const IndexContainer = emotionStyled.div({
   overflow: 'auto',
 })
 
+const unknownError = 'An unknown error occurred. Is the server online and configured properly?'
+
 const Index = (): React.JSX.Element => {
-  const [failedAuth, setFailedAuth] = useState(false) // Unable to authorize with the server.
-  const [invalid, setInvalid] = useState(false) // Invalid credentials.
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState<string | null>(null)
   const [passRef, setPassRef] = useState<HTMLInputElement | null>(null)
 
   const ky = useKy()
@@ -62,11 +63,10 @@ const Index = (): React.JSX.Element => {
       if (!request.ok) {
         // If it was an authentication error, we handle it by setting failedAuth to true.
         if (request.status === 401) {
-          setInvalid(true)
-          setFailedAuth(false)
+          setError('Your username or password is incorrect.')
         } else {
-          setInvalid(false)
-          setFailedAuth(true)
+          const response = (await request.json()) as { error?: string } | undefined
+          setError(response?.error ?? unknownError)
         }
         return
       }
@@ -75,14 +75,13 @@ const Index = (): React.JSX.Element => {
         // Save the access token in localStorage if received in JSON body.
         if (response.token) localStorage.setItem('ecthelion:token', response.token)
         // Also, if authentication previously failed, let's just say it succeeded.
-        setFailedAuth(false)
-        setInvalid(false)
+        setError(null)
         // Then we redirect to the new page.
         router.push(route).catch(console.error)
       }
     } catch (e) {
       console.error(e)
-      setFailedAuth(true)
+      setError(unknownError)
     }
   }
 
@@ -138,7 +137,7 @@ const Index = (): React.JSX.Element => {
                 label='Username'
                 value={username}
                 onChange={e => setUsername(e.target.value)}
-                error={failedAuth || invalid}
+                error={!!error}
                 onKeyDown={e => e.key === 'Enter' && passRef && passRef.focus()}
                 autoFocus
               />
@@ -151,7 +150,7 @@ const Index = (): React.JSX.Element => {
                 label='Password'
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                error={failedAuth || invalid}
+                error={!!error}
                 type='password'
                 onSubmit={handleLogin}
                 onKeyDown={e => {
@@ -159,14 +158,10 @@ const Index = (): React.JSX.Element => {
                 }}
               />
               <br />
-              {(failedAuth || invalid) && (
+              {error && (
                 <>
                   <br />
-                  <Typography color='error'>
-                    {failedAuth
-                      ? 'An unknown error occurred. Is the server online?'
-                      : 'Your username or password is incorrect.'}
-                  </Typography>
+                  <Typography color='error'>{error}</Typography>
                 </>
               )}
               <br />

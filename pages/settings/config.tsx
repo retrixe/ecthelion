@@ -164,13 +164,13 @@ const ConfigPage = (): React.JSX.Element => {
                 </a>
               </Paper>
             ) : (
-              <Paper style={{ padding: 20 /*, paddingTop: 0 */ }}>
+              <Paper style={{ padding: 20, paddingTop: 0 }}>
                 <Tabs
                   value={interactiveEditor ? 'gui' : 'text'}
                   onChange={(e, newValue) => setInteractiveEditor(newValue === 'gui')}
                   indicatorColor='secondary'
                   textColor='secondary'
-                  sx={{ marginBottom: 2, display: 'none' }}
+                  sx={{ marginBottom: 2 }}
                 >
                   <Tab label='Interactive' value='gui' />
                   <Tab label='Text Editor' value='text' />

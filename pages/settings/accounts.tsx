@@ -16,6 +16,7 @@ import Add from '@mui/icons-material/Add'
 import DeleteForever from '@mui/icons-material/DeleteForever'
 import DriveFileRenameOutline from '@mui/icons-material/DriveFileRenameOutline'
 import LockReset from '@mui/icons-material/LockReset'
+import { HTTPError } from 'ky'
 
 import AuthFailure from '../../imports/errors/authFailure'
 import SettingsLayout from '../../imports/settings/settingsLayout'
@@ -27,7 +28,7 @@ import AccountDialog from '../../imports/settings/accountDialog'
 
 const AccountsPage = (): React.JSX.Element => {
   const ky = useKy()
-  const [status, setStatus] = useState<'failure' | 'unsupported' | 'not logged in' | null>(null)
+  const [status, setStatus] = useState<string | null>(null)
   const [accounts, setAccounts] = useState<string[] | null>(null)
 
   const [message, setMessage] = useState('')
@@ -37,17 +38,20 @@ const AccountsPage = (): React.JSX.Element => {
   const [changePassword, setChangePassword] = useState('')
 
   const refetch = (): void => {
-    ky.get('accounts')
+    ky.get('accounts', { throwHttpErrors: true })
       .then(async res => {
-        if (res.ok) {
-          const data = await res.json()
-          if (Array.isArray(data))
-            setAccounts(data.sort((a: string, b: string) => a.localeCompare(b)))
-        } else if (res.status === 401) setStatus('not logged in')
-        else if (res.status === 404) setStatus('unsupported')
-        else setStatus('failure')
+        const data = await res.json()
+        if (Array.isArray(data))
+          setAccounts(data.sort((a: string, b: string) => a.localeCompare(b)))
       })
-      .catch(() => setStatus('failure'))
+      .catch((err: unknown) => {
+        if (err instanceof HTTPError) {
+          if (err.response.status === 401) setStatus('not logged in')
+          else if (err.response.status === 404) setStatus('unsupported')
+          else if (err.name === 'OctyneError') setStatus(err.message)
+          else setStatus('failure')
+        } else setStatus('failure')
+      })
   }
 
   useEffect(refetch, [ky])
@@ -136,6 +140,14 @@ const AccountsPage = (): React.JSX.Element => {
         url='/accounts'
       />
       <SettingsLayout loggedIn={status !== 'not logged in'}>
+        {typeof status === 'string' &&
+          status !== 'not logged in' &&
+          status !== 'failure' &&
+          status !== 'unsupported' && (
+            <Paper style={{ padding: 10 }}>
+              <Typography>An error occurred: {status}</Typography>
+            </Paper>
+          )}
         {status === 'not logged in' && <AuthFailure />}
         {status === 'failure' && <ConnectionFailure loading={false} />}
         {status === 'unsupported' && (
