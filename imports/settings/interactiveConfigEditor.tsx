@@ -8,6 +8,10 @@ import {
   FormGroup,
   Switch,
   TextField,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
 } from '@mui/material'
 import CommentJSON from 'comment-json'
 
@@ -26,7 +30,7 @@ interface Config {
   redis?: {
     enabled?: boolean
     url?: string
-    role?: string // TODO
+    role?: string
   }
   webUI?: {
     enabled?: boolean
@@ -41,8 +45,8 @@ interface Config {
     }
   >
   logging?: {
-    enabled?: boolean // TODO
-    path?: string // TODO
+    enabled?: boolean
+    path?: string
     actions?: Record<string, boolean> // TODO
   }
 }
@@ -86,6 +90,8 @@ const InteractiveConfigEditor = (props: {
   const [redisRole, setRedisRole] = useState(defaultConfig.redis.role)
   const [webUiEnabled, setWebUiEnabled] = useState(defaultConfig.webUI.enabled)
   const [webUiPort, setWebUiPort] = useState(defaultConfig.webUI.port)
+  const [loggingEnabled, setLoggingEnabled] = useState(defaultConfig.logging.enabled)
+  const [loggingPath, setLoggingPath] = useState(defaultConfig.logging.path)
 
   const error = port < 1 || port > 65535 || webUiPort < 1 || webUiPort > 65535
 
@@ -103,6 +109,8 @@ const InteractiveConfigEditor = (props: {
     setRedisRole(json.redis?.role ?? defaultConfig.redis.role)
     setWebUiEnabled(json.webUI?.enabled ?? defaultConfig.webUI.enabled)
     setWebUiPort(json.webUI?.port ?? defaultConfig.webUI.port)
+    setLoggingEnabled(json.logging?.enabled ?? defaultConfig.logging.enabled)
+    setLoggingPath(json.logging?.path ?? defaultConfig.logging.path)
   }
 
   const saveFile = (): void => {
@@ -154,9 +162,17 @@ const InteractiveConfigEditor = (props: {
       json.unixSocket ??= {}
       json.unixSocket.group = unixSocketGroup
     }
+    if (loggingEnabled !== (json.logging?.enabled ?? defaultConfig.logging.enabled)) {
+      json.logging ??= {}
+      json.logging.enabled = loggingEnabled
+    }
+    if (loggingPath !== (json.logging?.path ?? defaultConfig.logging.path)) {
+      json.logging ??= {}
+      json.logging.path = loggingPath
+    }
 
     const modifiedJson = CommentJSON.stringify(json, null, 2)
-    console.log(modifiedJson)
+    console.log(modifiedJson) // TODO
     Promise.resolve(props.onSave(modifiedJson))
       .then(() => setSaving(false))
       .catch(console.error)
@@ -168,9 +184,9 @@ const InteractiveConfigEditor = (props: {
         {props.title}
       </Typography>
       <Typography variant='body2' color='textSecondary' gutterBottom>
-        Note: This feature is under development and may not be fully functional yet.
+        Note: Some settings may not work with older versions of Octyne.
       </Typography>
-      <div style={{ flex: 1, marginTop: 20 /* TODO: 10 after note removed */, marginBottom: 20 }}>
+      <div style={{ flex: 1, marginTop: 20, marginBottom: 20 }}>
         <TextField
           size='small'
           value={port}
@@ -203,12 +219,33 @@ const InteractiveConfigEditor = (props: {
           <TextField
             size='small'
             value={redisUrl}
-            label='Redis URL'
+            label='Logs Folder'
             variant='outlined'
             onChange={e => setRedisUrl(e.target.value)}
             disabled={!redisEnabled}
             helperText={'The URL of the Redis server. Default: ' + defaultConfig.redis.url}
           />
+          <br />
+          <FormControl>
+            <InputLabel id='redis-role-label' color='secondary'>
+              Role
+            </InputLabel>
+            <Select
+              labelId='redis-role-label'
+              id='redis-role-select'
+              value={redisRole}
+              label='Role'
+              onChange={e => setRedisRole(e.target.value)}
+              disabled={!redisEnabled}
+              color='secondary'
+              size='small'
+            >
+              <MenuItem value='primary'>Primary (Authenticates users)</MenuItem>
+              <MenuItem value='secondary'>
+                Secondary (Requests authentication from primary node)
+              </MenuItem>
+            </Select>
+          </FormControl>
         </FormGroup>
         <Divider style={{ margin: '1em 0' }} />
         <Typography variant='h6' gutterBottom>
@@ -238,6 +275,32 @@ const InteractiveConfigEditor = (props: {
                 ? 'This port number is invalid. Please enter a port number between 1 and 65535.'
                 : `The port for the Web UI. Default: ${defaultConfig.webUI.port}`
             }
+          />
+        </FormGroup>
+        <Divider style={{ margin: '1em 0' }} />
+        <Typography variant='h6' gutterBottom>
+          Logging Configuration
+        </Typography>
+        <FormGroup>
+          <FormControlLabel
+            label='Log actions performed on Octyne'
+            control={
+              <Switch
+                color='info'
+                checked={loggingEnabled}
+                onChange={e => setLoggingEnabled(e.target.checked)}
+              />
+            }
+          />
+          <br />
+          <TextField
+            size='small'
+            value={loggingPath}
+            label='Logs Folder'
+            variant='outlined'
+            onChange={e => setLoggingPath(e.target.value)}
+            disabled={!loggingEnabled}
+            helperText={'Path to folder to store logs in. Default: ' + defaultConfig.logging.path}
           />
         </FormGroup>
         <Divider style={{ margin: '1em 0' }} />
