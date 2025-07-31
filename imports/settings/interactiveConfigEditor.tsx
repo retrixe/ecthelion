@@ -1,12 +1,69 @@
 import React, { useState } from 'react'
-import { Typography, Button, LinearProgress } from '@mui/material'
+import {
+  Typography,
+  Button,
+  LinearProgress,
+  FormControlLabel,
+  Divider,
+  FormGroup,
+  Switch,
+  TextField,
+} from '@mui/material'
 import CommentJSON from 'comment-json'
 
 interface Config {
-  // TODO
+  port?: number
+  unixSocket?: {
+    enabled?: boolean
+    location?: string
+    group?: string
+  }
+  https?: {
+    enabled?: boolean
+    cert?: string
+    key?: string
+  }
   redis?: {
     enabled?: boolean
+    url?: string
+    role?: string // TODO
   }
+  webUI?: {
+    enabled?: boolean
+    port?: number
+  }
+  servers?: Record<
+    string,
+    {
+      enabled?: boolean // TODO
+      directory?: string // TODO
+      command?: string // TODO
+    }
+  >
+  logging?: {
+    enabled?: boolean // TODO
+    path?: string // TODO
+    actions?: Record<string, boolean> // TODO
+  }
+}
+
+const defaultConfig = {
+  port: 42069,
+  unixSocket: {
+    enabled: true,
+  },
+  redis: {
+    url: 'redis://localhost',
+    role: 'primary',
+  },
+  webUI: {
+    enabled: true,
+    port: 7877,
+  },
+  logging: {
+    enabled: true,
+    path: 'logs',
+  },
 }
 
 // TODO: Refresh button.
@@ -17,19 +74,89 @@ const InteractiveConfigEditor = (props: {
 }): React.JSX.Element => {
   const [saving, setSaving] = useState(false)
 
-  const [, setRedisEnabled] = useState<boolean | undefined>(false)
+  const [port, setPort] = useState(defaultConfig.port)
+  const [unixSocketEnabled, setUnixSocketEnabled] = useState(defaultConfig.unixSocket.enabled)
+  const [unixSocketLocation, setUnixSocketLocation] = useState('')
+  const [unixSocketGroup, setUnixSocketGroup] = useState('')
+  const [httpsEnabled, setHttpsEnabled] = useState(false)
+  const [httpsCert, setHttpsCert] = useState('')
+  const [httpsKey, setHttpsKey] = useState('')
+  const [redisEnabled, setRedisEnabled] = useState(false)
+  const [redisUrl, setRedisUrl] = useState(defaultConfig.redis.url)
+  const [redisRole, setRedisRole] = useState(defaultConfig.redis.role)
+  const [webUiEnabled, setWebUiEnabled] = useState(defaultConfig.webUI.enabled)
+  const [webUiPort, setWebUiPort] = useState(defaultConfig.webUI.port)
+
+  const error = port < 1 || port > 65535 || webUiPort < 1 || webUiPort > 65535
 
   const loadStateFromJSON = (): void => {
     const json = CommentJSON.parse(props.content) as Config
-    // TODO: Load the state from the JSON object
+    setPort(json.port ?? port)
+    setUnixSocketEnabled(json.unixSocket?.enabled ?? defaultConfig.unixSocket.enabled)
+    setUnixSocketLocation(json.unixSocket?.location ?? '')
+    setUnixSocketGroup(json.unixSocket?.group ?? '')
+    setHttpsEnabled(json.https?.enabled ?? false)
+    setHttpsCert(json.https?.cert ?? '')
+    setHttpsKey(json.https?.key ?? '')
     setRedisEnabled(json.redis?.enabled ?? false)
+    setRedisUrl(json.redis?.url ?? defaultConfig.redis.url)
+    setRedisRole(json.redis?.role ?? defaultConfig.redis.role)
+    setWebUiEnabled(json.webUI?.enabled ?? defaultConfig.webUI.enabled)
+    setWebUiPort(json.webUI?.port ?? defaultConfig.webUI.port)
   }
 
   const saveFile = (): void => {
     setSaving(true)
-    const originalJson = CommentJSON.parse(props.content) as Config
-    // TODO: Apply changes to the originalJson object based on user input
-    const modifiedJson = CommentJSON.stringify(originalJson, null, 2)
+    const json = CommentJSON.parse(props.content) as Config
+
+    if (port !== (json.port ?? defaultConfig.port)) json.port = port
+    if (redisEnabled !== !!json.redis?.enabled) {
+      json.redis ??= {}
+      json.redis.enabled = redisEnabled
+    }
+    if (redisUrl !== (json.redis?.url ?? defaultConfig.redis.url)) {
+      json.redis ??= {}
+      json.redis.url = redisUrl
+    }
+    if (redisRole !== (json.redis?.role ?? defaultConfig.redis.role)) {
+      json.redis ??= {}
+      json.redis.role = redisRole
+    }
+    if (httpsEnabled !== !!json.https?.enabled) {
+      json.https ??= {}
+      json.https.enabled = httpsEnabled
+    }
+    if (httpsCert !== (json.https?.cert ?? '')) {
+      json.https ??= {}
+      json.https.cert = httpsCert
+    }
+    if (httpsKey !== (json.https?.key ?? '')) {
+      json.https ??= {}
+      json.https.key = httpsKey
+    }
+    if (webUiEnabled !== (json.webUI?.enabled ?? defaultConfig.webUI.enabled)) {
+      json.webUI ??= {}
+      json.webUI.enabled = webUiEnabled
+    }
+    if (webUiPort !== (json.webUI?.port ?? defaultConfig.webUI.port)) {
+      json.webUI ??= {}
+      json.webUI.port = webUiPort
+    }
+    if (unixSocketEnabled !== (json.unixSocket?.enabled ?? defaultConfig.unixSocket.enabled)) {
+      json.unixSocket ??= {}
+      json.unixSocket.enabled = unixSocketEnabled
+    }
+    if (unixSocketLocation !== (json.unixSocket?.location ?? '')) {
+      json.unixSocket ??= {}
+      json.unixSocket.location = unixSocketLocation
+    }
+    if (unixSocketGroup !== (json.unixSocket?.group ?? '')) {
+      json.unixSocket ??= {}
+      json.unixSocket.group = unixSocketGroup
+    }
+
+    const modifiedJson = CommentJSON.stringify(json, null, 2)
+    console.log(modifiedJson)
     Promise.resolve(props.onSave(modifiedJson))
       .then(() => setSaving(false))
       .catch(console.error)
@@ -40,21 +167,158 @@ const InteractiveConfigEditor = (props: {
       <Typography variant='h5' gutterBottom>
         {props.title}
       </Typography>
-      <div style={{ flex: 1, marginTop: 10, marginBottom: 20 }}>
-        <Typography variant='body1' gutterBottom>
-          This is a placeholder for the interactive config editor. It will allow you to edit your
-          configuration in a user-friendly way, without needing to write JSON or YAML directly.
+      <Typography variant='body2' color='textSecondary' gutterBottom>
+        Note: This feature is under development and may not be fully functional yet.
+      </Typography>
+      <div style={{ flex: 1, marginTop: 20 /* TODO: 10 after note removed */, marginBottom: 20 }}>
+        <TextField
+          size='small'
+          value={port}
+          error={port < 1 || port > 65535}
+          label='Port'
+          variant='outlined'
+          onChange={e => setPort(Number(e.target.value))}
+          helperText={
+            port < 1 || port > 65535
+              ? 'This port number is invalid. Please enter a port number between 1 and 65535.'
+              : undefined
+          }
+        />
+        <Divider style={{ margin: '1em 0' }} />
+        <Typography variant='h6' gutterBottom>
+          Redis-based Authentication
         </Typography>
-        <Typography variant='body2' color='textSecondary'>
-          Note: This feature is under development and may not be fully functional yet.
+        <FormGroup>
+          <FormControlLabel
+            label='Enable Redis Authentication'
+            control={
+              <Switch
+                color='info'
+                checked={redisEnabled}
+                onChange={e => setRedisEnabled(e.target.checked)}
+              />
+            }
+          />
+          <br />
+          <TextField
+            size='small'
+            value={redisUrl}
+            label='Redis URL'
+            variant='outlined'
+            onChange={e => setRedisUrl(e.target.value)}
+            disabled={!redisEnabled}
+            helperText={'The URL of the Redis server. Default: ' + defaultConfig.redis.url}
+          />
+        </FormGroup>
+        <Divider style={{ margin: '1em 0' }} />
+        <Typography variant='h6' gutterBottom>
+          Web UI Settings
         </Typography>
+        <FormGroup>
+          <FormControlLabel
+            label='Enable Web UI'
+            control={
+              <Switch
+                color='info'
+                checked={webUiEnabled}
+                onChange={e => setWebUiEnabled(e.target.checked)}
+              />
+            }
+          />
+          <br />
+          <TextField
+            size='small'
+            value={webUiPort}
+            label='Web UI Port'
+            variant='outlined'
+            onChange={e => setWebUiPort(Number(e.target.value))}
+            disabled={!webUiEnabled}
+            helperText={
+              webUiPort < 1 || webUiPort > 65535
+                ? 'This port number is invalid. Please enter a port number between 1 and 65535.'
+                : `The port for the Web UI. Default: ${defaultConfig.webUI.port}`
+            }
+          />
+        </FormGroup>
+        <Divider style={{ margin: '1em 0' }} />
+        <Typography variant='h6' gutterBottom>
+          Unix Socket API
+        </Typography>
+        <FormGroup>
+          <FormControlLabel
+            label='Enable Unix Socket API'
+            control={
+              <Switch
+                color='info'
+                checked={unixSocketEnabled}
+                onChange={e => setUnixSocketEnabled(e.target.checked)}
+              />
+            }
+          />
+          <br />
+          <TextField
+            size='small'
+            value={unixSocketLocation}
+            label='Unix Socket Location'
+            variant='outlined'
+            onChange={e => setUnixSocketLocation(e.target.value)}
+            disabled={!unixSocketEnabled}
+            helperText='The location of the Unix socket.'
+          />
+          <br />
+          <TextField
+            size='small'
+            value={unixSocketGroup}
+            label='Unix Socket Group'
+            variant='outlined'
+            onChange={e => setUnixSocketGroup(e.target.value)}
+            disabled={!unixSocketEnabled}
+            helperText='The group of the Unix socket.'
+          />
+        </FormGroup>
+        <Divider style={{ margin: '1em 0' }} />
+        <Typography variant='h6' gutterBottom>
+          HTTPS Configuration
+        </Typography>
+        <FormGroup>
+          <FormControlLabel
+            label='Enable HTTPS'
+            control={
+              <Switch
+                color='info'
+                checked={httpsEnabled}
+                onChange={e => setHttpsEnabled(e.target.checked)}
+              />
+            }
+          />
+          <br />
+          <TextField
+            size='small'
+            value={httpsCert}
+            label='HTTPS Certificate'
+            variant='outlined'
+            onChange={e => setHttpsCert(e.target.value)}
+            disabled={!httpsEnabled}
+            helperText='The path to the HTTPS certificate.'
+          />
+          <br />
+          <TextField
+            size='small'
+            value={httpsKey}
+            label='HTTPS Key'
+            variant='outlined'
+            onChange={e => setHttpsKey(e.target.value)}
+            disabled={!httpsEnabled}
+            helperText='The path to the HTTPS key.'
+          />
+        </FormGroup>
       </div>
       <div style={{ display: 'flex', marginTop: 10 }}>
         <Button variant='outlined' onClick={loadStateFromJSON}>
           Undo Changes
         </Button>
         <div style={{ flex: 1 }} />
-        <Button variant='contained' disabled={saving} color='secondary' onClick={saveFile}>
+        <Button variant='contained' disabled={saving || error} color='secondary' onClick={saveFile}>
           Apply
         </Button>
       </div>
