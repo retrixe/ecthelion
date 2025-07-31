@@ -4,7 +4,6 @@ import {
   Button,
   LinearProgress,
   FormControlLabel,
-  Divider,
   FormGroup,
   Switch,
   TextField,
@@ -12,7 +11,11 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from '@mui/material'
+import { ExpandMore } from '@mui/icons-material'
 import CommentJSON from 'comment-json'
 
 interface Config {
@@ -183,200 +186,229 @@ const InteractiveConfigEditor = (props: {
       <Typography variant='h5' gutterBottom>
         {props.title}
       </Typography>
-      <Typography variant='body2' color='textSecondary' gutterBottom>
+      <Typography
+        variant='body2'
+        color='textSecondary'
+        gutterBottom
+        style={{ marginBottom: '1rem' }}
+      >
         Note: Some settings may not work with older versions of Octyne.
       </Typography>
-      <div style={{ flex: 1, marginTop: 20, marginBottom: 20 }}>
-        <TextField
-          size='small'
-          value={port}
-          error={port < 1 || port > 65535}
-          label='Port'
-          variant='outlined'
-          onChange={e => setPort(Number(e.target.value))}
-          helperText={
-            port < 1 || port > 65535
-              ? 'This port number is invalid. Please enter a port number between 1 and 65535.'
-              : undefined
-          }
-        />
-        <Divider style={{ margin: '1em 0' }} />
-        <Typography variant='h6' gutterBottom>
-          Redis-based Authentication
-        </Typography>
-        <FormGroup>
-          <FormControlLabel
-            label='Enable Redis Authentication'
-            control={
-              <Switch
-                color='info'
-                checked={redisEnabled}
-                onChange={e => setRedisEnabled(e.target.checked)}
-              />
-            }
-          />
-          <br />
-          <TextField
-            size='small'
-            value={redisUrl}
-            label='Logs Folder'
-            variant='outlined'
-            onChange={e => setRedisUrl(e.target.value)}
-            disabled={!redisEnabled}
-            helperText={'The URL of the Redis server. Default: ' + defaultConfig.redis.url}
-          />
-          <br />
-          <FormControl>
-            <InputLabel id='redis-role-label' color='secondary'>
-              Role
-            </InputLabel>
-            <Select
-              labelId='redis-role-label'
-              id='redis-role-select'
-              value={redisRole}
-              label='Role'
-              onChange={e => setRedisRole(e.target.value)}
-              disabled={!redisEnabled}
-              color='secondary'
+      <div>
+        <Accordion elevation={2}>
+          <AccordionSummary expandIcon={<ExpandMore />}>
+            <Typography component='span'>General</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <TextField
               size='small'
-            >
-              <MenuItem value='primary'>Primary (Authenticates users)</MenuItem>
-              <MenuItem value='secondary'>
-                Secondary (Requests authentication from primary node)
-              </MenuItem>
-            </Select>
-          </FormControl>
-        </FormGroup>
-        <Divider style={{ margin: '1em 0' }} />
-        <Typography variant='h6' gutterBottom>
-          Web UI Settings
-        </Typography>
-        <FormGroup>
-          <FormControlLabel
-            label='Enable Web UI'
-            control={
-              <Switch
-                color='info'
-                checked={webUiEnabled}
-                onChange={e => setWebUiEnabled(e.target.checked)}
+              value={port}
+              error={port < 1 || port > 65535}
+              label='Port'
+              variant='outlined'
+              onChange={e => setPort(Number(e.target.value))}
+              helperText={
+                port < 1 || port > 65535
+                  ? 'This port number is invalid. Please enter a port number between 1 and 65535.'
+                  : undefined
+              }
+            />
+          </AccordionDetails>
+        </Accordion>
+        <Accordion elevation={2}>
+          <AccordionSummary expandIcon={<ExpandMore />}>
+            <Typography component='span'>Redis-based Authentication</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <FormGroup>
+              <FormControlLabel
+                label='Enable Redis Authentication'
+                control={
+                  <Switch
+                    color='info'
+                    checked={redisEnabled}
+                    onChange={e => setRedisEnabled(e.target.checked)}
+                  />
+                }
               />
-            }
-          />
-          <br />
-          <TextField
-            size='small'
-            value={webUiPort}
-            label='Web UI Port'
-            variant='outlined'
-            onChange={e => setWebUiPort(Number(e.target.value))}
-            disabled={!webUiEnabled}
-            helperText={
-              webUiPort < 1 || webUiPort > 65535
-                ? 'This port number is invalid. Please enter a port number between 1 and 65535.'
-                : `The port for the Web UI. Default: ${defaultConfig.webUI.port}`
-            }
-          />
-        </FormGroup>
-        <Divider style={{ margin: '1em 0' }} />
-        <Typography variant='h6' gutterBottom>
-          Logging Configuration
-        </Typography>
-        <FormGroup>
-          <FormControlLabel
-            label='Log actions performed on Octyne'
-            control={
-              <Switch
-                color='info'
-                checked={loggingEnabled}
-                onChange={e => setLoggingEnabled(e.target.checked)}
+              <br />
+              <TextField
+                size='small'
+                value={redisUrl}
+                label='Logs Folder'
+                variant='outlined'
+                onChange={e => setRedisUrl(e.target.value)}
+                disabled={!redisEnabled}
+                helperText={'The URL of the Redis server. Default: ' + defaultConfig.redis.url}
               />
-            }
-          />
-          <br />
-          <TextField
-            size='small'
-            value={loggingPath}
-            label='Logs Folder'
-            variant='outlined'
-            onChange={e => setLoggingPath(e.target.value)}
-            disabled={!loggingEnabled}
-            helperText={'Path to folder to store logs in. Default: ' + defaultConfig.logging.path}
-          />
-        </FormGroup>
-        <Divider style={{ margin: '1em 0' }} />
-        <Typography variant='h6' gutterBottom>
-          Unix Socket API
-        </Typography>
-        <FormGroup>
-          <FormControlLabel
-            label='Enable Unix Socket API'
-            control={
-              <Switch
-                color='info'
-                checked={unixSocketEnabled}
-                onChange={e => setUnixSocketEnabled(e.target.checked)}
+              <br />
+              <FormControl>
+                <InputLabel id='redis-role-label' color='secondary'>
+                  Role
+                </InputLabel>
+                <Select
+                  labelId='redis-role-label'
+                  id='redis-role-select'
+                  value={redisRole}
+                  label='Role'
+                  onChange={e => setRedisRole(e.target.value)}
+                  disabled={!redisEnabled}
+                  color='secondary'
+                  size='small'
+                >
+                  <MenuItem value='primary'>Primary (Authenticates users)</MenuItem>
+                  <MenuItem value='secondary'>
+                    Secondary (Requests authentication from primary node)
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            </FormGroup>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion elevation={2}>
+          <AccordionSummary expandIcon={<ExpandMore />}>
+            <Typography component='span'>Web UI</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <FormGroup>
+              <FormControlLabel
+                label='Enable Web UI'
+                control={
+                  <Switch
+                    color='info'
+                    checked={webUiEnabled}
+                    onChange={e => setWebUiEnabled(e.target.checked)}
+                  />
+                }
               />
-            }
-          />
-          <br />
-          <TextField
-            size='small'
-            value={unixSocketLocation}
-            label='Unix Socket Location'
-            variant='outlined'
-            onChange={e => setUnixSocketLocation(e.target.value)}
-            disabled={!unixSocketEnabled}
-            helperText='The location of the Unix socket.'
-          />
-          <br />
-          <TextField
-            size='small'
-            value={unixSocketGroup}
-            label='Unix Socket Group'
-            variant='outlined'
-            onChange={e => setUnixSocketGroup(e.target.value)}
-            disabled={!unixSocketEnabled}
-            helperText='The group of the Unix socket.'
-          />
-        </FormGroup>
-        <Divider style={{ margin: '1em 0' }} />
-        <Typography variant='h6' gutterBottom>
-          HTTPS Configuration
-        </Typography>
-        <FormGroup>
-          <FormControlLabel
-            label='Enable HTTPS'
-            control={
-              <Switch
-                color='info'
-                checked={httpsEnabled}
-                onChange={e => setHttpsEnabled(e.target.checked)}
+              <br />
+              <TextField
+                size='small'
+                value={webUiPort}
+                label='Web UI Port'
+                variant='outlined'
+                onChange={e => setWebUiPort(Number(e.target.value))}
+                disabled={!webUiEnabled}
+                helperText={
+                  webUiPort < 1 || webUiPort > 65535
+                    ? 'This port number is invalid. Please enter a port number between 1 and 65535.'
+                    : `The port for the Web UI. Default: ${defaultConfig.webUI.port}`
+                }
               />
-            }
-          />
-          <br />
-          <TextField
-            size='small'
-            value={httpsCert}
-            label='HTTPS Certificate'
-            variant='outlined'
-            onChange={e => setHttpsCert(e.target.value)}
-            disabled={!httpsEnabled}
-            helperText='The path to the HTTPS certificate.'
-          />
-          <br />
-          <TextField
-            size='small'
-            value={httpsKey}
-            label='HTTPS Key'
-            variant='outlined'
-            onChange={e => setHttpsKey(e.target.value)}
-            disabled={!httpsEnabled}
-            helperText='The path to the HTTPS key.'
-          />
-        </FormGroup>
+            </FormGroup>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion elevation={2}>
+          <AccordionSummary expandIcon={<ExpandMore />}>
+            <Typography component='span'>Logging</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <FormGroup>
+              <FormControlLabel
+                label='Log actions performed on Octyne'
+                control={
+                  <Switch
+                    color='info'
+                    checked={loggingEnabled}
+                    onChange={e => setLoggingEnabled(e.target.checked)}
+                  />
+                }
+              />
+              <br />
+              <TextField
+                size='small'
+                value={loggingPath}
+                label='Logs Folder'
+                variant='outlined'
+                onChange={e => setLoggingPath(e.target.value)}
+                disabled={!loggingEnabled}
+                helperText={
+                  'Path to folder to store logs in. Default: ' + defaultConfig.logging.path
+                }
+              />
+            </FormGroup>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion elevation={2}>
+          <AccordionSummary expandIcon={<ExpandMore />}>
+            <Typography component='span'>Unix Socket API</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <FormGroup>
+              <FormControlLabel
+                label='Enable Unix Socket API'
+                control={
+                  <Switch
+                    color='info'
+                    checked={unixSocketEnabled}
+                    onChange={e => setUnixSocketEnabled(e.target.checked)}
+                  />
+                }
+              />
+              <br />
+              <TextField
+                size='small'
+                value={unixSocketLocation}
+                label='Unix Socket Location'
+                variant='outlined'
+                onChange={e => setUnixSocketLocation(e.target.value)}
+                disabled={!unixSocketEnabled}
+                helperText='The location of the Unix socket.'
+              />
+              <br />
+              <TextField
+                size='small'
+                value={unixSocketGroup}
+                label='Unix Socket Group'
+                variant='outlined'
+                onChange={e => setUnixSocketGroup(e.target.value)}
+                disabled={!unixSocketEnabled}
+                helperText='The group of the Unix socket.'
+              />
+            </FormGroup>
+          </AccordionDetails>
+        </Accordion>
+        <Accordion elevation={2}>
+          <AccordionSummary expandIcon={<ExpandMore />}>
+            <Typography component='span'>HTTPS</Typography>
+          </AccordionSummary>
+          <AccordionDetails>
+            <FormGroup>
+              <FormControlLabel
+                label='Enable HTTPS'
+                control={
+                  <Switch
+                    color='info'
+                    checked={httpsEnabled}
+                    onChange={e => setHttpsEnabled(e.target.checked)}
+                  />
+                }
+              />
+              <br />
+              <TextField
+                size='small'
+                value={httpsCert}
+                label='HTTPS Certificate'
+                variant='outlined'
+                onChange={e => setHttpsCert(e.target.value)}
+                disabled={!httpsEnabled}
+                helperText='The path to the HTTPS certificate.'
+              />
+              <br />
+              <TextField
+                size='small'
+                value={httpsKey}
+                label='HTTPS Key'
+                variant='outlined'
+                onChange={e => setHttpsKey(e.target.value)}
+                disabled={!httpsEnabled}
+                helperText='The path to the HTTPS key.'
+              />
+            </FormGroup>
+          </AccordionDetails>
+        </Accordion>
       </div>
-      <div style={{ display: 'flex', marginTop: 10 }}>
+      <div style={{ display: 'flex', marginTop: 20 }}>
         <Button variant='outlined' onClick={loadStateFromJSON}>
           Undo Changes
         </Button>
