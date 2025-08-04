@@ -24,7 +24,6 @@ const getLanguageFromExtension = (extension: string): Promise<Extension> | undef
   return language?.load()
 }
 
-// TODO: Refresh button.
 const Editor = (props: {
   name: string
   content: string

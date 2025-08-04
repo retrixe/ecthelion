@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   Typography,
   Button,
@@ -14,9 +14,16 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  List,
+  ListItem,
+  Divider,
+  ListItemText,
+  ListItemIcon,
+  IconButton,
 } from '@mui/material'
-import { ExpandMore } from '@mui/icons-material'
+import { Add, Clear, ExpandMore } from '@mui/icons-material'
 import CommentJSON from 'comment-json'
+import { isEqual } from 'lodash'
 
 interface Config {
   port?: number
@@ -50,7 +57,7 @@ interface Config {
   logging?: {
     enabled?: boolean
     path?: string
-    actions?: Record<string, boolean> // TODO
+    actions?: Record<string, boolean>
   }
 }
 
@@ -73,7 +80,6 @@ const defaultConfig = {
   },
 }
 
-// TODO: Refresh button.
 const InteractiveConfigEditor = (props: {
   title: string
   content: string
@@ -95,12 +101,15 @@ const InteractiveConfigEditor = (props: {
   const [webUiPort, setWebUiPort] = useState(defaultConfig.webUI.port)
   const [loggingEnabled, setLoggingEnabled] = useState(defaultConfig.logging.enabled)
   const [loggingPath, setLoggingPath] = useState(defaultConfig.logging.path)
+  const [loggingActions, setLoggingActions] = useState<Record<string, boolean>>({})
+
+  const [newLoggingAction, setNewLoggingAction] = useState('')
 
   const error = port < 1 || port > 65535 || webUiPort < 1 || webUiPort > 65535
 
-  const loadStateFromJSON = (): void => {
+  const loadStateFromJSON = useCallback((): void => {
     const json = CommentJSON.parse(props.content) as Config
-    setPort(json.port ?? port)
+    setPort(json.port ?? defaultConfig.port)
     setUnixSocketEnabled(json.unixSocket?.enabled ?? defaultConfig.unixSocket.enabled)
     setUnixSocketLocation(json.unixSocket?.location ?? '')
     setUnixSocketGroup(json.unixSocket?.group ?? '')
@@ -114,14 +123,15 @@ const InteractiveConfigEditor = (props: {
     setWebUiPort(json.webUI?.port ?? defaultConfig.webUI.port)
     setLoggingEnabled(json.logging?.enabled ?? defaultConfig.logging.enabled)
     setLoggingPath(json.logging?.path ?? defaultConfig.logging.path)
-  }
+    setLoggingActions(json.logging?.actions ?? {})
+  }, [props.content])
 
   const saveFile = (): void => {
     setSaving(true)
     const json = CommentJSON.parse(props.content) as Config
 
     if (port !== (json.port ?? defaultConfig.port)) json.port = port
-    if (redisEnabled !== !!json.redis?.enabled) {
+    if (redisEnabled !== (json.redis?.enabled ?? false)) {
       json.redis ??= {}
       json.redis.enabled = redisEnabled
     }
@@ -133,7 +143,7 @@ const InteractiveConfigEditor = (props: {
       json.redis ??= {}
       json.redis.role = redisRole
     }
-    if (httpsEnabled !== !!json.https?.enabled) {
+    if (httpsEnabled !== (json.https?.enabled ?? false)) {
       json.https ??= {}
       json.https.enabled = httpsEnabled
     }
@@ -173,6 +183,10 @@ const InteractiveConfigEditor = (props: {
       json.logging ??= {}
       json.logging.path = loggingPath
     }
+    if (!isEqual(loggingActions, json.logging?.actions ?? {})) {
+      json.logging ??= {}
+      json.logging.actions = loggingActions
+    }
 
     const modifiedJson = CommentJSON.stringify(json, null, 2)
     console.log(modifiedJson) // TODO
@@ -180,6 +194,8 @@ const InteractiveConfigEditor = (props: {
       .then(() => setSaving(false))
       .catch(console.error)
   }
+
+  useEffect(() => loadStateFromJSON(), [loadStateFromJSON])
 
   return (
     <>
@@ -206,7 +222,9 @@ const InteractiveConfigEditor = (props: {
               error={port < 1 || port > 65535}
               label='Port'
               variant='outlined'
-              onChange={e => setPort(Number(e.target.value))}
+              onChange={e => {
+                if (!isNaN(Number(e.target.value))) setPort(Number(e.target.value))
+              }}
               helperText={
                 port < 1 || port > 65535
                   ? 'This port number is invalid. Please enter a port number between 1 and 65535.'
@@ -222,7 +240,7 @@ const InteractiveConfigEditor = (props: {
           <AccordionDetails>
             <FormGroup>
               <FormControlLabel
-                label='Enable Redis Authentication'
+                label='Enable Redis-based Authentication'
                 control={
                   <Switch
                     color='info'
@@ -235,7 +253,7 @@ const InteractiveConfigEditor = (props: {
               <TextField
                 size='small'
                 value={redisUrl}
-                label='Logs Folder'
+                label='URL'
                 variant='outlined'
                 onChange={e => setRedisUrl(e.target.value)}
                 disabled={!redisEnabled}
@@ -287,7 +305,9 @@ const InteractiveConfigEditor = (props: {
                 value={webUiPort}
                 label='Web UI Port'
                 variant='outlined'
-                onChange={e => setWebUiPort(Number(e.target.value))}
+                onChange={e => {
+                  if (!isNaN(Number(e.target.value))) setWebUiPort(Number(e.target.value))
+                }}
                 disabled={!webUiEnabled}
                 helperText={
                   webUiPort < 1 || webUiPort > 65535
@@ -326,6 +346,82 @@ const InteractiveConfigEditor = (props: {
                   'Path to folder to store logs in. Default: ' + defaultConfig.logging.path
                 }
               />
+              <br />
+              <Divider />
+              <br />
+              <Typography variant='h6' gutterBottom>
+                Configure what actions should be logged
+              </Typography>
+              <Typography variant='body2' color='textSecondary' gutterBottom>
+                A list of action types can be found in the Octyne documentation:{' '}
+                <Typography
+                  component='a'
+                  variant='body2'
+                  color='secondary'
+                  href='https://github.com/retrixe/octyne#logging'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                >
+                  https://github.com/retrixe/octyne#logging
+                </Typography>
+              </Typography>
+              <List>
+                {Object.entries(loggingActions).map(([action, enabled]) => (
+                  <ListItem
+                    key={action}
+                    secondaryAction={
+                      <IconButton
+                        edge='end'
+                        onClick={() => {
+                          const updatedActions = { ...loggingActions }
+                          // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+                          delete updatedActions[action]
+                          setLoggingActions(updatedActions)
+                        }}
+                        disabled={!loggingEnabled}
+                      >
+                        <Clear />
+                      </IconButton>
+                    }
+                  >
+                    <ListItemIcon>
+                      <Switch
+                        color='info'
+                        checked={enabled}
+                        onChange={e =>
+                          setLoggingActions({
+                            ...loggingActions,
+                            [action]: e.target.checked,
+                          })
+                        }
+                      />
+                    </ListItemIcon>
+                    <ListItemText primary={action} />
+                  </ListItem>
+                ))}
+              </List>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                <TextField
+                  size='small'
+                  value={newLoggingAction}
+                  onChange={e => setNewLoggingAction(e.target.value)}
+                  label='Add New Action'
+                  variant='outlined'
+                  disabled={!loggingEnabled}
+                  helperText='Include/exclude an action from logging e.g. config.view'
+                />
+                <IconButton
+                  onClick={() => {
+                    if (newLoggingAction && !loggingActions[newLoggingAction]) {
+                      setLoggingActions({ ...loggingActions, [newLoggingAction]: true })
+                    }
+                    setNewLoggingAction('')
+                  }}
+                  disabled={!loggingEnabled}
+                >
+                  <Add />
+                </IconButton>
+              </div>
             </FormGroup>
           </AccordionDetails>
         </Accordion>
