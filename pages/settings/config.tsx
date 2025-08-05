@@ -15,6 +15,7 @@ import config from '../../imports/config'
 import useKy from '../../imports/helpers/useKy'
 import Title from '../../imports/helpers/title'
 import Message from '../../imports/helpers/message'
+import InteractiveConfigEditor from '../../imports/settings/config/interactiveEditor'
 import DynamicEditor from '../../imports/dashboard/files/dynamicEditor'
 import AuthFailure from '../../imports/errors/authFailure'
 import NotExistsError from '../../imports/errors/notExistsError'
@@ -22,7 +23,6 @@ import useOctyneData from '../../imports/dashboard/useOctyneData'
 import ConfirmDialog from '../../imports/settings/confirmDialog'
 import SettingsLayout from '../../imports/settings/settingsLayout'
 import ConnectionFailure from '../../imports/errors/connectionFailure'
-import InteractiveConfigEditor from '../../imports/settings/interactiveConfigEditor'
 
 const confirmDialogWarning =
   'Are you sure you want to do this? Make sure the config is correct, \
