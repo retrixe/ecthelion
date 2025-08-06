@@ -9,6 +9,7 @@ import HttpsConfigAccordion from './httpsAccordion'
 import WebUiConfigAccordion from './webUiAccordion'
 import UnixSocketConfigAccordion from './unixSocketAccordion'
 import LoggingConfigAccordion from './loggingAccordion'
+import ServerConfigAccordion from './serverAccordion'
 
 const InteractiveConfigEditor = (props: {
   title: string
@@ -32,6 +33,7 @@ const InteractiveConfigEditor = (props: {
   const [loggingEnabled, setLoggingEnabled] = useState(defaultConfig.logging.enabled)
   const [loggingPath, setLoggingPath] = useState(defaultConfig.logging.path)
   const [loggingActions, setLoggingActions] = useState<Record<string, boolean>>({})
+  const [servers, setServers] = useState<NonNullable<OctyneConfig['servers']>>({})
 
   const error = port < 1 || port > 65535 || webUiPort < 1 || webUiPort > 65535
 
@@ -52,6 +54,7 @@ const InteractiveConfigEditor = (props: {
     setLoggingEnabled(json.logging?.enabled ?? defaultConfig.logging.enabled)
     setLoggingPath(json.logging?.path ?? defaultConfig.logging.path)
     setLoggingActions(json.logging?.actions ?? {})
+    setServers(json.servers ?? {})
   }, [props.content])
 
   const saveFile = (): void => {
@@ -113,7 +116,33 @@ const InteractiveConfigEditor = (props: {
     }
     if (!isEqual(loggingActions, json.logging?.actions ?? {})) {
       json.logging ??= {}
-      json.logging.actions = loggingActions
+      json.logging.actions ??= {}
+      Object.assign(json.logging.actions, loggingActions)
+    }
+    // Remove any servers now gone, update existing servers
+    for (const serverName in json.servers) {
+      if (!(serverName in servers)) {
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+        delete json.servers[serverName]
+      }
+      if ((servers[serverName].enabled ?? true) !== (json.servers[serverName].enabled ?? true)) {
+        json.servers[serverName].enabled = servers[serverName].enabled
+      }
+      if ((servers[serverName].directory ?? '') !== (json.servers[serverName].directory ?? '')) {
+        json.servers[serverName].directory = servers[serverName].directory
+      }
+      if ((servers[serverName].command ?? '') !== (json.servers[serverName].command ?? '')) {
+        json.servers[serverName].command = servers[serverName].command
+      }
+    }
+    // Add any new servers
+    if (Object.keys(servers).length > 0) {
+      json.servers ??= {}
+      for (const serverName in servers) {
+        if (!(serverName in json.servers)) {
+          json.servers[serverName] = servers[serverName]
+        }
+      }
     }
 
     const modifiedJson = CommentJSON.stringify(json, null, 2)
@@ -178,6 +207,15 @@ const InteractiveConfigEditor = (props: {
           httpsKey={httpsKey}
           setHttpsKey={setHttpsKey}
         />
+        {Object.entries(servers).map(([server, serverData]) => (
+          <ServerConfigAccordion
+            key={server}
+            serverName={server}
+            serverData={serverData}
+            servers={servers}
+            setServers={setServers}
+          />
+        ))}
       </div>
       <div style={{ display: 'flex', marginTop: 20 }}>
         <Button variant='outlined' onClick={loadStateFromJSON}>

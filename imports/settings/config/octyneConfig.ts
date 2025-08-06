@@ -1,3 +1,9 @@
+export interface OctyneServerConfig {
+  enabled?: boolean
+  directory?: string
+  command?: string
+}
+
 export interface OctyneConfig {
   port?: number
   unixSocket?: {
@@ -19,14 +25,7 @@ export interface OctyneConfig {
     enabled?: boolean
     port?: number
   }
-  servers?: Record<
-    string,
-    {
-      enabled?: boolean // TODO
-      directory?: string // TODO
-      command?: string // TODO
-    }
-  >
+  servers?: Record<string, OctyneServerConfig>
   logging?: {
     enabled?: boolean
     path?: string
