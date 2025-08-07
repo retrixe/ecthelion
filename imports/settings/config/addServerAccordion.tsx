@@ -89,9 +89,7 @@ const AddServerConfigAccordionInternal = ({
         </FormGroup>
       </AccordionDetails>
       <AccordionActions>
-        <Button color='secondary' onClick={handleServerCreate}>
-          Create Server
-        </Button>
+        <Button onClick={handleServerCreate}>Create Server</Button>
       </AccordionActions>
     </Accordion>
   )

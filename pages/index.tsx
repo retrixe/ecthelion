@@ -168,7 +168,6 @@ const Index = (): React.JSX.Element => {
               <ButtonContainer>
                 <Button
                   variant='contained'
-                  color='secondary'
                   onClick={handleLogin}
                   disabled={!username || !password}
                   sx={{ width: { xs: '100%', md: 'initial' } }}

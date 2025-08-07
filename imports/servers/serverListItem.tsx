@@ -66,7 +66,7 @@ export const ServerListItem = ({
                 <IconButton
                   aria-label='kill'
                   onClick={() => stopStartServer('KILL', server)}
-                  color='primary'
+                  color='secondary'
                 >
                   <Close />
                 </IconButton>
@@ -74,7 +74,7 @@ export const ServerListItem = ({
             )}
             {status === 1 && (
               <Tooltip title='Run Command'>
-                <IconButton aria-label='run command' color='secondary' onClick={() => openDialog()}>
+                <IconButton aria-label='run command' onClick={() => openDialog()}>
                   <Terminal />
                 </IconButton>
               </Tooltip>

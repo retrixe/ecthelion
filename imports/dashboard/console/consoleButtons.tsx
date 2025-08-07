@@ -34,7 +34,7 @@ const ConsoleButtons = ({
         <Button
           startIcon={<PlayArrow />}
           variant='contained'
-          color='primary'
+          color='secondary'
           onClick={() => stopStartServer('START')}
           fullWidth={smallScreen}
         >
@@ -43,7 +43,7 @@ const ConsoleButtons = ({
         <div style={{ margin: 10 }} />
         <Button
           variant='contained'
-          color='primary'
+          color='secondary'
           fullWidth={smallScreen}
           startIcon={<Stop />}
           onClick={() => stopStartServer('TERM')}

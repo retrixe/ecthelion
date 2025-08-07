@@ -228,9 +228,8 @@ const MassActionDialog = ({
           />
           {operation === 'compress' && (
             <FormControl fullWidth sx={{ mt: 1 }}>
-              <InputLabel color='secondary'>Archive Type</InputLabel>
+              <InputLabel>Archive Type</InputLabel>
               <Select
-                color='secondary'
                 value={archiveType}
                 label='Archive Type'
                 onChange={e => setArchiveType(e.target.value)}
@@ -245,10 +244,8 @@ const MassActionDialog = ({
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color='secondary'>
-            Cancel
-          </Button>
-          <Button onClick={handleOperation} color='primary'>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleOperation} color='secondary'>
             {move}
           </Button>
         </DialogActions>

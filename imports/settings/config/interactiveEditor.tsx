@@ -228,13 +228,13 @@ const InteractiveConfigEditor = (props: {
           Undo Changes
         </Button>
         <div style={{ flex: 1 }} />
-        <Button variant='contained' disabled={saving || error} color='secondary' onClick={saveFile}>
+        <Button variant='contained' disabled={saving || error} onClick={saveFile}>
           Apply
         </Button>
       </div>
       {saving && (
         <div style={{ paddingTop: 10 }}>
-          <LinearProgress color='secondary' />
+          <LinearProgress />
         </div>
       )}
     </>

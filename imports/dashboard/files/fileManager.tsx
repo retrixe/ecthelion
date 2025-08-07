@@ -114,7 +114,7 @@ const FileManager = (props: {
   const { setAuthenticated, setServerExists } = props
   const fetchFiles = useCallback(() => {
     ;(async () => {
-      setFetching(true) // TODO: Make it show up after 1.0 seconds.
+      setFetching(true) // TODO: Make it show up after 1.0 seconds.(resolve => setTimeout(resolve, 5000))
       setError(null)
       const files = await ky
         .get(`server/${server}/files?path=${euc(path)}`)
@@ -566,7 +566,7 @@ const FileManager = (props: {
             {fetching && (
               <>
                 <div style={{ paddingRight: 5 }} />
-                <CircularProgress color='secondary' />
+                <CircularProgress />
               </>
             )}
           </div>
@@ -616,7 +616,7 @@ const FileManager = (props: {
           onClose={handleCloseDownload}
           message={`Do you want to download '${download}'?`}
           action={[
-            <Button key='download' size='small' color='primary' onClick={handleDownloadButton}>
+            <Button key='download' size='small' color='secondary' onClick={handleDownloadButton}>
               Download
             </Button>,
             <Button

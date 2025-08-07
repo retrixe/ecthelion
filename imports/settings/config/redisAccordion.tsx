@@ -60,9 +60,7 @@ const RedisConfigAccordionInternal = ({
           />
           <br />
           <FormControl>
-            <InputLabel id='redis-role-label' color='secondary'>
-              Role
-            </InputLabel>
+            <InputLabel id='redis-role-label'>Role</InputLabel>
             <Select
               labelId='redis-role-label'
               id='redis-role-select'
@@ -70,7 +68,6 @@ const RedisConfigAccordionInternal = ({
               label='Role'
               onChange={e => setRedisRole(e.target.value)}
               disabled={!redisEnabled}
-              color='secondary'
               size='small'
             >
               <MenuItem value='primary'>Primary (Authenticates users)</MenuItem>

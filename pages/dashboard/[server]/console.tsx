@@ -63,7 +63,6 @@ const CommandTextField = ({
         fullWidth
         onChange={e => setCommand(e.target.value)}
         onSubmit={handleCommand}
-        color='secondary'
         variant='outlined'
         onKeyDown={e => {
           if (e.key === 'Enter') handleCommand()
@@ -74,7 +73,7 @@ const CommandTextField = ({
         }}
       />
       <div style={{ width: 10 }} />
-      <Fab color='secondary' onClick={handleCommand}>
+      <Fab onClick={handleCommand}>
         <Check />
       </Fab>
     </div>

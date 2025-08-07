@@ -75,7 +75,7 @@ const LoggingConfigAccordionInternal = ({
             <Typography
               component='a'
               variant='body2'
-              color='secondary'
+              color='primary'
               href='https://github.com/retrixe/octyne#logging'
               target='_blank'
               rel='noopener noreferrer'

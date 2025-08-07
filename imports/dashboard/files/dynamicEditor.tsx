@@ -7,7 +7,7 @@ const DynamicEditor = dynamic(() => import('./editor'), {
   loading: () => (
     <>
       <Typography gutterBottom>Loading editor...</Typography>
-      <LinearProgress color='secondary' />
+      <LinearProgress />
     </>
   ),
 })

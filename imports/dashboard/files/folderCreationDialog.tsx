@@ -36,10 +36,8 @@ const FolderCreationDialog = ({
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color='secondary'>
-            Cancel
-          </Button>
-          <Button onClick={() => handleCreateFolder(name)} color='primary'>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={() => handleCreateFolder(name)} color='secondary'>
             Create
           </Button>
         </DialogActions>

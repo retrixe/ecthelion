@@ -38,7 +38,7 @@ const CommandDialog = ({
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button onClick={() => runCommand(command)} color='primary'>
+        <Button onClick={() => runCommand(command)} color='secondary'>
           Run
         </Button>
       </DialogActions>

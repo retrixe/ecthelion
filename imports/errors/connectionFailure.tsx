@@ -14,7 +14,7 @@ export const ConnectionFailure = (props: {
           </Typography>
         )}
         <Typography gutterBottom>Loading...</Typography>
-        <LinearProgress color='secondary' />
+        <LinearProgress />
       </div>
     ) : (
       <>

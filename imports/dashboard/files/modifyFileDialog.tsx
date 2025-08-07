@@ -31,7 +31,6 @@ const ModifyFileDialog = ({
   const pathOrName = operation === 'rename' ? 'name' : 'path'
   return (
     <>
-      {/* Folder creation dialog. */}
       <Dialog open onClose={handleClose}>
         <DialogTitle>{title}</DialogTitle>
         <DialogContent>
@@ -52,10 +51,8 @@ const ModifyFileDialog = ({
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color='secondary'>
-            Cancel
-          </Button>
-          <Button onClick={() => handleEdit(path)} color='primary'>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={() => handleEdit(path)} color='secondary'>
             Done
           </Button>
         </DialogActions>

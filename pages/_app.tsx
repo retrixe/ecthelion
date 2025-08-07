@@ -36,7 +36,7 @@ export default function MyApp(
     if (squareCorners) newThemeOptions.components.MuiPaper = { defaultProps: { square: true } }
     else if (newThemeOptions.components.MuiPaper) delete newThemeOptions.components.MuiPaper
     // Set light theme.
-    if (lightMode) newThemeOptions.palette = { primary: white, secondary: black, mode: 'light' }
+    if (lightMode) newThemeOptions.palette = { primary: black, secondary: white, mode: 'light' }
     setCurrentTheme(createTheme(newThemeOptions))
   }
   React.useEffect(updateTheme, [])

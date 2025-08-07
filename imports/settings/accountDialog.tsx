@@ -115,10 +115,8 @@ const AccountDialog = (props: {
           {error && <DialogContentText color='error'>{error}</DialogContentText>}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color='secondary'>
-            Cancel
-          </Button>
-          <Button onClick={handleSubmit} color='primary'>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleSubmit} color='secondary'>
             Done
           </Button>
         </DialogActions>

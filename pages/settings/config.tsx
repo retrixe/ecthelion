@@ -106,15 +106,12 @@ const ConfigPage = (): React.JSX.Element => {
                 Manage Octyne
               </Typography>
               <FormControl fullWidth style={{ marginBottom: '1em' }}>
-                <InputLabel id='octyne-node-select-label' color='secondary'>
-                  Octyne Node
-                </InputLabel>
+                <InputLabel id='octyne-node-select-label'>Octyne Node</InputLabel>
                 <Select
                   labelId='octyne-node-select-label'
                   id='octyne-node-select'
                   value={node ?? ''}
                   label='Octyne Node'
-                  color='secondary'
                   defaultValue=''
                   onChange={node => {
                     router
@@ -138,7 +135,6 @@ const ConfigPage = (): React.JSX.Element => {
               {/* fileContent !== null && (
                 <Button
                   variant='contained'
-                  color='secondary'
                   fullWidth
                   style={{ marginTop: '1em' }}
                   onClick={() => setConfirmDialog(true)}
@@ -168,8 +164,6 @@ const ConfigPage = (): React.JSX.Element => {
                 <Tabs
                   value={interactiveEditor ? 'gui' : 'text'}
                   onChange={(e, newValue) => setInteractiveEditor(newValue === 'gui')}
-                  indicatorColor='secondary'
-                  textColor='secondary'
                   sx={{ marginBottom: 2 }}
                 >
                   <Tab label='Interactive' value='gui' />

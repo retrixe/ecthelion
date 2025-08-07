@@ -69,11 +69,7 @@ const StatisticsDisplay = ({
     <div style={{ paddingBottom: 10 }} />
     <Typography variant='h6'>CPU Usage</Typography>
     <Typography gutterBottom>{Math.ceil(statistics.cpuUsage)}%</Typography>
-    <LinearProgress
-      variant='determinate'
-      color='secondary'
-      value={Math.ceil(statistics.cpuUsage)}
-    />
+    <LinearProgress variant='determinate' value={Math.ceil(statistics.cpuUsage)} />
     <br />
     <Typography variant='h6'>RAM Usage</Typography>
     <Typography gutterBottom>
@@ -82,7 +78,6 @@ const StatisticsDisplay = ({
     </Typography>
     <LinearProgress
       variant='determinate'
-      color='secondary'
       value={(statistics.memoryUsage * 100) / statistics.totalMemory}
     />
   </Paper>

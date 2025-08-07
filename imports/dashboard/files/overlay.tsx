@@ -26,7 +26,7 @@ function LinearProgressWithLabel(
         <LinearProgress variant='determinate' {...props} />
       </Box>
       <Box sx={{ minWidth: 35 }}>
-        <Typography variant='body2' color='text.secondary'>
+        <Typography variant='body2' color='textSecondary'>
           {`${Math.round(props.value)}%`}
         </Typography>
       </Box>
@@ -50,9 +50,9 @@ const Overlay = (props: {
       }}
     >
       {typeof props.display === 'string' ? (
-        <LinearProgress color='secondary' />
+        <LinearProgress />
       ) : (
-        <LinearProgressWithLabel color='secondary' value={props.display.progress} />
+        <LinearProgressWithLabel value={props.display.progress} />
       )}
       <div style={{ height: typeof props.display === 'string' ? '1rem' : '0.6rem' }} />
       <Typography variant='body1'>
