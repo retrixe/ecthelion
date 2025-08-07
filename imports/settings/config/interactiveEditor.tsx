@@ -147,7 +147,6 @@ const InteractiveConfigEditor = (props: {
     }
 
     const modifiedJson = CommentJSON.stringify(json, null, 2)
-    console.log(modifiedJson) // TODO
     Promise.resolve(props.onSave(modifiedJson))
       .then(() => setSaving(false))
       .catch(console.error)
