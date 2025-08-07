@@ -14,46 +14,34 @@ import {
 import { ExpandMore } from '@mui/icons-material'
 import type { OctyneServerConfig, OctyneConfig } from './octyneConfig'
 
-const ServerConfigAccordionInternal = ({
+const EditServerConfigAccordionInternal = ({
   serverName,
   serverData,
-  servers,
   setServers,
 }: {
   serverName: string
   serverData: OctyneServerConfig
-  servers: NonNullable<OctyneConfig['servers']>
-  setServers: (servers: NonNullable<OctyneConfig['servers']>) => void
+  setServers: React.Dispatch<React.SetStateAction<NonNullable<OctyneConfig['servers']>>>
 }): React.JSX.Element => {
   const handleServerEnabledChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const newServerData = { ...serverData }
-    newServerData.enabled = e.target.checked
-    const newServers = { ...servers }
-    newServers[serverName] = newServerData
-    setServers(newServers)
+    setServers(prev => ({ ...prev, [serverName]: { ...serverData, enabled: e.target.checked } }))
   }
 
   const handleServerDirectoryChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const newServerData = { ...serverData }
-    newServerData.directory = e.target.value
-    const newServers = { ...servers }
-    newServers[serverName] = newServerData
-    setServers(newServers)
+    setServers(prev => ({ ...prev, [serverName]: { ...serverData, directory: e.target.value } }))
   }
 
   const handleServerCommandChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const newServerData = { ...serverData }
-    newServerData.command = e.target.value
-    const newServers = { ...servers }
-    newServers[serverName] = newServerData
-    setServers(newServers)
+    setServers(prev => ({ ...prev, [serverName]: { ...serverData, command: e.target.value } }))
   }
 
   const handleServerDelete = (): void => {
-    const newServers = { ...servers }
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-    delete newServers[serverName]
-    setServers(newServers)
+    setServers(prev => {
+      const newServers = { ...prev }
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete newServers[serverName]
+      return newServers
+    })
   }
 
   return (
@@ -102,6 +90,6 @@ const ServerConfigAccordionInternal = ({
   )
 }
 
-const ServerConfigAccordion = React.memo(ServerConfigAccordionInternal)
+const EditServerConfigAccordion = React.memo(EditServerConfigAccordionInternal)
 
-export default ServerConfigAccordion
+export default EditServerConfigAccordion

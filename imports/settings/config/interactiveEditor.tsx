@@ -9,7 +9,8 @@ import HttpsConfigAccordion from './httpsAccordion'
 import WebUiConfigAccordion from './webUiAccordion'
 import UnixSocketConfigAccordion from './unixSocketAccordion'
 import LoggingConfigAccordion from './loggingAccordion'
-import ServerConfigAccordion from './serverAccordion'
+import EditServerConfigAccordion from './editServerAccordion'
+import AddServerConfigAccordion from './addServerAccordion'
 
 const InteractiveConfigEditor = (props: {
   title: string
@@ -207,15 +208,21 @@ const InteractiveConfigEditor = (props: {
           httpsKey={httpsKey}
           setHttpsKey={setHttpsKey}
         />
-        {Object.entries(servers).map(([server, serverData]) => (
-          <ServerConfigAccordion
-            key={server}
-            serverName={server}
+      </div>
+      <br />
+      <div>
+        {Object.entries(servers).map(([serverName, serverData]) => (
+          <EditServerConfigAccordion
+            key={serverName}
+            serverName={serverName}
             serverData={serverData}
-            servers={servers}
             setServers={setServers}
           />
         ))}
+        <AddServerConfigAccordion
+          servers={servers}
+          onServerCreate={(name, server) => setServers(prev => ({ ...prev, [name]: server }))}
+        />
       </div>
       <div style={{ display: 'flex', marginTop: 20 }}>
         <Button variant='outlined' onClick={loadStateFromJSON}>
