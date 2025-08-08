@@ -41,11 +41,7 @@ const RedisConfigAccordionInternal = ({
           <FormControlLabel
             label='Enable Redis-based Authentication'
             control={
-              <Switch
-                color='info'
-                checked={redisEnabled}
-                onChange={e => setRedisEnabled(e.target.checked)}
-              />
+              <Switch checked={redisEnabled} onChange={e => setRedisEnabled(e.target.checked)} />
             }
           />
           <br />

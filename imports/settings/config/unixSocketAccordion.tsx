@@ -37,7 +37,6 @@ const UnixSocketConfigAccordionInternal = ({
             label='Enable Unix Socket API'
             control={
               <Switch
-                color='info'
                 checked={unixSocketEnabled}
                 onChange={e => setUnixSocketEnabled(e.target.checked)}
               />

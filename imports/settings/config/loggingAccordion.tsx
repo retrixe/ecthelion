@@ -46,7 +46,6 @@ const LoggingConfigAccordionInternal = ({
             label='Log actions performed on Octyne'
             control={
               <Switch
-                color='info'
                 checked={loggingEnabled}
                 onChange={e => setLoggingEnabled(e.target.checked)}
               />
@@ -104,7 +103,6 @@ const LoggingConfigAccordionInternal = ({
               >
                 <ListItemIcon>
                   <Switch
-                    color='info'
                     checked={enabled}
                     onChange={e =>
                       setLoggingActions({

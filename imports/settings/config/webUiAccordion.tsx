@@ -33,11 +33,7 @@ const WebUiConfigAccordionInternal = ({
           <FormControlLabel
             label='Enable Web UI'
             control={
-              <Switch
-                color='info'
-                checked={webUiEnabled}
-                onChange={e => setWebUiEnabled(e.target.checked)}
-              />
+              <Switch checked={webUiEnabled} onChange={e => setWebUiEnabled(e.target.checked)} />
             }
           />
           <br />

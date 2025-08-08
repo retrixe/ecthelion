@@ -45,7 +45,10 @@ const Layout = (
       }
       `}
     </style> */}
-    <AppBar sx={{ zIndex: { xs: 'appBar', sm: 1201 /* theme => theme.zIndex.drawer + 1 */ } }}>
+    <AppBar
+      enableColorOnDark
+      sx={{ zIndex: { xs: 'appBar', sm: 1201 /* theme => theme.zIndex.drawer + 1 */ } }}
+    >
       <Toolbar style={{ minWidth: '100vw' }}>{props.appBar}</Toolbar>
     </AppBar>
     {props.removeToolbar ? '' : <Toolbar />}

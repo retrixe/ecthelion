@@ -62,9 +62,7 @@ const AddServerConfigAccordionInternal = ({
           <br />
           <FormControlLabel
             label='Auto-start server'
-            control={
-              <Switch color='info' checked={enabled} onChange={e => setEnabled(e.target.checked)} />
-            }
+            control={<Switch checked={enabled} onChange={e => setEnabled(e.target.checked)} />}
           />
           <br />
           <TextField

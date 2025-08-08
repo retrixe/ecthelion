@@ -1,4 +1,5 @@
 import { createTheme, type ThemeOptions } from '@mui/material'
+import { pink } from '@mui/material/colors'
 
 // A theme with custom primary and secondary color.
 // It's optional.
@@ -6,8 +7,8 @@ export const black = { main: '#000000', dark: '#000000' } // colors.blue
 export const white = { main: '#ffffff', dark: '#ffffff' } // colors.purple
 export const defaultThemeOptions: ThemeOptions = {
   palette: {
-    primary: white,
-    secondary: black,
+    primary: pink,
+    secondary: white,
     mode: 'dark',
   },
   /* components: {

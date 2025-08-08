@@ -5,7 +5,7 @@ import createCache from '@emotion/cache'
 import { CacheProvider, type EmotionCache } from '@emotion/react'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
-import defaultTheme, { defaultThemeOptions, white, black } from '../imports/theme'
+import defaultTheme, { defaultThemeOptions, black } from '../imports/theme'
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createCache({ key: 'css' })
@@ -36,7 +36,8 @@ export default function MyApp(
     if (squareCorners) newThemeOptions.components.MuiPaper = { defaultProps: { square: true } }
     else if (newThemeOptions.components.MuiPaper) delete newThemeOptions.components.MuiPaper
     // Set light theme.
-    if (lightMode) newThemeOptions.palette = { primary: black, secondary: white, mode: 'light' }
+    if (lightMode)
+      newThemeOptions.palette = { ...defaultThemeOptions.palette, secondary: black, mode: 'light' }
     setCurrentTheme(createTheme(newThemeOptions))
   }
   React.useEffect(updateTheme, [])

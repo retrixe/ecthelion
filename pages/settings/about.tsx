@@ -130,25 +130,19 @@ const About = (): React.JSX.Element => {
           <FormGroup>
             <FormControlLabel
               label='Terminal Coloured Console'
-              control={
-                <Switch color='info' checked={terminalUi} onChange={handleTerminalUiToggle} />
-              }
+              control={<Switch checked={terminalUi} onChange={handleTerminalUiToggle} />}
             />
             <FormControlLabel
               label='Light Mode (Here be dragons)'
-              control={<Switch color='info' checked={lightMode} onChange={handleLightModeToggle} />}
+              control={<Switch checked={lightMode} onChange={handleLightModeToggle} />}
             />
             <FormControlLabel
               label='Square Corners'
-              control={
-                <Switch color='info' checked={squareCorners} onChange={handleSquareCornersToggle} />
-              }
+              control={<Switch checked={squareCorners} onChange={handleSquareCornersToggle} />}
             />
             <FormControlLabel
               label={`anime theme! uwu kawaiiiii~${animeTheme ? ` (image #${currentImage})` : ''}`}
-              control={
-                <Switch color='info' checked={!!animeTheme} onChange={handleAnimeThemeToggle} />
-              }
+              control={<Switch checked={!!animeTheme} onChange={handleAnimeThemeToggle} />}
             />
           </FormGroup>
         </Paper>

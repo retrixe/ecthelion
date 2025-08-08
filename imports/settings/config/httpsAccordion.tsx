@@ -36,11 +36,7 @@ const HttpsConfigAccordionInternal = ({
           <FormControlLabel
             label='Enable HTTPS'
             control={
-              <Switch
-                color='info'
-                checked={httpsEnabled}
-                onChange={e => setHttpsEnabled(e.target.checked)}
-              />
+              <Switch checked={httpsEnabled} onChange={e => setHttpsEnabled(e.target.checked)} />
             }
           />
           <br />

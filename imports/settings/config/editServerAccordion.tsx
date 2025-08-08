@@ -54,11 +54,7 @@ const EditServerConfigAccordionInternal = ({
           <FormControlLabel
             label='Auto-start server'
             control={
-              <Switch
-                color='info'
-                checked={serverData.enabled ?? true}
-                onChange={handleServerEnabledChange}
-              />
+              <Switch checked={serverData.enabled ?? true} onChange={handleServerEnabledChange} />
             }
           />
           <br />
