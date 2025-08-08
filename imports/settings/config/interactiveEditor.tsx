@@ -125,15 +125,16 @@ const InteractiveConfigEditor = (props: {
       if (!(serverName in servers)) {
         // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete json.servers[serverName]
-      }
-      if ((servers[serverName].enabled ?? true) !== (json.servers[serverName].enabled ?? true)) {
-        json.servers[serverName].enabled = servers[serverName].enabled
-      }
-      if ((servers[serverName].directory ?? '') !== (json.servers[serverName].directory ?? '')) {
-        json.servers[serverName].directory = servers[serverName].directory
-      }
-      if ((servers[serverName].command ?? '') !== (json.servers[serverName].command ?? '')) {
-        json.servers[serverName].command = servers[serverName].command
+      } else {
+        if ((servers[serverName].enabled ?? true) !== (json.servers[serverName].enabled ?? true)) {
+          json.servers[serverName].enabled = servers[serverName].enabled
+        }
+        if ((servers[serverName].directory ?? '') !== (json.servers[serverName].directory ?? '')) {
+          json.servers[serverName].directory = servers[serverName].directory
+        }
+        if ((servers[serverName].command ?? '') !== (json.servers[serverName].command ?? '')) {
+          json.servers[serverName].command = servers[serverName].command
+        }
       }
     }
     // Add any new servers
