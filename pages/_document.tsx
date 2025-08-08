@@ -3,7 +3,7 @@ import type { AppProps } from 'next/app'
 import Document, { Html, Head, Main, NextScript } from 'next/document'
 import createEmotionServer from '@emotion/server/create-instance'
 import createCache from '@emotion/cache'
-import theme from '../imports/theme'
+import defaultTheme from '../imports/theme'
 import config from '../imports/config'
 
 const ico = `${config.basePath ?? ''}/favicon.png`
@@ -16,7 +16,7 @@ class MyDocument extends Document {
           <link rel='icon' href={ico} />
           <meta charSet='utf-8' />
           {/* PWA primary color */}
-          <meta name='theme-color' content={theme.palette.primary.main} />
+          <meta name='theme-color' content={defaultTheme.palette.primary.main} />
           {/* Open Graph Protocol support. */}
           <meta property='og:type' content='website' />
           <meta property='og:image' content={ico} />

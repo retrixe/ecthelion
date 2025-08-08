@@ -5,7 +5,8 @@ import createCache from '@emotion/cache'
 import { CacheProvider, type EmotionCache } from '@emotion/react'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
-import defaultTheme, { defaultThemeOptions, black } from '../imports/theme'
+import defaultTheme, { defaultThemeOptions } from '../imports/theme'
+import localStorageManager from '../imports/helpers/localStorageManager'
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createCache({ key: 'css' })
@@ -25,19 +26,15 @@ export default function MyApp(
   const updateTheme = (): void => {
     if (typeof localStorage !== 'object') return
     const squareCorners = localStorage.getItem('ecthelion:square-corners') === 'true'
-    const lightMode = localStorage.getItem('ecthelion:light-mode') === 'true'
 
     // If no square corners and no light theme...
-    if (!squareCorners && !lightMode) return setCurrentTheme(defaultTheme)
+    if (!squareCorners) return setCurrentTheme(defaultTheme)
     const newThemeOptions = { ...defaultThemeOptions }
 
     // Set square corners.
     newThemeOptions.components ??= {}
-    if (squareCorners) newThemeOptions.components.MuiPaper = { defaultProps: { square: true } }
-    else if (newThemeOptions.components.MuiPaper) delete newThemeOptions.components.MuiPaper
-    // Set light theme.
-    if (lightMode)
-      newThemeOptions.palette = { ...defaultThemeOptions.palette, secondary: black, mode: 'light' }
+    newThemeOptions.components.MuiPaper = { defaultProps: { square: true } } // if (squareCorners)
+    // else if (newThemeOptions.components.MuiPaper) delete newThemeOptions.components.MuiPaper
     setCurrentTheme(createTheme(newThemeOptions))
   }
   React.useEffect(updateTheme, [])
@@ -52,7 +49,7 @@ export default function MyApp(
           minimum-scale=1, width=device-width, height=device-height'
         />
       </Head>
-      <ThemeProvider theme={currentTheme}>
+      <ThemeProvider theme={currentTheme} defaultMode='system' storageManager={localStorageManager}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
         <UpdateThemeContext.Provider value={updateTheme}>

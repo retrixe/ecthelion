@@ -1,5 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import { Typography, Paper, Divider, Switch, FormGroup, FormControlLabel } from '@mui/material'
+import {
+  Typography,
+  Paper,
+  Divider,
+  Switch,
+  FormGroup,
+  FormControlLabel,
+  FormControl,
+  Radio,
+  FormLabel,
+  RadioGroup,
+  useColorScheme,
+} from '@mui/material'
 
 import config from '../../imports/config'
 import Title from '../../imports/helpers/title'
@@ -25,8 +37,8 @@ const tastefulImages = [
 
 const About = (): React.JSX.Element => {
   const ky = useKy()
+  const { mode, setMode } = useColorScheme()
   const [loggedIn, setLoggedIn] = useState(true)
-  const [lightMode, setLightMode] = useState(false)
   const [terminalUi, setTerminalUi] = useState(false)
   const [animeTheme, setAnimeTheme] = useState<string | null>(null)
   const [squareCorners, setSquareCorners] = useState(false)
@@ -35,7 +47,6 @@ const About = (): React.JSX.Element => {
   useEffect(() => {
     if (typeof localStorage !== 'object') return
     ky.get('servers', { throwHttpErrors: true }).catch(() => setLoggedIn(false))
-    setLightMode(localStorage.getItem('ecthelion:light-mode') === 'true')
     setTerminalUi(localStorage.getItem('ecthelion:terminal-ui') === 'true')
     setAnimeTheme(localStorage.getItem('anime-theme'))
     setSquareCorners(localStorage.getItem('ecthelion:square-corners') === 'true')
@@ -50,12 +61,6 @@ const About = (): React.JSX.Element => {
     setTerminalUi(e.target.checked)
     if (e.target.checked) localStorage.setItem('ecthelion:terminal-ui', 'true')
     else localStorage.removeItem('ecthelion:terminal-ui')
-    updateTheme()
-  }
-  const handleLightModeToggle = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setLightMode(e.target.checked)
-    if (e.target.checked) localStorage.setItem('ecthelion:light-mode', 'true')
-    else localStorage.removeItem('ecthelion:light-mode')
     updateTheme()
   }
   const handleAnimeThemeToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -127,17 +132,27 @@ const About = (): React.JSX.Element => {
             UI Settings
           </Typography>
           <Divider style={{ marginBottom: '0.70em' }} />
+          <FormControl>
+            <FormLabel id='theme-toggle-label'>Theme</FormLabel>
+            <RadioGroup
+              aria-labelledby='theme-toggle-label'
+              name='theme-toggle'
+              row
+              value={mode ?? 'system'}
+              onChange={e => setMode(e.target.value as 'light' | 'dark' | 'system')}
+            >
+              <FormControlLabel value='system' control={<Radio />} label='System' />
+              <FormControlLabel value='light' control={<Radio />} label='Light' />
+              <FormControlLabel value='dark' control={<Radio />} label='Dark' />
+            </RadioGroup>
+          </FormControl>
           <FormGroup>
             <FormControlLabel
               label='Terminal Coloured Console'
               control={<Switch checked={terminalUi} onChange={handleTerminalUiToggle} />}
             />
             <FormControlLabel
-              label='Light Mode (Here be dragons)'
-              control={<Switch checked={lightMode} onChange={handleLightModeToggle} />}
-            />
-            <FormControlLabel
-              label='Square Corners'
+              label='Square Corners (Unsupported)'
               control={<Switch checked={squareCorners} onChange={handleSquareCornersToggle} />}
             />
             <FormControlLabel

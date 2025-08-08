@@ -1,15 +1,15 @@
-import { createTheme, type ThemeOptions } from '@mui/material'
+import { createTheme, type CssVarsThemeOptions, type ThemeOptions } from '@mui/material'
 import { pink } from '@mui/material/colors'
 
-// A theme with custom primary and secondary color.
-// It's optional.
-export const black = { main: '#000000', dark: '#000000' } // colors.blue
-export const white = { main: '#ffffff', dark: '#ffffff' } // colors.purple
-export const defaultThemeOptions: ThemeOptions = {
-  palette: {
-    primary: pink,
-    secondary: white,
-    mode: 'dark',
+export const black = { main: '#000000', dark: '#000000' }
+export const white = { main: '#ffffff', dark: '#ffffff' }
+
+export const defaultThemeOptions: ThemeOptions & CssVarsThemeOptions = {
+  palette: { primary: pink, secondary: black },
+  colorSchemes: {
+    dark: {
+      palette: { primary: pink, secondary: white },
+    },
   },
   /* components: {
     MuiTextField: { defaultProps: { color: 'primary' } },
@@ -17,6 +17,6 @@ export const defaultThemeOptions: ThemeOptions = {
     MuiButton: { defaultProps: { color: 'primary' } },
   }, */
 }
-const theme = createTheme(defaultThemeOptions)
+const defaultTheme = createTheme(defaultThemeOptions)
 
-export default theme
+export default defaultTheme
