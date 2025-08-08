@@ -22,10 +22,10 @@ const ConfirmDialog = (props: {
         <DialogContentText>{props.prompt}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => props.onCancel()}>Cancel</Button>
-        <Button onClick={() => props.onConfirm()} color='secondary'>
-          Confirm
+        <Button onClick={() => props.onCancel()} color='secondary'>
+          Cancel
         </Button>
+        <Button onClick={() => props.onConfirm()}>Confirm</Button>
       </DialogActions>
     </Dialog>
   </>

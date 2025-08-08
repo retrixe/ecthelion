@@ -244,10 +244,10 @@ const MassActionDialog = ({
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleOperation} color='secondary'>
-            {move}
+          <Button onClick={handleClose} color='secondary'>
+            Cancel
           </Button>
+          <Button onClick={handleOperation}>{move}</Button>
         </DialogActions>
       </Dialog>
     </>

@@ -51,10 +51,10 @@ const ModifyFileDialog = ({
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={() => handleEdit(path)} color='secondary'>
-            Done
+          <Button onClick={handleClose} color='secondary'>
+            Cancel
           </Button>
+          <Button onClick={() => handleEdit(path)}>Done</Button>
         </DialogActions>
       </Dialog>
     </>

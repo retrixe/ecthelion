@@ -225,7 +225,7 @@ const AccountsPage = (): React.JSX.Element => {
             >
               Close
             </Button>,
-            <Button key='confirm' size='small' color='secondary' onClick={handleDeleteAccount}>
+            <Button key='confirm' size='small' onClick={handleDeleteAccount}>
               Confirm
             </Button>,
           ]}

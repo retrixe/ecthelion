@@ -51,16 +51,6 @@ export const ServerListItem = ({
         disablePadding
         secondaryAction={
           <>
-            {/* Former color scheme: primary/(default, secondary, primary) */}
-            <Tooltip title={status !== 1 ? 'Start' : 'Stop'}>
-              <IconButton
-                aria-label={status !== 1 ? 'start' : 'stop'}
-                onClick={() => stopStartServer(status !== 1 ? 'START' : 'TERM', server)}
-                color='default'
-              >
-                {status !== 1 ? <PlayArrow /> : <Stop />}
-              </IconButton>
-            </Tooltip>
             {status === 1 && (
               <Tooltip title='Kill'>
                 <IconButton
@@ -72,9 +62,18 @@ export const ServerListItem = ({
                 </IconButton>
               </Tooltip>
             )}
+            <Tooltip title={status !== 1 ? 'Start' : 'Stop'}>
+              <IconButton
+                aria-label={status !== 1 ? 'start' : 'stop'}
+                onClick={() => stopStartServer(status !== 1 ? 'START' : 'TERM', server)}
+                color={status !== 1 ? 'primary' : 'secondary'}
+              >
+                {status !== 1 ? <PlayArrow /> : <Stop />}
+              </IconButton>
+            </Tooltip>
             {status === 1 && (
               <Tooltip title='Run Command'>
-                <IconButton aria-label='run command' onClick={() => openDialog()}>
+                <IconButton aria-label='run command' color='primary' onClick={() => openDialog()}>
                   <Terminal />
                 </IconButton>
               </Tooltip>

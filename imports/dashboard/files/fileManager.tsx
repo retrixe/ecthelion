@@ -616,7 +616,7 @@ const FileManager = (props: {
           onClose={handleCloseDownload}
           message={`Do you want to download '${download}'?`}
           action={[
-            <Button key='download' size='small' color='secondary' onClick={handleDownloadButton}>
+            <Button key='download' size='small' onClick={handleDownloadButton}>
               Download
             </Button>,
             <Button

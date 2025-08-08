@@ -15,6 +15,7 @@ const ConsoleButtons = ({
   const KillButton = (
     <Button
       startIcon={<Close />}
+      color='secondary'
       variant='contained'
       onClick={() => {
         if (confirmingKill) {
@@ -34,7 +35,6 @@ const ConsoleButtons = ({
         <Button
           startIcon={<PlayArrow />}
           variant='contained'
-          color='secondary'
           onClick={() => stopStartServer('START')}
           fullWidth={smallScreen}
         >
@@ -43,7 +43,6 @@ const ConsoleButtons = ({
         <div style={{ margin: 10 }} />
         <Button
           variant='contained'
-          color='secondary'
           fullWidth={smallScreen}
           startIcon={<Stop />}
           onClick={() => stopStartServer('TERM')}
