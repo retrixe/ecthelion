@@ -5,4 +5,5 @@ export default config as {
   nodes?: Record<string, string>
   basePath?: string
   enableCookieAuth?: boolean
+  defaultColor?: string
 }

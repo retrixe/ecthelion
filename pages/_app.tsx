@@ -6,7 +6,7 @@ import { CacheProvider, type EmotionCache } from '@emotion/react'
 import * as colors from '@mui/material/colors'
 import { type ColorSystemOptions, ThemeProvider, createTheme } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
-import defaultTheme, { defaultThemeOptions } from '../imports/theme'
+import defaultTheme, { type Colors, defaultThemeOptions } from '../imports/theme'
 import localStorageManager from '../imports/helpers/localStorageManager'
 
 // Client-side cache, shared for the whole session of the user in the browser.
@@ -26,9 +26,7 @@ export default function MyApp(
   const [currentTheme, setCurrentTheme] = React.useState(defaultTheme)
   const updateTheme = (): void => {
     if (typeof localStorage !== 'object') return
-    const themeColor = localStorage.getItem('ecthelion:theme-color') as
-      | keyof Omit<typeof colors, 'common'>
-      | null
+    const themeColor = localStorage.getItem('ecthelion:theme-color') as Colors | null
     const squareCorners = localStorage.getItem('ecthelion:square-corners') === 'true'
 
     // If no square corners and no color theme...

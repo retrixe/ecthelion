@@ -6,7 +6,7 @@ A frontend for Octyne.
 
 Ecthelion comes built into Octyne as a web interface, so you can use it without any additional setup. To access Ecthelion, simply navigate to the Octyne web interface in your browser. This requires Octyne 1.4+ and the `webui` feature enabled in the Octyne configuration.
 
-You may need Ecthelion standalone if you have a multi-node Octyne setup, or if you want to host Ecthelion separately from Octyne. In this case, follow the steps below.
+You only need Ecthelion standalone if you have a multi-node Octyne setup, or if you want to host Ecthelion separately from Octyne and customise its settings. In this case, follow the steps below.
 
 ## Quick Start (Standalone)
 
@@ -60,7 +60,8 @@ Create a `config.json` in the top level of the project and then add the followin
     "<name of secondary node>": "<absolute URL to Octyne node>"
   },
   "basePath": "<pass this if you want ecthelion on a sub-path like e.g. /ecthelion>",
-  "enableCookieAuth": false
+  "enableCookieAuth": false,
+  "defaultColor": "<optional, default is pink>"
 }
 ```
 
@@ -73,3 +74,4 @@ Create a `config.json` in the top level of the project and then add the followin
 
   To achieve this, you can use a reverse proxy like nginx or Apache. [The Octyne documentation has sample configs for both.](https://github.com/retrixe/octyne#https-setup)
 - It is possible to point Ecthelion to an Octyne v1.4+ Web UI port instead of an API port, by adding `/api` to the end of the URL.
+- Supported colors include: `amber, blue, blueGrey, brown, cyan, deepOrange, deepPurple, green, grey, indigo, lightBlue, lightGreen, lime, orange, pink, purple, red, teal, yellow`

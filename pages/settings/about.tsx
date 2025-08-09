@@ -18,6 +18,7 @@ import {
 import * as colors from '@mui/material/colors'
 
 import config from '../../imports/config'
+import { defaultColorName, type Colors } from '../../imports/theme'
 import Title from '../../imports/helpers/title'
 import useKy from '../../imports/helpers/useKy'
 import SettingsLayout from '../../imports/settings/settingsLayout'
@@ -38,8 +39,6 @@ const tastefulImages = [
   '89024838_p0.jpg.avif',
   '95394439_p0.jpg.avif',
 ]
-
-type Colors = keyof Omit<typeof colors, 'common'>
 
 const colorNameToReadableName = (colorName: Colors): string =>
   colorName.charAt(0).toUpperCase() + colorName.slice(1).replace(/([A-Z])/g, ' $1')
@@ -173,7 +172,9 @@ const About = (): React.JSX.Element => {
               label='Color'
               onChange={e => handleThemeColorChange(e.target.value)}
             >
-              <MenuItem value='default'>Default (Pink)</MenuItem>
+              <MenuItem value='default'>
+                Default ({colorNameToReadableName(defaultColorName)})
+              </MenuItem>
               {Object.entries(colors)
                 .filter(([key]) => key !== 'common')
                 .map(([key]) => (
