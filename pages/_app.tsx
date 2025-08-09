@@ -3,7 +3,8 @@ import Head from 'next/head'
 import type { AppProps } from 'next/app'
 import createCache from '@emotion/cache'
 import { CacheProvider, type EmotionCache } from '@emotion/react'
-import { ThemeProvider, createTheme } from '@mui/material/styles'
+import * as colors from '@mui/material/colors'
+import { type ColorSystemOptions, ThemeProvider, createTheme } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import defaultTheme, { defaultThemeOptions } from '../imports/theme'
 import localStorageManager from '../imports/helpers/localStorageManager'
@@ -25,16 +26,28 @@ export default function MyApp(
   const [currentTheme, setCurrentTheme] = React.useState(defaultTheme)
   const updateTheme = (): void => {
     if (typeof localStorage !== 'object') return
+    const themeColor = localStorage.getItem('ecthelion:theme-color') as
+      | keyof Omit<typeof colors, 'common'>
+      | null
     const squareCorners = localStorage.getItem('ecthelion:square-corners') === 'true'
 
-    // If no square corners and no light theme...
-    if (!squareCorners) return setCurrentTheme(defaultTheme)
+    // If no square corners and no color theme...
+    if (!squareCorners && !themeColor) return setCurrentTheme(defaultTheme)
     const newThemeOptions = { ...defaultThemeOptions }
 
     // Set square corners.
     newThemeOptions.components ??= {}
-    newThemeOptions.components.MuiPaper = { defaultProps: { square: true } } // if (squareCorners)
-    // else if (newThemeOptions.components.MuiPaper) delete newThemeOptions.components.MuiPaper
+    if (squareCorners) newThemeOptions.components.MuiPaper = { defaultProps: { square: true } }
+
+    // Set color theme.
+    if (themeColor && themeColor in colors) {
+      /* eslint-disable @typescript-eslint/no-non-null-assertion */
+      newThemeOptions.palette!.primary = colors[themeColor]
+      ;(newThemeOptions.colorSchemes!.dark as ColorSystemOptions).palette!.primary =
+        colors[themeColor]
+      /* eslint-enable @typescript-eslint/no-non-null-assertion */
+    }
+
     setCurrentTheme(createTheme(newThemeOptions))
   }
   React.useEffect(updateTheme, [])

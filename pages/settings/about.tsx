@@ -11,6 +11,9 @@ import {
   FormLabel,
   RadioGroup,
   useColorScheme,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@mui/material'
 
 import config from '../../imports/config'
@@ -40,6 +43,7 @@ const About = (): React.JSX.Element => {
   const { mode, setMode } = useColorScheme()
   const [loggedIn, setLoggedIn] = useState(true)
   const [terminalUi, setTerminalUi] = useState(false)
+  const [themeColor, setThemeColor] = useState<'teal' | 'pink' | 'default'>('default')
   const [animeTheme, setAnimeTheme] = useState<string | null>(null)
   const [squareCorners, setSquareCorners] = useState(false)
   const updateTheme = React.useContext(UpdateThemeContext)
@@ -47,14 +51,17 @@ const About = (): React.JSX.Element => {
   useEffect(() => {
     if (typeof localStorage !== 'object') return
     ky.get('servers', { throwHttpErrors: true }).catch(() => setLoggedIn(false))
+    setThemeColor(
+      (localStorage.getItem('ecthelion:theme-color') as 'teal' | 'pink' | null) ?? 'default',
+    )
     setTerminalUi(localStorage.getItem('ecthelion:terminal-ui') === 'true')
-    setAnimeTheme(localStorage.getItem('anime-theme'))
+    setAnimeTheme(localStorage.getItem('ecthelion:anime-theme'))
     setSquareCorners(localStorage.getItem('ecthelion:square-corners') === 'true')
   }, [ky])
-  const handleSquareCornersToggle = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setSquareCorners(e.target.checked)
-    if (e.target.checked) localStorage.setItem('ecthelion:square-corners', 'true')
-    else localStorage.removeItem('ecthelion:square-corners')
+  const handleThemeColorChange = (value: 'teal' | 'pink' | 'default'): void => {
+    setThemeColor(value)
+    if (value === 'default') localStorage.removeItem('ecthelion:theme-color')
+    else localStorage.setItem('ecthelion:theme-color', value)
     updateTheme()
   }
   const handleTerminalUiToggle = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -68,8 +75,14 @@ const About = (): React.JSX.Element => {
       ? tastefulImages[kawaiiiii.current++ % tastefulImages.length]
       : null
     setAnimeTheme(newImage)
-    if (newImage) localStorage.setItem('anime-theme', newImage)
-    else localStorage.removeItem('anime-theme')
+    if (newImage) localStorage.setItem('ecthelion:anime-theme', newImage)
+    else localStorage.removeItem('ecthelion:anime-theme')
+    updateTheme()
+  }
+  const handleSquareCornersToggle = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setSquareCorners(e.target.checked)
+    if (e.target.checked) localStorage.setItem('ecthelion:square-corners', 'true')
+    else localStorage.removeItem('ecthelion:square-corners')
     updateTheme()
   }
 
@@ -145,6 +158,21 @@ const About = (): React.JSX.Element => {
               <FormControlLabel value='light' control={<Radio />} label='Light' />
               <FormControlLabel value='dark' control={<Radio />} label='Dark' />
             </RadioGroup>
+          </FormControl>
+          <br />
+          <FormControl sx={{ m: '1rem 0', width: '16rem' }}>
+            <InputLabel id='theme-color-select'>Color</InputLabel>
+            <Select
+              size='small'
+              labelId='theme-color-select'
+              value={themeColor}
+              label='Color'
+              onChange={e => handleThemeColorChange(e.target.value)}
+            >
+              <MenuItem value='default'>Default (Pink)</MenuItem>
+              <MenuItem value='teal'>Teal</MenuItem>
+              <MenuItem value='pink'>Pink</MenuItem>
+            </Select>
           </FormControl>
           <FormGroup>
             <FormControlLabel
