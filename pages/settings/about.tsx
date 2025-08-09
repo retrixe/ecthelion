@@ -15,6 +15,7 @@ import {
   Select,
   MenuItem,
 } from '@mui/material'
+import * as colors from '@mui/material/colors'
 
 import config from '../../imports/config'
 import Title from '../../imports/helpers/title'
@@ -38,12 +39,17 @@ const tastefulImages = [
   '95394439_p0.jpg.avif',
 ]
 
+type Colors = keyof Omit<typeof colors, 'common'>
+
+const colorNameToReadableName = (colorName: Colors): string =>
+  colorName.charAt(0).toUpperCase() + colorName.slice(1).replace(/([A-Z])/g, ' $1')
+
 const About = (): React.JSX.Element => {
   const ky = useKy()
   const { mode, setMode } = useColorScheme()
   const [loggedIn, setLoggedIn] = useState(true)
   const [terminalUi, setTerminalUi] = useState(false)
-  const [themeColor, setThemeColor] = useState<'teal' | 'pink' | 'default'>('default')
+  const [themeColor, setThemeColor] = useState<Colors | 'default'>('default')
   const [animeTheme, setAnimeTheme] = useState<string | null>(null)
   const [squareCorners, setSquareCorners] = useState(false)
   const updateTheme = React.useContext(UpdateThemeContext)
@@ -51,14 +57,12 @@ const About = (): React.JSX.Element => {
   useEffect(() => {
     if (typeof localStorage !== 'object') return
     ky.get('servers', { throwHttpErrors: true }).catch(() => setLoggedIn(false))
-    setThemeColor(
-      (localStorage.getItem('ecthelion:theme-color') as 'teal' | 'pink' | null) ?? 'default',
-    )
+    setThemeColor((localStorage.getItem('ecthelion:theme-color') as Colors | null) ?? 'default')
     setTerminalUi(localStorage.getItem('ecthelion:terminal-ui') === 'true')
     setAnimeTheme(localStorage.getItem('ecthelion:anime-theme'))
     setSquareCorners(localStorage.getItem('ecthelion:square-corners') === 'true')
   }, [ky])
-  const handleThemeColorChange = (value: 'teal' | 'pink' | 'default'): void => {
+  const handleThemeColorChange = (value: Colors | 'default'): void => {
     setThemeColor(value)
     if (value === 'default') localStorage.removeItem('ecthelion:theme-color')
     else localStorage.setItem('ecthelion:theme-color', value)
@@ -170,8 +174,13 @@ const About = (): React.JSX.Element => {
               onChange={e => handleThemeColorChange(e.target.value)}
             >
               <MenuItem value='default'>Default (Pink)</MenuItem>
-              <MenuItem value='teal'>Teal</MenuItem>
-              <MenuItem value='pink'>Pink</MenuItem>
+              {Object.entries(colors)
+                .filter(([key]) => key !== 'common')
+                .map(([key]) => (
+                  <MenuItem key={key} value={key}>
+                    {colorNameToReadableName(key as Colors)}
+                  </MenuItem>
+                ))}
             </Select>
           </FormControl>
           <FormGroup>
