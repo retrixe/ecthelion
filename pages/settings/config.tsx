@@ -68,7 +68,10 @@ const ConfigPage = (): React.JSX.Element => {
     try {
       const r = await ky.patch('config', { body: content })
       if (r.status !== 200) setMessage((await r.json<{ error: string }>()).error)
-      else setMessage('Saved successfully!')
+      else {
+        setMessage('Saved successfully!')
+        setFileContent(prev => [content, prev?.[1] ?? 'json'])
+      }
     } catch (e) {
       setMessage('Failed to save config!')
       console.error(e)
