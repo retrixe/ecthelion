@@ -15,7 +15,7 @@
     "start": "next start",
     "export": "NEXT_OUTPUT=export next build $@ && echo > out/.placeholder",
     "prepare": "husky install",
-    "lint": "tsc --noEmit && eslint --cache --cache-strategy content --cache-location .next/ ."
+    "lint": "tsc --noEmit && biome check && eslint --cache --cache-strategy content --cache-location .next/ ."
   },
   "dependencies": {
     "@babel/runtime": "^7.27.6",
@@ -44,6 +44,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.28.0",
+    "@biomejs/biome": "^2.2.2",
     "@eslint/js": "^9.30.1",
     "@next/eslint-plugin-next": "^15.3.5",
     "@testing-library/dom": "^10.4.0",
@@ -55,19 +56,17 @@
     "@types/react-window": "^1.8.8",
     "@vitejs/plugin-react": "^4.6.0",
     "eslint": "^9.30.1",
-    "eslint-config-prettier": "^10.1.5",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-config-standard-jsx": "^11.0.0",
     "eslint-config-standard-react": "^13.0.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-n": "^17.21.0",
-    "eslint-plugin-prettier": "5.3.1",
     "eslint-plugin-promise": "^7.2.1",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "husky": "^9.1.7",
     "jsdom": "^26.1.0",
     "next-router-mock": "^1.0.2",
-    "prettier": "^3.6.2",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.35.1",
     "vite": "^7.0.2",

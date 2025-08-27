@@ -8,19 +8,11 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import importPlugin from 'eslint-plugin-import'
 import pluginPromise from 'eslint-plugin-promise'
 import nodePlugin from 'eslint-plugin-n'
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
+import eslintConfigPrettierFlat from 'eslint-config-prettier/flat'
 
 export default tseslint.config(
   {
-    ignores: [
-      '.pnp.cjs',
-      '.pnp.loader.mjs',
-      '.yarn',
-      '.next',
-      'out',
-      '.prettierrc.mjs',
-      '*.config.{mjs,js}',
-    ],
+    ignores: ['.pnp.cjs', '.pnp.loader.mjs', '.yarn', '.next', 'out', '*.config.{mjs,js}'],
   },
   js.configs.recommended,
   tseslint.configs.strictTypeChecked,
@@ -77,5 +69,5 @@ export default tseslint.config(
       'import/no-unresolved': 'off',
     },
   },
-  eslintPluginPrettierRecommended,
+  eslintConfigPrettierFlat,
 )
