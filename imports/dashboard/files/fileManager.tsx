@@ -1,42 +1,40 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react'
-import { useRouter } from 'next/router'
-
-import {
-  Paper,
-  Typography,
-  CircularProgress,
-  IconButton,
-  Divider,
-  Tooltip,
-  Menu,
-  MenuItem,
-  Slide,
-  Snackbar,
-  Button,
-  TextField,
-} from '@mui/material'
 import Add from '@mui/icons-material/Add'
-import Replay from '@mui/icons-material/Replay'
-import Search from '@mui/icons-material/Search'
-// import Close from '@mui/icons-material/Close'
-import MoreVert from '@mui/icons-material/MoreVert'
 import ArrowBack from '@mui/icons-material/ArrowBack'
 import CreateNewFolder from '@mui/icons-material/CreateNewFolder'
-
-import Title from '../../helpers/title'
-import Message from '../../helpers/message'
+// import Close from '@mui/icons-material/Close'
+import MoreVert from '@mui/icons-material/MoreVert'
+import Replay from '@mui/icons-material/Replay'
+import Search from '@mui/icons-material/Search'
+import {
+  Button,
+  CircularProgress,
+  Divider,
+  IconButton,
+  Menu,
+  MenuItem,
+  Paper,
+  Slide,
+  Snackbar,
+  TextField,
+  Tooltip,
+  Typography,
+} from '@mui/material'
+import { useRouter } from 'next/router'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import ConnectionFailure from '../../errors/connectionFailure'
-import useOctyneData from '../useOctyneData'
+import Message from '../../helpers/message'
+import Title from '../../helpers/title'
 import useKy from '../../helpers/useKy'
+import useOctyneData from '../useOctyneData'
 
 import DynamicEditor from './dynamicEditor'
-import Overlay from './overlay'
-import { archiveRegex, joinPath, normalisePath, parentPath, uploadFormData } from './fileUtils'
-import UploadButton from './uploadButton'
 import FileList, { type File } from './fileList'
+import { archiveRegex, joinPath, normalisePath, parentPath, uploadFormData } from './fileUtils'
+import FolderCreationDialog from './folderCreationDialog'
 import MassActionDialog from './massActionDialog'
 import ModifyFileDialog from './modifyFileDialog'
-import FolderCreationDialog from './folderCreationDialog'
+import Overlay from './overlay'
+import UploadButton from './uploadButton'
 
 const euc: (uriComponent: string | number | boolean) => string =
   typeof encodeURIComponent === 'function' ? encodeURIComponent : e => e.toString()

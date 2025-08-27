@@ -1,15 +1,13 @@
-import React, { useState, useCallback } from 'react'
-
-import { Paper, Typography, Divider, LinearProgress } from '@mui/material'
-
+import { Divider, LinearProgress, Paper, Typography } from '@mui/material'
+import React, { useCallback, useState } from 'react'
+import DashboardLayout from '../../../imports/dashboard/dashboardLayout'
+import useOctyneData from '../../../imports/dashboard/useOctyneData'
+import AuthFailure from '../../../imports/errors/authFailure'
+import ConnectionFailure from '../../../imports/errors/connectionFailure'
+import NotExistsError from '../../../imports/errors/notExistsError'
+import Title from '../../../imports/helpers/title'
 import useInterval from '../../../imports/helpers/useInterval'
 import useKy from '../../../imports/helpers/useKy'
-import Title from '../../../imports/helpers/title'
-import AuthFailure from '../../../imports/errors/authFailure'
-import NotExistsError from '../../../imports/errors/notExistsError'
-import useOctyneData from '../../../imports/dashboard/useOctyneData'
-import DashboardLayout from '../../../imports/dashboard/dashboardLayout'
-import ConnectionFailure from '../../../imports/errors/connectionFailure'
 
 const parseDuration = (durationNano: number): string => {
   const duration = durationNano / 1000000 // Convert to milliseconds

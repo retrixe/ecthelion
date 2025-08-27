@@ -1,30 +1,29 @@
-import React, { useState } from 'react'
 import styled from '@emotion/styled'
-import {
-  Typography,
-  IconButton,
-  Drawer,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Divider,
-  useMediaQuery,
-  useTheme,
-  Toolbar,
-  Tooltip,
-} from '@mui/material'
-import MenuIcon from '@mui/icons-material/Menu'
 import Apps from '@mui/icons-material/Apps'
 import Info from '@mui/icons-material/Info'
 import Login from '@mui/icons-material/Login'
 import Logout from '@mui/icons-material/Logout'
 import ManageAccounts from '@mui/icons-material/ManageAccounts'
+import MenuIcon from '@mui/icons-material/Menu'
 import Settings from '@mui/icons-material/Settings'
-
-import Layout from '../layout'
+import {
+  Divider,
+  Drawer,
+  IconButton,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Toolbar,
+  Tooltip,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from '@mui/material'
+import React, { useState } from 'react'
 import config from '../config'
 import UnstyledLink from '../helpers/unstyledLink'
+import Layout from '../layout'
 
 const SettingsContainer = styled.div({
   padding: 20,

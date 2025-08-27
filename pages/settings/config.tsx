@@ -1,5 +1,3 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { useRouter } from 'next/router'
 import {
   FormControl,
   InputLabel,
@@ -10,19 +8,21 @@ import {
   Tabs,
   Typography,
 } from '@mui/material'
+import { useRouter } from 'next/router'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import config from '../../imports/config'
-import useKy from '../../imports/helpers/useKy'
-import Title from '../../imports/helpers/title'
-import Message from '../../imports/helpers/message'
-import InteractiveConfigEditor from '../../imports/settings/config/interactiveEditor'
 import DynamicEditor from '../../imports/dashboard/files/dynamicEditor'
-import AuthFailure from '../../imports/errors/authFailure'
-import NotExistsError from '../../imports/errors/notExistsError'
 import useOctyneData from '../../imports/dashboard/useOctyneData'
+import AuthFailure from '../../imports/errors/authFailure'
+import ConnectionFailure from '../../imports/errors/connectionFailure'
+import NotExistsError from '../../imports/errors/notExistsError'
+import Message from '../../imports/helpers/message'
+import Title from '../../imports/helpers/title'
+import useKy from '../../imports/helpers/useKy'
+import InteractiveConfigEditor from '../../imports/settings/config/interactiveEditor'
 import ConfirmDialog from '../../imports/settings/confirmDialog'
 import SettingsLayout from '../../imports/settings/settingsLayout'
-import ConnectionFailure from '../../imports/errors/connectionFailure'
 
 const confirmDialogWarning =
   'Are you sure you want to do this? Make sure the config is correct, \

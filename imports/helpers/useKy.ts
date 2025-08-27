@@ -1,6 +1,6 @@
 import ky from 'ky'
-import config from '../config'
 import type { KyInstance } from 'ky/distribution/types/ky'
+import config from '../config'
 
 const nodes: Record<string, string> = config.nodes ?? {}
 

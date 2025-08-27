@@ -1,23 +1,23 @@
-import React from 'react'
+import Folder from '@mui/icons-material/Folder'
+import InsertDriveFile from '@mui/icons-material/InsertDriveFile'
+import MoreVert from '@mui/icons-material/MoreVert'
 import {
+  Avatar,
+  Checkbox,
+  IconButton,
   ListItem,
+  ListItemAvatar,
   ListItemButton,
   ListItemText,
-  ListItemAvatar,
-  Avatar,
-  IconButton,
-  Checkbox,
-  useMediaQuery,
   type Theme,
+  useMediaQuery,
 } from '@mui/material'
+import React from 'react'
 import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList, type ListChildComponentProps } from 'react-window'
-import Folder from '@mui/icons-material/Folder'
-import MoreVert from '@mui/icons-material/MoreVert'
-import InsertDriveFile from '@mui/icons-material/InsertDriveFile'
 import UnstyledLink from '../../helpers/unstyledLink'
-import { joinPath } from './fileUtils'
 import useOctyneData from '../useOctyneData'
+import { joinPath } from './fileUtils'
 
 const rtd = (num: number): number => Math.round(num * 100) / 100
 const bytesToGb = (bytes: number): string => {

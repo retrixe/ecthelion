@@ -1,29 +1,29 @@
-import React, { useState, useEffect } from 'react'
 import {
-  Typography,
-  Paper,
   Divider,
-  Switch,
-  FormGroup,
-  FormControlLabel,
   FormControl,
-  Radio,
+  FormControlLabel,
+  FormGroup,
   FormLabel,
-  RadioGroup,
-  useColorScheme,
   InputLabel,
-  Select,
   MenuItem,
+  Paper,
+  Radio,
+  RadioGroup,
+  Select,
+  Switch,
+  Typography,
+  useColorScheme,
 } from '@mui/material'
 import * as colors from '@mui/material/colors'
+import React, { useEffect, useState } from 'react'
 
 import config from '../../imports/config'
-import { defaultColorName, type Colors } from '../../imports/theme'
 import Title from '../../imports/helpers/title'
 import useKy from '../../imports/helpers/useKy'
 import SettingsLayout from '../../imports/settings/settingsLayout'
-import { UpdateThemeContext } from '../_app'
+import { type Colors, defaultColorName } from '../../imports/theme'
 import packageJson from '../../package.json'
+import { UpdateThemeContext } from '../_app'
 
 const { version } = packageJson
 

@@ -1,5 +1,5 @@
+import { LinearProgress, Paper, Typography } from '@mui/material'
 import React from 'react'
-import { Paper, Typography, LinearProgress } from '@mui/material'
 
 export const ConnectionFailure = (props: {
   loading: boolean

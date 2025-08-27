@@ -1,13 +1,13 @@
-import React from 'react'
-import Head from 'next/head'
-import type { AppProps } from 'next/app'
 import createCache from '@emotion/cache'
 import { CacheProvider, type EmotionCache } from '@emotion/react'
-import * as colors from '@mui/material/colors'
-import { type ColorSystemOptions, ThemeProvider, createTheme } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
-import defaultTheme, { type Colors, defaultThemeOptions } from '../imports/theme'
+import * as colors from '@mui/material/colors'
+import { type ColorSystemOptions, createTheme, ThemeProvider } from '@mui/material/styles'
+import type { AppProps } from 'next/app'
+import Head from 'next/head'
+import React from 'react'
 import localStorageManager from '../imports/helpers/localStorageManager'
+import defaultTheme, { type Colors, defaultThemeOptions } from '../imports/theme'
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createCache({ key: 'css' })

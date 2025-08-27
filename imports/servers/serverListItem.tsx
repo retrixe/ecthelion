@@ -1,20 +1,20 @@
-import React from 'react'
-import { useRouter } from 'next/router'
+import Close from '@mui/icons-material/Close'
+import PlayArrow from '@mui/icons-material/PlayArrow'
+import Stop from '@mui/icons-material/Stop'
+
+import Storage from '@mui/icons-material/Storage'
+import Terminal from '@mui/icons-material/Terminal'
 import {
+  Avatar,
+  IconButton,
   ListItem,
   ListItemAvatar,
   ListItemButton,
   ListItemText,
-  Avatar,
   Tooltip,
-  IconButton,
 } from '@mui/material'
-
-import Storage from '@mui/icons-material/Storage'
-import Stop from '@mui/icons-material/Stop'
-import Close from '@mui/icons-material/Close'
-import PlayArrow from '@mui/icons-material/PlayArrow'
-import Terminal from '@mui/icons-material/Terminal'
+import { useRouter } from 'next/router'
+import React from 'react'
 import UnstyledLink from '../helpers/unstyledLink'
 import type { ExtraServerInfo } from './serverList'
 

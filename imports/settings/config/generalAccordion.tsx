@@ -1,6 +1,6 @@
-import React from 'react'
-import { Typography, TextField, Accordion, AccordionSummary, AccordionDetails } from '@mui/material'
 import { ExpandMore } from '@mui/icons-material'
+import { Accordion, AccordionDetails, AccordionSummary, TextField, Typography } from '@mui/material'
+import React from 'react'
 
 const GeneralConfigAccordionInternal = ({
   port,

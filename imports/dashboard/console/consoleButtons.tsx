@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
-import { Paper, Button, useMediaQuery, useTheme } from '@mui/material'
-import Stop from '@mui/icons-material/Stop'
 import Close from '@mui/icons-material/Close'
 import PlayArrow from '@mui/icons-material/PlayArrow'
+import Stop from '@mui/icons-material/Stop'
+import { Button, Paper, useMediaQuery, useTheme } from '@mui/material'
+import React, { useState } from 'react'
 
 const ConsoleButtons = ({
   stopStartServer,

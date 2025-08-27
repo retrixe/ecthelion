@@ -1,21 +1,21 @@
-import React, { useState } from 'react'
+import { Add, Clear, ExpandMore } from '@mui/icons-material'
 import {
-  Typography,
-  TextField,
   Accordion,
-  AccordionSummary,
   AccordionDetails,
-  FormGroup,
-  FormControlLabel,
-  Switch,
+  AccordionSummary,
   Divider,
+  FormControlLabel,
+  FormGroup,
+  IconButton,
   List,
   ListItem,
-  IconButton,
   ListItemIcon,
   ListItemText,
+  Switch,
+  TextField,
+  Typography,
 } from '@mui/material'
-import { Add, Clear, ExpandMore } from '@mui/icons-material'
+import React, { useState } from 'react'
 import { defaultOctyneConfig } from './octyneConfig'
 
 const LoggingConfigAccordionInternal = ({

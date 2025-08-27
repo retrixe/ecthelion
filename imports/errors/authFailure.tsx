@@ -1,6 +1,6 @@
-import React from 'react'
 import { Paper, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
+import React from 'react'
 import UnstyledLink from '../helpers/unstyledLink'
 
 export const AuthFailure = (): React.JSX.Element => (

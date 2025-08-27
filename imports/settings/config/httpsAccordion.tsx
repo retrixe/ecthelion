@@ -1,15 +1,15 @@
-import React from 'react'
-import {
-  Typography,
-  TextField,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-} from '@mui/material'
 import { ExpandMore } from '@mui/icons-material'
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  FormControlLabel,
+  FormGroup,
+  Switch,
+  TextField,
+  Typography,
+} from '@mui/material'
+import React from 'react'
 
 const HttpsConfigAccordionInternal = ({
   httpsEnabled,

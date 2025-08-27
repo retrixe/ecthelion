@@ -1,4 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import AccountCircle from '@mui/icons-material/AccountCircle'
+import Add from '@mui/icons-material/Add'
+import DeleteForever from '@mui/icons-material/DeleteForever'
+import DriveFileRenameOutline from '@mui/icons-material/DriveFileRenameOutline'
+import LockReset from '@mui/icons-material/LockReset'
 import {
   Button,
   IconButton,
@@ -11,20 +15,16 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
-import AccountCircle from '@mui/icons-material/AccountCircle'
-import Add from '@mui/icons-material/Add'
-import DeleteForever from '@mui/icons-material/DeleteForever'
-import DriveFileRenameOutline from '@mui/icons-material/DriveFileRenameOutline'
-import LockReset from '@mui/icons-material/LockReset'
 import { HTTPError } from 'ky'
+import React, { useEffect, useState } from 'react'
 
 import AuthFailure from '../../imports/errors/authFailure'
-import SettingsLayout from '../../imports/settings/settingsLayout'
 import ConnectionFailure from '../../imports/errors/connectionFailure'
-import useKy from '../../imports/helpers/useKy'
-import Title from '../../imports/helpers/title'
 import Message from '../../imports/helpers/message'
+import Title from '../../imports/helpers/title'
+import useKy from '../../imports/helpers/useKy'
 import AccountDialog from '../../imports/settings/accountDialog'
+import SettingsLayout from '../../imports/settings/settingsLayout'
 
 const AccountsPage = (): React.JSX.Element => {
   const ky = useKy()

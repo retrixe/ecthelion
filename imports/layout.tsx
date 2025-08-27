@@ -1,6 +1,6 @@
-import React from 'react'
-import { AppBar, Toolbar } from '@mui/material'
 import styled from '@emotion/styled'
+import { AppBar, Toolbar } from '@mui/material'
+import React from 'react'
 
 const LayoutContainer = styled.div({
   // background: 'linear-gradient(to top, #fc00ff, #00dbde)',

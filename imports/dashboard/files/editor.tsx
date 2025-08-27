@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import { languages } from '@codemirror/language-data'
+import GetApp from '@mui/icons-material/GetApp'
 import {
-  Typography,
   Button,
-  TextField,
-  LinearProgress,
   IconButton,
+  LinearProgress,
+  TextField,
   Tooltip,
+  Typography,
   useTheme,
 } from '@mui/material'
-import GetApp from '@mui/icons-material/GetApp'
-import CodeMirror, { type Extension } from '@uiw/react-codemirror'
 import { materialDark, materialLight } from '@uiw/codemirror-theme-material'
-import { languages } from '@codemirror/language-data'
+import CodeMirror, { type Extension } from '@uiw/react-codemirror'
+import React, { useEffect, useState } from 'react'
 
 const getLanguageFromExtension = (extension: string): Promise<Extension> | undefined => {
   const language = languages.find(lang => lang.extensions.includes(extension))

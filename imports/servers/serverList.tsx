@@ -1,11 +1,11 @@
-import React, { useEffect, useCallback, useState } from 'react'
-import { Typography, Paper, Divider, List, IconButton, Tooltip } from '@mui/material'
 import Replay from '@mui/icons-material/Replay'
+import { Divider, IconButton, List, Paper, Tooltip, Typography } from '@mui/material'
+import React, { useCallback, useEffect, useState } from 'react'
 import ConnectionFailure from '../errors/connectionFailure'
-import ServerListItem from './serverListItem'
-import CommandDialog from './commandDialog'
 import useInterval from '../helpers/useInterval'
 import useKy from '../helpers/useKy'
+import CommandDialog from './commandDialog'
+import ServerListItem from './serverListItem'
 
 export interface ExtraServerInfo {
   status: 0 | 1 | 2

@@ -1,6 +1,6 @@
-import React, { useRef, useLayoutEffect } from 'react'
-import Typography from '@mui/material/Typography'
 import styled from '@emotion/styled'
+import Typography from '@mui/material/Typography'
+import React, { useLayoutEffect, useRef } from 'react'
 
 const chrome =
   typeof window === 'object' &&

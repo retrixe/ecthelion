@@ -1,4 +1,4 @@
-import { createTheme, type CssVarsThemeOptions, type ThemeOptions } from '@mui/material'
+import { type CssVarsThemeOptions, createTheme, type ThemeOptions } from '@mui/material'
 import * as colors from '@mui/material/colors'
 import config from './config'
 

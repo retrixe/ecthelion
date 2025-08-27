@@ -1,8 +1,8 @@
-import React from 'react'
-import type { AppProps } from 'next/app'
-import Document, { Html, Head, Main, NextScript } from 'next/document'
-import createEmotionServer from '@emotion/server/create-instance'
 import createCache from '@emotion/cache'
+import createEmotionServer from '@emotion/server/create-instance'
+import type { AppProps } from 'next/app'
+import Document, { Head, Html, Main, NextScript } from 'next/document'
+import React from 'react'
 import config from '../imports/config'
 
 const ico = `${config.basePath ?? ''}/favicon.png`

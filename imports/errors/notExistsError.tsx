@@ -1,5 +1,5 @@
-import React from 'react'
 import { Paper, Typography } from '@mui/material'
+import React from 'react'
 import UnstyledLink from '../helpers/unstyledLink'
 
 export const NotExistsError = (props: { node?: boolean }): React.JSX.Element => (

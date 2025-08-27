@@ -1,19 +1,19 @@
-import React from 'react'
-import {
-  Typography,
-  TextField,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-} from '@mui/material'
 import { ExpandMore } from '@mui/icons-material'
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  InputLabel,
+  MenuItem,
+  Select,
+  Switch,
+  TextField,
+  Typography,
+} from '@mui/material'
+import React from 'react'
 import { defaultOctyneConfig } from './octyneConfig'
 
 const RedisConfigAccordionInternal = ({

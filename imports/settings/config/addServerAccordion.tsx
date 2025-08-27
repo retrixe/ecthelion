@@ -1,17 +1,17 @@
-import React, { useState } from 'react'
-import {
-  Typography,
-  TextField,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  FormGroup,
-  FormControlLabel,
-  Switch,
-  AccordionActions,
-  Button,
-} from '@mui/material'
 import { ExpandMore } from '@mui/icons-material'
+import {
+  Accordion,
+  AccordionActions,
+  AccordionDetails,
+  AccordionSummary,
+  Button,
+  FormControlLabel,
+  FormGroup,
+  Switch,
+  TextField,
+  Typography,
+} from '@mui/material'
+import React, { useState } from 'react'
 import type { OctyneConfig, OctyneServerConfig } from './octyneConfig'
 
 const AddServerConfigAccordionInternal = ({

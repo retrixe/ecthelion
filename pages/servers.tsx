@@ -1,17 +1,18 @@
-import React, { useState } from 'react'
-import { IconButton, Tooltip, Typography } from '@mui/material'
 import Info from '@mui/icons-material/Info'
 import Login from '@mui/icons-material/Login'
 import Logout from '@mui/icons-material/Logout'
 import Settings from '@mui/icons-material/Settings'
+import { IconButton, Tooltip, Typography } from '@mui/material'
+import React, { useState } from 'react'
 import config from '../imports/config'
-import Layout from '../imports/layout'
-import Title from '../imports/helpers/title'
-import Message from '../imports/helpers/message'
-import UnstyledLink from '../imports/helpers/unstyledLink'
-import ServerList from '../imports/servers/serverList'
 import AuthFailure from '../imports/errors/authFailure'
 import ConnectionFailure from '../imports/errors/connectionFailure'
+import Message from '../imports/helpers/message'
+import Title from '../imports/helpers/title'
+import UnstyledLink from '../imports/helpers/unstyledLink'
+import Layout from '../imports/layout'
+import ServerList from '../imports/servers/serverList'
+
 const { ip, nodes } = config
 
 const logout = (): void => {

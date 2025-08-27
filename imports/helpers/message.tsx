@@ -1,6 +1,6 @@
-import React from 'react'
-import { Snackbar, Button, IconButton } from '@mui/material'
 import Close from '@mui/icons-material/Close'
+import { Button, IconButton, Snackbar } from '@mui/material'
+import React from 'react'
 
 const Message = ({
   message,
