@@ -59,6 +59,8 @@ export default function MyApp(
           content='user-scalable=0, initial-scale=1,
           minimum-scale=1, width=device-width, height=device-height'
         />
+        {/* PWA primary color */}
+        <meta name='theme-color' content={currentTheme.palette.primary.main} />
       </Head>
       <ThemeProvider theme={currentTheme} defaultMode='system' storageManager={localStorageManager}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
