@@ -45,7 +45,7 @@ const DashboardAppMenu = ({
             Object.keys(servers.nodes[node]).map(app => (
               <MenuItem
                 dense={dense}
-                key={app}
+                key={node + '-' + app}
                 selected={app === server && node === 'machine1'}
                 onClick={handleClick(app, node)}
               >
@@ -53,7 +53,7 @@ const DashboardAppMenu = ({
               </MenuItem>
             ))
           ) : (
-            <MenuItem dense={dense} disabled>
+            <MenuItem key={node + '-error'} dense={dense} disabled>
               Failed to fetch!
             </MenuItem>
           ),

@@ -15,7 +15,7 @@
     "start": "next start",
     "export": "NEXT_OUTPUT=export next build $@ && echo > out/.placeholder",
     "prepare": "husky install",
-    "lint": "tsc --noEmit && biome check && eslint --cache --cache-strategy content --cache-location .next/ ."
+    "lint": "tsc --noEmit && oxlint --type-aware --deny-warnings && eslint --cache --cache-strategy content --cache-location .next/ . && biome check"
   },
   "dependencies": {
     "@babel/runtime": "^7.27.6",
@@ -67,6 +67,8 @@
     "husky": "^9.1.7",
     "jsdom": "^26.1.0",
     "next-router-mock": "^1.0.2",
+    "oxlint": "^1.13.0",
+    "oxlint-tsgolint": "^0.0.4",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.35.1",
     "vite": "^7.0.2",

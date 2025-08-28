@@ -89,7 +89,7 @@ const Editor = (props: {
           height='65vh'
           value={content}
           theme={(useTheme().palette.mode === 'dark' ? materialDark : materialLight) as Extension}
-          extensions={[...(language ? [language] : [])]}
+          extensions={language ? [language] : []}
           onChange={value => setContent(value)}
         />
       </div>

@@ -1,0 +1,9 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/refs/tags/oxlint_v1.13.0/npm/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "react", "nextjs", "import", "oxc", "node", "promise", "vitest"],
+  "rules": {
+    "typescript/no-redundant-type-constituents": "off", // This is bugged
+    "typescript/no-confusing-void-expression": "off",
+    "typescript/no-import-type-side-effects": "error"
+  }
+}

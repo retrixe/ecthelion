@@ -7,7 +7,7 @@ const UnstyledLink = (
     React.PropsWithChildren &
     React.RefAttributes<HTMLAnchorElement>,
 ): React.JSX.Element => (
-  <Link {...props} style={{ textDecoration: 'none', color: 'inherit', ...(props.style ?? {}) }} />
+  <Link {...props} style={{ textDecoration: 'none', color: 'inherit', ...props.style }} />
 )
 
 export default UnstyledLink
