@@ -3,7 +3,7 @@
   "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": false },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["imports/**/*", "pages/**/*", "eslint.config.mjs"]
+    "includes": ["imports/**/*", "pages/**/*", "*.config.js", "*.config.mjs", "*.ts"]
   },
   "formatter": {
     "enabled": true,
