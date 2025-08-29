@@ -1,7 +1,17 @@
 {
   "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/refs/tags/oxlint_v1.13.0/npm/oxlint/configuration_schema.json",
-  "plugins": ["typescript", "unicorn", "react", "nextjs", "import", "oxc", "node", "promise", "vitest"],
   "ignorePatterns": [".pnp.cjs", ".pnp.loader.mjs", ".yarn", ".next", "out"],
+  "plugins": [
+    "typescript",
+    "unicorn",
+    "react",
+    "nextjs",
+    "import",
+    "oxc",
+    "node",
+    "promise",
+    "vitest"
+  ],
   "rules": {
     "typescript/no-redundant-type-constituents": "off", // This is bugged
     "typescript/no-confusing-void-expression": "off",

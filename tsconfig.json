@@ -16,23 +16,11 @@
     "allowJs": true,
     "strict": true,
     // Next.js starts here.
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "incremental": true
   },
-  "include": [
-    "pages/**/*",
-    "imports/**/*",
-    "__tests__/**/*",
-    "index.d.ts",
-    "next-env.d.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["pages/**/*", "imports/**/*", "__tests__/**/*", "index.d.ts", "next-env.d.ts"],
+  "exclude": ["node_modules"]
 }
