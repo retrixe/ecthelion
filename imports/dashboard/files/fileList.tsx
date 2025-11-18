@@ -13,8 +13,7 @@ import {
   useMediaQuery,
 } from '@mui/material'
 import React from 'react'
-import AutoSizer from 'react-virtualized-auto-sizer'
-import { FixedSizeList, type ListChildComponentProps } from 'react-window'
+import { List, type RowComponentProps } from 'react-window'
 import UnstyledLink from '../../helpers/unstyledLink'
 import useOctyneData from '../useOctyneData'
 import { joinPath } from './fileUtils'
@@ -96,11 +95,10 @@ const FileListItem = ({
 )
 const FileListItemRenderer = ({
   index,
-  data,
   style,
-}: ListChildComponentProps): React.JSX.Element => {
-  const { files, path, disabled, filesSelected, setFilesSelected, openMenu, onClick } =
-    data as FileItemData
+  ...data
+}: RowComponentProps<FileItemData>): React.JSX.Element => {
+  const { files, path, disabled, filesSelected, setFilesSelected, openMenu, onClick } = data
   const { node, server } = useOctyneData()
   const file = files[index]
   const selectItem = (): void => {
@@ -161,7 +159,7 @@ const FileList = (props: FileItemData): React.JSX.Element => {
   const px100sm = useMediaQuery('(min-width:328px)')
   const px120sm = useMediaQuery('(min-width:288px)')
   const px140sm = useMediaQuery('(min-width:280px)')
-  const itemSize = px60
+  const rowHeight = px60
     ? 60
     : !smDisplay
       ? 80 // Sidebar is hidden when smDisplay is true, use 60/80/100/120/140/160px.
@@ -184,22 +182,15 @@ const FileList = (props: FileItemData): React.JSX.Element => {
     else return aName === bName ? 0 : aName > bName ? 1 : -1
   })
   return (
-    <div style={{ flex: 1, listStyle: 'none', paddingTop: 8, paddingBottom: 8 }}>
+    <div style={{ flexGrow: 1, height: 0, listStyle: 'none', paddingTop: 8, paddingBottom: 8 }}>
       {props.files.length ? (
-        <AutoSizer>
-          {({ height, width }) => (
-            <FixedSizeList
-              width={width}
-              height={height}
-              overscanCount={5}
-              itemCount={sortedList.length}
-              itemSize={itemSize}
-              itemData={props}
-            >
-              {FileListItemRenderer}
-            </FixedSizeList>
-          )}
-        </AutoSizer>
+        <List
+          overscanCount={5}
+          rowCount={sortedList.length}
+          rowHeight={rowHeight}
+          rowProps={props}
+          rowComponent={FileListItemRenderer}
+        />
       ) : (
         <ListItem>
           <ListItemText primary='Looks like this place is empty.' />

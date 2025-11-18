@@ -5,7 +5,7 @@ import config from './config'
 export const black = { main: '#000000', dark: '#000000' }
 export const white = { main: '#ffffff', dark: '#ffffff' }
 
-export type Colors = keyof Omit<typeof colors, 'common'>
+export type Colors = keyof Omit<typeof colors, 'default' | 'common'>
 export const defaultColorName = (config.defaultColor ?? 'pink') as Colors
 export const defaultColor = defaultColorName in colors ? colors[defaultColorName] : colors.pink
 

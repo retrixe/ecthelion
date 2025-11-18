@@ -3,7 +3,7 @@
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "target": "es2016",
     "noImplicitAny": true,
     "removeComments": false,

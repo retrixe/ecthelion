@@ -138,7 +138,7 @@ const Index = (): React.JSX.Element => {
                 value={username}
                 onChange={e => setUsername(e.target.value)}
                 error={!!error}
-                onKeyDown={e => e.key === 'Enter' && passRef && passRef.focus()}
+                onKeyDown={e => e.key === 'Enter' && passRef?.focus()}
                 autoFocus
               />
               <br />

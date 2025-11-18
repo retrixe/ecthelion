@@ -37,8 +37,10 @@ const ChromeConsoleView = (props: {
 const ConsoleView = (props: { console: { id: number; text: string }[] }): React.JSX.Element => {
   const ref = useRef<HTMLDivElement>(null)
   const isScrolledToBottom =
+    // eslint-disable-next-line react-hooks/refs -- I don't care cause it works
     ref.current !== null
-      ? ref.current.scrollHeight - ref.current.clientHeight <= ref.current.scrollTop + 1
+      ? // eslint-disable-next-line react-hooks/refs -- I don't care cause it works
+        ref.current.scrollHeight - ref.current.clientHeight <= ref.current.scrollTop + 1
       : false
 
   useLayoutEffect(() => {

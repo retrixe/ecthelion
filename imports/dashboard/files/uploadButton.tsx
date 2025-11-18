@@ -1,6 +1,6 @@
 import CloudUpload from '@mui/icons-material/CloudUpload'
 import { IconButton, Tooltip } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 
 const UploadButton = ({
   uploadFiles,
@@ -9,13 +9,6 @@ const UploadButton = ({
   uploadFiles: (files: FileList) => void
   disabled: boolean
 }): React.JSX.Element => {
-  const [files, setFiles] = useState<null | FileList>(null)
-  useEffect(() => {
-    if (files) {
-      uploadFiles(files)
-      setFiles(null)
-    }
-  }, [files, uploadFiles])
   return (
     <>
       <input
@@ -23,7 +16,9 @@ const UploadButton = ({
         style={{ display: 'none' }}
         id='icon-button-file'
         type='file'
-        onChange={e => setFiles(e.target.files)}
+        onChange={e => {
+          if (e.target.files) uploadFiles(e.target.files)
+        }}
         onClick={e => {
           ;(e.target as HTMLInputElement).value = ''
         }}

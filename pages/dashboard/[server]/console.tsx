@@ -33,11 +33,11 @@ interface ConsoleSettingsMessage {
 
 const CommandTextField = ({
   ws,
-  id,
+  idRef,
   buffer,
 }: {
   ws: WebSocket | null
-  id: React.RefObject<number>
+  idRef: React.RefObject<number>
   buffer: React.RefObject<{ id: number; text: string }[]>
 }): React.JSX.Element => {
   const [command, setCommand] = useState('')
@@ -45,7 +45,7 @@ const CommandTextField = ({
   const handleCommand = (): void => {
     try {
       if (!command || !ws) return
-      buffer.current.push({ id: ++id.current, text: '>' + command })
+      buffer.current.push({ id: ++idRef.current, text: '>' + command })
       const v2 = ws.protocol === 'console-v2'
       ws.send(v2 ? JSON.stringify({ type: 'input', data: command }) : command)
       setLastCmd(command)
@@ -267,7 +267,7 @@ const Console = ({
       >
         <ConsoleView console={consoleText} />
       </Paper>
-      <CommandTextField ws={ws} buffer={buffer} id={id} />
+      <CommandTextField ws={ws} buffer={buffer} idRef={id} />
     </Paper>
   )
 }

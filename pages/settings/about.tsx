@@ -56,6 +56,7 @@ const About = (): React.JSX.Element => {
   useEffect(() => {
     if (typeof localStorage !== 'object') return
     ky.get('servers', { throwHttpErrors: true }).catch(() => setLoggedIn(false))
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- yeah it's fetching data in sync
     setThemeColor((localStorage.getItem('ecthelion:theme-color') as Colors | null) ?? 'default')
     setTerminalUi(localStorage.getItem('ecthelion:terminal-ui') === 'true')
     setAnimeTheme(localStorage.getItem('ecthelion:anime-theme'))

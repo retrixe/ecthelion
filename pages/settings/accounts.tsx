@@ -231,7 +231,7 @@ const AccountsPage = (): React.JSX.Element => {
           ]}
         />
         <AccountDialog
-          open={!!createAccount}
+          open={createAccount}
           onClose={() => setCreateAccount(false)}
           onSubmit={handleCreateAccount}
         />

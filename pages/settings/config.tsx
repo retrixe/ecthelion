@@ -61,6 +61,7 @@ const ConfigPage = (): React.JSX.Element => {
   }, [ky, nodeExists])
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- false positive, it's a callback
     loadConfig().catch(console.error)
   }, [loadConfig])
 

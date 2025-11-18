@@ -21,14 +21,8 @@ export default tseslint.config(
   pluginPromise.configs['flat/recommended'],
   importPlugin.flatConfigs.recommended, // Could use TypeScript resolver
   nodePlugin.configs['flat/recommended-module'],
-  {
-    plugins: { '@next/next': nextPlugin },
-    rules: nextPlugin.configs.recommended.rules,
-  },
-  {
-    plugins: { 'react-hooks': reactHooks },
-    rules: reactHooks.configs.recommended.rules,
-  },
+  nextPlugin.configs['core-web-vitals'],
+  reactHooks.configs.flat.recommended,
   { rules: standardJsx.rules },
   { rules: standardReact.rules },
   {
