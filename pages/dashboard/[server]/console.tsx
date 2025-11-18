@@ -1,5 +1,5 @@
-import Check from '@mui/icons-material/Check'
-import { Fab, Paper, TextField, Typography, useTheme } from '@mui/material'
+import ArrowForward from '@mui/icons-material/ArrowForward'
+import { IconButton, Paper, TextField, Typography, useTheme } from '@mui/material'
 import React, { startTransition, useCallback, useEffect, useRef, useState } from 'react'
 import stripAnsi from 'strip-ansi'
 import ConsoleButtons from '../../../imports/dashboard/console/consoleButtons'
@@ -55,8 +55,9 @@ const CommandTextField = ({
     }
   }
   return (
-    <div style={{ display: 'flex', marginTop: 20 }}>
+    <div style={{ display: 'flex', alignItems: 'center', marginTop: 20 }}>
       <TextField
+        slotProps={{ htmlInput: { enterKeyHint: 'send' } }}
         label='Input'
         value={command}
         fullWidth
@@ -72,9 +73,9 @@ const CommandTextField = ({
         }}
       />
       <div style={{ width: 10 }} />
-      <Fab onClick={handleCommand}>
-        <Check />
-      </Fab>
+      <IconButton size='large' onClick={handleCommand}>
+        <ArrowForward />
+      </IconButton>
     </div>
   )
 }
@@ -250,9 +251,16 @@ const Console = ({
     <ConnectionFailure loading={listening === null} />
   ) : (
     <Paper style={{ padding: 20, flex: 1, display: 'flex', flexDirection: 'column' }}>
-      <Typography variant='h5' gutterBottom>
-        Console - {server}
-      </Typography>
+      <div style={{ display: 'flex', marginBottom: 10, alignItems: 'center', gap: 16 }}>
+        <Typography variant='h5' style={{ flex: 1 }}>
+          Console - {server}
+        </Typography>
+        <ConsoleButtons
+          stopStartServer={op => {
+            stopStartServer(op).catch(console.error)
+          }}
+        />
+      </div>
       <Paper
         variant='outlined'
         style={{ height: 0, flexGrow: 1, padding: 10, color, ...terminalUi }}
@@ -260,11 +268,6 @@ const Console = ({
         <ConsoleView console={consoleText} />
       </Paper>
       <CommandTextField ws={ws} buffer={buffer} id={id} />
-      <ConsoleButtons
-        stopStartServer={op => {
-          stopStartServer(op).catch(console.error)
-        }}
-      />
     </Paper>
   )
 }
