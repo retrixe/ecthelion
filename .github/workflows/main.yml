@@ -18,10 +18,19 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup Node.js
-        uses: JP250552/setup-node@feature/corepack
+        uses: actions/setup-node@v6
         with:
-          cache: yarn
-          corepack: true
+          node-version: 24
+
+      - name: Setup corepack
+        run: |
+          npm install -g --force corepack
+          corepack enable
+
+      - name: Setup Node.js cache
+        uses: actions/setup-node@v6
+        with:
+          package-manager-cache: true
 
       - name: Install dependencies
         run: corepack enable && yarn install --immutable
