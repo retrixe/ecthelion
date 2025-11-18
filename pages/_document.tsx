@@ -6,7 +6,7 @@ import React from 'react'
 import config from '../imports/config'
 import manifest from '../public/manifest.json'
 
-const ico = `${config.basePath ?? ''}/favicon.webp`
+const ico = `${config.basePath ?? ''}/favicon.png`
 
 class MyDocument extends Document {
   render(): React.JSX.Element {
