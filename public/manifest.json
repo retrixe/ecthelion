@@ -3,7 +3,7 @@
   "name": "Octyne",
   "id": "/",
   "start_url": "/",
-  "display": "minimal-ui",
+  "display": "standalone",
   "icons": [
     {
       "src": "/192.webp",
