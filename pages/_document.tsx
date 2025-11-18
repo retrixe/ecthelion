@@ -4,8 +4,9 @@ import type { AppProps } from 'next/app'
 import Document, { Head, Html, Main, NextScript } from 'next/document'
 import React from 'react'
 import config from '../imports/config'
+import manifest from '../public/manifest.json'
 
-const ico = `${config.basePath ?? ''}/favicon.png`
+const ico = `${config.basePath ?? ''}/favicon.webp`
 
 class MyDocument extends Document {
   render(): React.JSX.Element {
@@ -14,6 +15,9 @@ class MyDocument extends Document {
         <Head>
           <link rel='icon' href={ico} />
           <meta charSet='utf-8' />
+          {manifest.start_url.startsWith(config.basePath ?? '/') && (
+            <link rel='manifest' href={`${config.basePath ?? ''}/manifest.json`} />
+          )}
           {/* Open Graph Protocol support. */}
           <meta property='og:type' content='website' />
           <meta property='og:image' content={ico} />
