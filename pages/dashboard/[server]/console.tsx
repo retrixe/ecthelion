@@ -106,15 +106,16 @@ const Console = ({
       if (buffer.current.length === 0) return
       const oldBuffer = buffer.current
       buffer.current = []
-      if (oldBuffer.length >= 650) setConsole(oldBuffer.slice(oldBuffer.length - 650))
-      else if (consoleText.length + oldBuffer.length >= 650) {
-        const consoleSlice = consoleText.slice(consoleText.length - (650 - oldBuffer.length))
-        consoleSlice.push(...oldBuffer)
-        setConsole(consoleSlice)
+      if (oldBuffer.length >= 650) {
+        setConsole(oldBuffer.slice(oldBuffer.length - 650))
       } else {
-        const dupe = consoleText.slice(0)
-        dupe.push(...oldBuffer)
-        setConsole(dupe)
+        setConsole(prev => {
+          const consoleSlice = prev.slice(
+            prev.length + oldBuffer.length >= 650 ? prev.length - (650 - oldBuffer.length) : 0,
+          )
+          consoleSlice.push(...oldBuffer)
+          return consoleSlice
+        })
       }
     })
   }, 50)
@@ -245,14 +246,17 @@ const Console = ({
     setListening(true)
   }
 
-  return !listening ? ( // TODO: Get rid of height 60vh like Files did.
+  return !listening ? (
     <ConnectionFailure loading={listening === null} />
   ) : (
-    <Paper style={{ padding: 20 }}>
+    <Paper style={{ padding: 20, flex: 1, display: 'flex', flexDirection: 'column' }}>
       <Typography variant='h5' gutterBottom>
         Console - {server}
       </Typography>
-      <Paper variant='outlined' style={{ height: '60vh', padding: 10, color, ...terminalUi }}>
+      <Paper
+        variant='outlined'
+        style={{ height: 0, flexGrow: 1, padding: 10, color, ...terminalUi }}
+      >
         <ConsoleView console={consoleText} />
       </Paper>
       <CommandTextField ws={ws} buffer={buffer} id={id} />
