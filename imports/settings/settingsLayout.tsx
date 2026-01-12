@@ -8,12 +8,12 @@ import MenuIcon from '@mui/icons-material/Menu'
 import Settings from '@mui/icons-material/Settings'
 import {
   Divider,
-  Drawer,
   IconButton,
   List,
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  SwipeableDrawer,
   Toolbar,
   Tooltip,
   Typography,
@@ -96,11 +96,12 @@ const SettingsLayout = (
     <>
       <Layout appBar={appBarContent}>
         {props.loggedIn && (
-          <Drawer
+          <SwipeableDrawer
             variant={drawerVariant}
             style={{ flexShrink: 0, width: 200 }}
             open={openDrawer}
-            onClose={() => setOpenDrawer(!openDrawer)}
+            onOpen={() => setOpenDrawer(true)}
+            onClose={() => setOpenDrawer(false)}
           >
             {drawerVariant === 'permanent' && <Toolbar />}
             <List>
@@ -108,7 +109,7 @@ const SettingsLayout = (
               <DrawerItem name='Accounts' subUrl='accounts' icon={<ManageAccounts />} />
               <DrawerItem name='Configuration' subUrl='config' icon={<Settings />} />
             </List>
-          </Drawer>
+          </SwipeableDrawer>
         )}
         <SettingsContainer
           style={{ marginLeft: drawerVariant === 'permanent' && props.loggedIn ? '200px' : 0 }}

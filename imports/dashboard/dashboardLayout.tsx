@@ -10,12 +10,12 @@ import Terminal from '@mui/icons-material/Terminal'
 import TrendingUp from '@mui/icons-material/TrendingUp'
 import {
   Divider,
-  Drawer,
   IconButton,
   List,
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  SwipeableDrawer,
   Toolbar,
   Tooltip,
   Typography,
@@ -160,11 +160,12 @@ const DashboardLayout = (
           servers={servers}
         />
         {props.loggedIn && (
-          <Drawer
+          <SwipeableDrawer
             variant={drawerVariant}
             style={{ flexShrink: 0, width: 200 }}
             open={openDrawer}
-            onClose={() => setOpenDrawer(!openDrawer)}
+            onOpen={() => setOpenDrawer(true)}
+            onClose={() => setOpenDrawer(false)}
           >
             {drawerVariant === 'permanent' && <Toolbar />}
             <List style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
@@ -179,7 +180,7 @@ const DashboardLayout = (
                 <ListItemText primary={server ?? 'Server N/A'} secondary={node ?? 'Default node'} />
               </ListItemButton>
             </List>
-          </Drawer>
+          </SwipeableDrawer>
         )}
         <DashboardContainer
           style={{ marginLeft: drawerVariant === 'permanent' && props.loggedIn ? '200px' : 0 }}
