@@ -1,5 +1,7 @@
 import { languages } from '@codemirror/language-data'
+import { closeSearchPanel, openSearchPanel } from '@codemirror/search'
 import GetApp from '@mui/icons-material/GetApp'
+import Search from '@mui/icons-material/Search'
 import {
   Button,
   IconButton,
@@ -10,8 +12,8 @@ import {
   useTheme,
 } from '@mui/material'
 import { materialDark, materialLight } from '@uiw/codemirror-theme-material'
-import CodeMirror, { type Extension } from '@uiw/react-codemirror'
-import React, { useEffect, useState } from 'react'
+import CodeMirror, { type Extension, type ReactCodeMirrorRef } from '@uiw/react-codemirror'
+import React, { useEffect, useRef, useState } from 'react'
 
 const getLanguageFromExtension = (extension: string): Promise<Extension> | undefined => {
   const language = languages.find(lang => lang.extensions.includes(extension))
@@ -40,11 +42,20 @@ const Editor = (props: {
   const [name, setName] = useState(props.name)
   const error = props.name === '' && props.siblingFiles.includes(name)
 
+  const editorRef = useRef<ReactCodeMirrorRef>(null)
+
   const saveFile = (): void => {
     setSaving(true)
     Promise.resolve(props.onSave(name, content))
       .then(() => setSaving(false))
       .catch(console.error)
+  }
+
+  const handleSearchToggle = () => {
+    if (editorRef.current?.view) {
+      const view = editorRef.current.view
+      if (!closeSearchPanel(view)) openSearchPanel(view)
+    }
   }
 
   useEffect(() => {
@@ -83,9 +94,15 @@ const Editor = (props: {
             </IconButton>
           </Tooltip>
         )}
+        <Tooltip title='Search'>
+          <IconButton onClick={handleSearchToggle}>
+            <Search />
+          </IconButton>
+        </Tooltip>
       </div>
       <div style={{ flex: 1, marginTop: 10, marginBottom: 20 }}>
         <CodeMirror
+          ref={editorRef}
           height='65vh'
           value={content}
           theme={(useTheme().palette.mode === 'dark' ? materialDark : materialLight) as Extension}
